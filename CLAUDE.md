@@ -1,6 +1,6 @@
 # Timetable — AI System Reference
 
-**Version:** 0.2.0 | **Stand:** 2026-05-16
+**Version:** 0.2.1 | **Stand:** 2026-05-16
 **Repository:** https://github.com/ELEVENBIAI/TIMETABLE
 
 ## Identität
@@ -35,6 +35,7 @@ Hausmeister services Wochenplan erstellen
 8. **NIEMALS** neue Datei anlegen ohne Eintrag in `ARCHITECTURE_DESIGN.md §9 Referenzen` + `INDEX.md`
 9. **NIEMALS** Issue schließen ohne Integration-Test-Check (neue Komponente abgedeckt?)
 10. **NIEMALS** personenbezogene Daten (Mitarbeiter, Zeitpläne) ohne DSGVO-Prüfung speichern
+11. **NIEMALS** String-Literale in UI-Code (Frontend) oder API-Error-Messages — immer über i18next + Locale-Resource (ADR-16). Default `en`, erste übersetzte Sprache `de`. Locale-Quelle: `users.locale` → JWT → Accept-Language → Fallback `en`.
 
 ## Governance-Hooks
 

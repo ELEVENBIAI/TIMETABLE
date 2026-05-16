@@ -1,0 +1,21 @@
+{
+  "note": "Folge-Issues aus dem i18n-Nachtrag (ADR-16). Foundation ist Teil von ELE-169.",
+  "issues": [
+    {
+      "identifier": "ELE-194",
+      "id": "75ec8a64-6c2f-45e3-b301-45cc8e32938e",
+      "title": "i18n Backend Full — i18next + Locale-Middleware + alle Error-Messages",
+      "url": "https://linear.app/elevenbi/issue/ELE-194/i18n-backend-full-i18next-locale-middleware-alle-error-messages",
+      "scope": "Backend",
+      "depends_on": ["ELE-169"]
+    },
+    {
+      "identifier": "ELE-195",
+      "id": "1f9e26a1-fe6c-415a-b162-98f91b3ae731",
+      "title": "i18n Frontend — react-i18next + Locale-Selector im Profil",
+      "url": "https://linear.app/elevenbi/issue/ELE-195/i18n-frontend-react-i18next-locale-selector-im-profil",
+      "scope": "Frontend",
+      "depends_on": ["ELE-194", "ELE-170"]
+    }
+  ]
+}

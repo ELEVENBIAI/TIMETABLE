@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.0 | **Stand:** 2026-05-16
+**Version:** 0.2.1 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -13,17 +13,18 @@ Quelle: `developer_input/` (Tool-Beschreibung, Datenmodell, Feature-Spec, Linear
 
 ## Quality Attributes
 
-| Attribut        | Priorität | Beschreibung                                                                      |
-| --------------- | --------- | --------------------------------------------------------------------------------- |
-| Reliability     | Hoch      | Stundenplan ist betriebskritisch — Ausfall = manuelles Chaos                      |
-| Data Integrity  | Hoch      | PostgreSQL-Constraints + Zod-Validierung + RLS                                    |
-| Security        | Hoch      | JWT mit Rollen, RLS Multi-Tenancy, Rate Limiting, Audit-Log                       |
-| Performance     | Mittel    | Fastify, Vite-Bundle, indexierte Queries                                          |
-| Observability   | Mittel    | Pino-Logger, OpenAPI-Doku, REASSIGNMENT_LOG                                       |
-| Maintainability | Mittel    | TypeScript end-to-end, Pure-Function-Services                                     |
-| Privacy / DSGVO | Hoch      | Mitarbeiterdaten + GPS-Tracking — Datenminimierung, Audit-Log, Löschkonzept       |
-| Cost Efficiency | Mittel    | Regelbasiertes Scoring statt LLM, bewusste API-Wahl (OSRM vs Google)              |
-| Signal Quality  | Mittel    | Soll/Ist-Abweichung als KPI, Auslastungsmessung als Basis für bessere Kalkulation |
+| Attribut              | Priorität | Beschreibung                                                                                   |
+| --------------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| Reliability           | Hoch      | Stundenplan ist betriebskritisch — Ausfall = manuelles Chaos                                   |
+| Data Integrity        | Hoch      | PostgreSQL-Constraints + Zod-Validierung + RLS                                                 |
+| Security              | Hoch      | JWT mit Rollen, RLS Multi-Tenancy, Rate Limiting, Audit-Log                                    |
+| Performance           | Mittel    | Fastify, Vite-Bundle, indexierte Queries                                                       |
+| Observability         | Mittel    | Pino-Logger, OpenAPI-Doku, REASSIGNMENT_LOG                                                    |
+| Maintainability       | Mittel    | TypeScript end-to-end, Pure-Function-Services                                                  |
+| Privacy / DSGVO       | Hoch      | Mitarbeiterdaten + GPS-Tracking — Datenminimierung, Audit-Log, Löschkonzept                    |
+| Cost Efficiency       | Mittel    | Regelbasiertes Scoring statt LLM, bewusste API-Wahl (OSRM vs Google)                           |
+| Signal Quality        | Mittel    | Soll/Ist-Abweichung als KPI, Auslastungsmessung als Basis für bessere Kalkulation              |
+| Internationalisierung | Hoch      | i18next (FE+BE), Default `en`, erste übersetzte Sprache `de`, User-Locale in JWT + DB (ADR-16) |
 
 ## ADRs (Architecture Decision Records)
 
@@ -44,6 +45,7 @@ Quelle: `developer_input/` (Tool-Beschreibung, Datenmodell, Feature-Spec, Linear
 | ADR-13 | 2026-05-16 | Migration-Tooling Drizzle Kit                              | Active |
 | ADR-14 | 2026-05-16 | Performance-Budgets (Backend / Frontend / DB)              | Active |
 | ADR-15 | 2026-05-16 | Logging-Schema (Pino strukturiert + AUDIT_LOG)             | Active |
+| ADR-16 | 2026-05-16 | i18n-Strategie (i18next, BCP 47, User-Locale in JWT)       | Active |
 
 ### ADR-01: Monolith mit Fastify + React
 
@@ -147,6 +149,7 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)             |
 | `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                   |
 | `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar               |
+| `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                   |
 | `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                            |
 | `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                     |
 | `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                       |

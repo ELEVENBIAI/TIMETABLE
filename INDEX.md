@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.0 | **Stand:** 2026-05-16
+**Version:** 0.2.1 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -23,6 +23,12 @@
 | `SECURITY.md`            | Security-Policy, DSGVO       |
 | `CHANGELOG.md`           | Version-History              |
 | `specs/TEMPLATE.md`      | Story-Template               |
+
+## ADRs / Strategie-Dokumente
+
+| Datei                          | Zweck                                      |
+| ------------------------------ | ------------------------------------------ |
+| `docs/ADR-16-i18n-strategy.md` | Internationalisierungs-Strategie (i18next) |
 
 ## Komponenten
 
@@ -76,3 +82,4 @@
 | `Components/scheduling.md`          | **Kern: Plan-Generator + Vertretungs-Scoring** |
 | `Components/routing.md`             | Tourenoptimierung Welle 5                      |
 | `Components/test-infrastructure.md` | Test-Infrastruktur (Vitest + Playwright)       |
+| `Components/i18n.md`                | Internationalisierung (ADR-16)                 |

@@ -1,6 +1,6 @@
 # Timetable — System Architecture
 
-**Version:** 0.2.0 | **Stand:** 2026-05-16
+**Version:** 0.2.1 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -93,16 +93,17 @@ Details: `docs/ADR-09-users-table-and-roles.md`.
 
 ## Cross-Cutting Concerns
 
-| Concern             | Lösung                                                      | Referenz       |
-| ------------------- | ----------------------------------------------------------- | -------------- |
-| Authentifizierung   | JWT mit 7d-Expiry, bcryptjs cost 12, FAILED_LOGIN_COUNT     | ADR-09         |
-| Multi-Tenancy       | RLS + zwei DB-Rollen                                        | ADR-02, ADR-08 |
-| Validierung         | Zod (Server + Client)                                       | ADR-03         |
-| Logging             | Pino strukturiert, Pflicht-Felder requestId/tenantId/userId | ADR-15         |
-| Performance-Budgets | API p95 < 200ms, Plan-Gen < 5s, PWA Bundle < 250KB gzip     | ADR-14         |
-| Migrations          | Drizzle Kit, reversibel                                     | ADR-13         |
-| Backup / Recovery   | Daily-Snapshot + WAL-Archiving für Point-in-Time-Recovery   | ADR-12         |
-| Routing-Provider    | OpenRouteService primär, Google als Fallback                | ADR-11         |
+| Concern               | Lösung                                                      | Referenz       |
+| --------------------- | ----------------------------------------------------------- | -------------- |
+| Authentifizierung     | JWT mit 7d-Expiry, bcryptjs cost 12, FAILED_LOGIN_COUNT     | ADR-09         |
+| Multi-Tenancy         | RLS + zwei DB-Rollen                                        | ADR-02, ADR-08 |
+| Validierung           | Zod (Server + Client)                                       | ADR-03         |
+| Logging               | Pino strukturiert, Pflicht-Felder requestId/tenantId/userId | ADR-15         |
+| Performance-Budgets   | API p95 < 200ms, Plan-Gen < 5s, PWA Bundle < 250KB gzip     | ADR-14         |
+| Migrations            | Drizzle Kit, reversibel                                     | ADR-13         |
+| Backup / Recovery     | Daily-Snapshot + WAL-Archiving für Point-in-Time-Recovery   | ADR-12         |
+| Routing-Provider      | OpenRouteService primär, Google als Fallback                | ADR-11         |
+| Internationalisierung | i18next FE+BE, BCP 47 Locales, User-Locale in JWT + DB      | ADR-16         |
 
 ## Datenmodell — 5 Schichten
 

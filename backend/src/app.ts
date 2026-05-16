@@ -105,11 +105,16 @@ export async function buildApp() {
   });
 
   // ─── Error-Handler (MUSS vor Routes registriert sein, sonst greift er nicht) ─
+  // Error-Format (ADR-16): { error: { code, messageKey?, message } }
   fastify.setErrorHandler((rawErr, request, reply) => {
     const err = rawErr as Error & { statusCode?: number; code?: string };
     if (err instanceof HttpError) {
       return reply.code(err.statusCode).send({
-        error: { code: err.code, message: err.message },
+        error: {
+          code: err.code,
+          ...(err.messageKey && { messageKey: err.messageKey }),
+          message: err.message,
+        },
       });
     }
     // Fastify-Built-Ins (z.B. Validation, Rate-Limit)
@@ -121,7 +126,11 @@ export async function buildApp() {
     // Unbekannter Server-Error → 500, kein Stack-Leak
     request.log.error({ err }, 'Unhandled error');
     return reply.code(500).send({
-      error: { code: 'INTERNAL_ERROR', message: 'Interner Serverfehler' },
+      error: {
+        code: 'INTERNAL_ERROR',
+        messageKey: 'errors.internal',
+        message: 'Interner Serverfehler',
+      },
     });
   });
 

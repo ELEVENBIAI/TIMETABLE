@@ -6,11 +6,21 @@ import jsonwebtoken from 'jsonwebtoken';
 import { SECURITY } from '../config.js';
 import { isUserRole, type UserRole } from './roles.js';
 
+export type Locale = 'en' | 'de';
+
+export const SUPPORTED_LOCALES: readonly Locale[] = ['en', 'de'] as const;
+export const DEFAULT_LOCALE: Locale = 'en';
+
+export function isLocale(value: unknown): value is Locale {
+  return typeof value === 'string' && (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
+
 export interface JwtPayload {
   userId: string;
   tenantId: string;
   role: UserRole;
   isSuperAdmin: boolean;
+  locale: Locale;
 }
 
 export interface JwtPayloadWithMeta extends JwtPayload {
@@ -39,7 +49,10 @@ export function verifyJwt(token: string): JwtPayloadWithMeta {
     throw new Error('JWT-Payload ist String statt Object');
   }
   // Pflicht-Felder prüfen
-  const { userId, tenantId, role, isSuperAdmin, iat, exp } = decoded as Record<string, unknown>;
+  const { userId, tenantId, role, isSuperAdmin, locale, iat, exp } = decoded as Record<
+    string,
+    unknown
+  >;
   if (
     typeof userId !== 'string' ||
     typeof tenantId !== 'string' ||
@@ -50,5 +63,7 @@ export function verifyJwt(token: string): JwtPayloadWithMeta {
   ) {
     throw new Error('JWT-Payload unvollständig');
   }
-  return { userId, tenantId, role, isSuperAdmin, iat, exp };
+  // locale: rückwärtskompatibel — fehlt es im Token (Pre-ADR-16), fällt auf DEFAULT_LOCALE
+  const resolvedLocale: Locale = isLocale(locale) ? locale : DEFAULT_LOCALE;
+  return { userId, tenantId, role, isSuperAdmin, locale: resolvedLocale, iat, exp };
 }

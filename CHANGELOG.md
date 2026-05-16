@@ -1,5 +1,22 @@
 # Changelog — Timetable
 
+## v0.2.1 — 2026-05-16 (i18n-Nachtrag: ADR-16 + Foundation)
+
+- **ADR-16 angelegt:** `docs/ADR-16-i18n-strategy.md` — i18next FE+BE, Default `en`, erste übersetzte Sprache `de`, BCP 47 Codes
+- **Migration 0006:** `users.locale VARCHAR(10) NOT NULL DEFAULT 'en' CHECK (locale IN ('en', 'de'))`
+- **JWT-Payload erweitert:** neuer Pflicht-Claim `locale: 'en' | 'de'` mit Backwards-Compat-Fallback auf `en` für Pre-ADR-16-Tokens
+- **Backend-Foundation:**
+  - `backend/src/lib/i18n.ts` Mini-i18n-Map mit `t(key, locale)` + `resolveLocaleFromAcceptLanguage()`
+  - `backend/src/locales/{en,de}/index.ts` Resource-Maps (errors + auth Namespaces)
+  - Error-Klassen um `messageKey` erweitert — Format `{ error: { code, messageKey, message } }`
+  - Login-Endpoint signiert JWT mit `users.locale`
+- **Governance:** CLAUDE.md Regel 11 ergänzt — keine Inline-Strings im UI- oder API-Error-Code
+- **Doku-Updates:** ARCHITECTURE_DESIGN, SYSTEM_ARCHITECTURE (Cross-Cutting Concerns), COMPONENT_INVENTORY (i18n Backend/Frontend), INDEX, Obsidian `Components/i18n.md`
+- **Folge-Issues:**
+  - ELE-194: i18n Backend Full (i18next + Locale-Middleware)
+  - ELE-195: i18n Frontend (react-i18next + Locale-Selector im Profil)
+- **Tests:** 4 i18n-Unit-Tests + 1 JWT-Backwards-Compat-Test — Total 72/72 grün, TypeScript clean
+
 ## v0.2.0 — 2026-05-16 (ELE-169: Backend-Skeleton mit Fastify + Auth + Swagger)
 
 - **ELE-169 done:** Fastify-Backend produktiv mit komplettem Auth-Stack

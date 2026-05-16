@@ -7,7 +7,7 @@
 
 import type { FastifyInstance } from 'fastify';
 import { SECURITY } from '../config.js';
-import { signJwt } from '../auth/jwt.js';
+import { DEFAULT_LOCALE, isLocale, signJwt, type Locale } from '../auth/jwt.js';
 import { comparePassword, DUMMY_HASH } from '../auth/password.js';
 import { isUserRole, type UserRole } from '../auth/roles.js';
 import { getOwnerPool } from '../db/pools.js';
@@ -24,6 +24,7 @@ interface UserRow {
   failed_login_count: number;
   locked_until: Date | null;
   must_change_password: boolean;
+  locale: string;
 }
 
 export async function authRoutes(fastify: FastifyInstance): Promise<void> {
@@ -55,7 +56,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
       // User per Email lookup (case-insensitive)
       const result = await pool.query<UserRow>(
         `SELECT id, tenant_id, password_hash, role, is_super_admin,
-                failed_login_count, locked_until, must_change_password
+                failed_login_count, locked_until, must_change_password, locale
          FROM users
          WHERE LOWER(email) = LOWER($1) AND is_deleted = FALSE`,
         [email]
@@ -117,12 +118,15 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
 
       // Rolle validieren
       const role: UserRole = isUserRole(user.role) ? user.role : 'EMPLOYEE';
+      // Locale validieren (DB-Default 'en', CHECK constraint sichert (en|de) ab)
+      const locale: Locale = isLocale(user.locale) ? user.locale : DEFAULT_LOCALE;
 
       const token = signJwt({
         userId: user.id,
         tenantId: user.tenant_id,
         role,
         isSuperAdmin: user.is_super_admin,
+        locale,
       });
 
       request.log.info(

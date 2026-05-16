@@ -36,6 +36,13 @@
       "when": 1747440300000,
       "tag": "0005_schicht5",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1747526400000,
+      "tag": "0006_user_locale",
+      "breakpoints": true
     }
   ]
 }
