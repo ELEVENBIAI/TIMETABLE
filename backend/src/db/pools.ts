@@ -5,7 +5,12 @@
 // Liest process.env zur Laufzeit (nicht aus config.env-Singleton),
 // damit Tests die Verbindungs-URL via process.env überschreiben können.
 
-import { Pool } from 'pg';
+import { Pool, types } from 'pg';
+
+// DATE (OID 1082) als String parsen statt JS-Date — vermeidet Zeitzone-Drift.
+// PostgreSQL DATE = nur Datum, JS Date enthält UTC-Zeit → "2027-01-01" wird sonst
+// zu Date(2027-01-01 local) und in JSON-Antworten zu "2026-12-31T23:00:00.000Z" (UTC).
+types.setTypeParser(1082, (v: string) => v);
 
 let ownerPool: Pool | null = null;
 let appPool: Pool | null = null;

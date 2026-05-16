@@ -1,5 +1,37 @@
 # Changelog — Timetable
 
+## v0.2.6 — 2026-05-16 (ELE-174 + ELE-176 + ELE-177: Employee-Skills, Properties, Property-Services)
+
+- **ELE-174 done (Backend):** Employee-Skills — 3 nested Sub-Resources
+  - `/api/employees/:id/qualifications` (GET/POST/PUT/DELETE) mit `valid_until`, `certificate_number`
+  - `/api/employees/:id/equipment` (GET/POST/PUT/DELETE) mit `assigned_at`
+  - `/api/employees/:id/availability` (GET, PUT `:dayOfWeek` als Upsert, UNIQUE per employee+day)
+  - Doppelte Zuordnung → 409 DUPLICATE_ASSIGNMENT (junction-table UNIQUE)
+  - 10 Tests
+- **ELE-176 done (Backend):** Properties + Property-Zones
+  - Properties: GET (mit `?q=` ILIKE-Suche auf name/street/city), GET/:id, POST/PUT (ADMIN/PLANNER), DELETE (ADMIN, IN_USE-Check `property_services` + `schedule_entries`)
+  - Property-Zones nested unter `/api/properties/:propertyId/zones`
+  - PROPERTY_TYPES + ZONE_TYPES als Zod-Enum
+  - **Geocoding deferred** → Welle 5 (ELE-184/185); `lat`/`lng` werden direkt entgegengenommen
+  - 7 Tests
+- **ELE-177 done (Backend):** Property-Services (Leistungsverzeichnis)
+  - Routes: GET (mit `?propertyId=` Filter), GET/:id, POST/PUT (ADMIN/PLANNER), DELETE
+  - **`frequency_detail` JSONB typed per Zod** je nach `frequency`:
+    - WEEKLY → `{ weekdays | dayOfWeek }`
+    - BIWEEKLY → `{ dayOfWeek, oddWeek? }`
+    - MONTHLY → `{ dayOfMonth | weekOfMonth + dayOfWeek }`
+    - QUARTERLY/BIANNUAL/ANNUAL → `{ months? }`
+    - ON_DEMAND → `{}`
+  - PUT validiert `frequency_detail` neu wenn `frequency` oder `frequency_detail` geändert
+  - Saisonalitäts-Wrap-Around (z.B. Nov–Mär, seasonal_start=11, seasonal_end=3) wird unterstützt
+  - 8 Tests
+- **Bugfix `pools.ts`:** PostgreSQL DATE (OID 1082) wird jetzt als String geparsed statt JS-Date — vermeidet Zeitzone-Drift bei `valid_until` (Berlin UTC+1 hatte `2027-01-01` zu `2026-12-31T23:00:00.000Z` gemacht)
+- Locales erweitert (en+de): `propertyNotFound`, `propertyZoneNotFound`, `propertyServiceNotFound`, `employeeQualificationNotFound`, `employeeEquipmentNotFound`, `duplicateAssignment`, `invalidFrequencyDetail`, `invalidSeasonalRange`, `propertyMismatch`
+- 25 neue Tests (Total **169/169 grün**), TypeScript clean
+- **Frontend deferred** für alle 3 Issues → wandert zu ELE-180
+- **VALID_UNTIL-Warning-Service deferred** (ELE-174 T3) → separate Notification-Story
+- **ELE-176 trotz offenem ELE-175-Block umgesetzt:** `property_manager_id`/`contract_id` sind NULL-fähig, später nachpflegbar
+
 ## v0.2.5 — 2026-05-16 (ELE-172: Qualification + Equipment Types CRUD)
 
 - **ELE-172 done (Backend):** Zwei verwandte Stammdaten-CRUDs für Wave-3-Scoring

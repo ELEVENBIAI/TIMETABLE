@@ -32,5 +32,14 @@
   "employeeNotFound": "Mitarbeiter nicht gefunden",
   "qualificationTypeNotFound": "Qualifikation nicht gefunden",
   "equipmentTypeNotFound": "Equipment-Type nicht gefunden",
-  "duplicateCode": "Code existiert bereits in diesem Tenant"
+  "duplicateCode": "Code existiert bereits in diesem Tenant",
+  "propertyNotFound": "Objekt nicht gefunden",
+  "propertyZoneNotFound": "Zone nicht gefunden",
+  "propertyServiceNotFound": "Leistung nicht gefunden",
+  "employeeQualificationNotFound": "Mitarbeiter-Qualifikation nicht gefunden",
+  "employeeEquipmentNotFound": "Mitarbeiter-Equipment-Zuordnung nicht gefunden",
+  "duplicateAssignment": "Bereits zugeordnet",
+  "invalidFrequencyDetail": "frequency_detail passt nicht zur gewählten Frequenz",
+  "invalidSeasonalRange": "Ungültiger Saison-Bereich (Monate müssen 1..12 sein)",
+  "propertyMismatch": "Ressource gehört nicht zum angegebenen Objekt"
 }

@@ -32,5 +32,14 @@
   "employeeNotFound": "Employee not found",
   "qualificationTypeNotFound": "Qualification type not found",
   "equipmentTypeNotFound": "Equipment type not found",
-  "duplicateCode": "Code already exists in this tenant"
+  "duplicateCode": "Code already exists in this tenant",
+  "propertyNotFound": "Property not found",
+  "propertyZoneNotFound": "Property zone not found",
+  "propertyServiceNotFound": "Property service not found",
+  "employeeQualificationNotFound": "Employee qualification not found",
+  "employeeEquipmentNotFound": "Employee equipment assignment not found",
+  "duplicateAssignment": "Already assigned",
+  "invalidFrequencyDetail": "Invalid frequency_detail for selected frequency",
+  "invalidSeasonalRange": "Invalid seasonal range (months must be 1..12)",
+  "propertyMismatch": "Resource does not belong to the given property"
 }

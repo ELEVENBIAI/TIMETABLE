@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.5 | **Stand:** 2026-05-16
+**Version:** 0.2.6 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -212,18 +212,27 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/employees.ts`                                                | Employees CRUD + DSGVO-Filter + Audit-Read — ELE-173       |
 | `backend/src/routes/qualification-types.ts`                                      | Qualification-Types CRUD — ELE-172                         |
 | `backend/src/routes/equipment-types.ts`                                          | Equipment-Types CRUD — ELE-172                             |
+| `backend/src/routes/employee-skills.ts`                                          | Quali / Equipment / Availability nested — ELE-174          |
+| `backend/src/routes/properties.ts`                                               | Properties + nested Zones — ELE-176                        |
+| `backend/src/routes/property-services.ts`                                        | Leistungsverzeichnis + Frequency-Validation — ELE-177      |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                               |
 | `backend/src/schemas/employees.ts`                                               | Zod Employee + filterEmployeeForActor                      |
 | `backend/src/schemas/qualification-types.ts`                                     | Zod Qualification-Type                                     |
 | `backend/src/schemas/equipment-types.ts`                                         | Zod Equipment-Type + factor 0.30–2.00                      |
+| `backend/src/schemas/employee-skills.ts`                                         | Zod Quali / Equipment / Availability                       |
+| `backend/src/schemas/properties.ts`                                              | Zod Property + Zone                                        |
+| `backend/src/schemas/property-services.ts`                                       | Zod + validateFrequencyDetail (typed JSONB)                |
 | `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
 | `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
 | `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)       |
 | `backend/tests/routes/employees.test.ts`                                         | Employees-Tests (Role-Filter, Tenant-Match, Audit-Log)     |
 | `backend/tests/routes/qualification-types.test.ts`                               | Qualification-Types Tests (IN_USE via 2 Quellen, dup code) |
 | `backend/tests/routes/equipment-types.test.ts`                                   | Equipment-Types Tests (factor-range, IN_USE)               |
+| `backend/tests/routes/employee-skills.test.ts`                                   | Quali/Equipment/Availability Tests (Upsert, UNIQUE)        |
+| `backend/tests/routes/properties.test.ts`                                        | Properties + Zones + ILIKE-Suche                           |
+| `backend/tests/routes/property-services.test.ts`                                 | Alle 7 Frequenzen + frequency_detail-Validation            |
 | `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
 | `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
 

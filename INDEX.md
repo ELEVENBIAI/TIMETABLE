@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.5 | **Stand:** 2026-05-16
+**Version:** 0.2.6 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -55,12 +55,18 @@
 | `backend/src/routes/employees.ts`                  | Employees CRUD mit DSGVO-Filter (ELE-173)         |
 | `backend/src/routes/qualification-types.ts`        | Qualification-Types CRUD (ELE-172)                |
 | `backend/src/routes/equipment-types.ts`            | Equipment-Types CRUD (ELE-172)                    |
+| `backend/src/routes/employee-skills.ts`            | Quali / Equipment / Availability nested (ELE-174) |
+| `backend/src/routes/properties.ts`                 | Properties + nested Zones (ELE-176)               |
+| `backend/src/routes/property-services.ts`          | Leistungsverzeichnis + frequency_detail (ELE-177) |
 | `backend/src/schemas/tenants.ts`                   | Zod Tenant                                        |
 | `backend/src/schemas/users.ts`                     | Zod User + Passwort-Policy                        |
 | `backend/src/schemas/service-types.ts`             | Zod Service-Type + Hex-Color                      |
 | `backend/src/schemas/employees.ts`                 | Zod Employee + filterEmployeeForActor             |
 | `backend/src/schemas/qualification-types.ts`       | Zod Qualification-Type                            |
 | `backend/src/schemas/equipment-types.ts`           | Zod Equipment-Type + factor 0.30–2.00             |
+| `backend/src/schemas/employee-skills.ts`           | Zod Quali/Equipment/Availability                  |
+| `backend/src/schemas/properties.ts`                | Zod Property + Zone                               |
+| `backend/src/schemas/property-services.ts`         | Zod + validateFrequencyDetail                     |
 | `backend/src/auth/authorize.ts`                    | requireRole + canActOnUser Helper                 |
 | `backend/tests/routes/tenants.test.ts`             | Tenant-Routes Tests                               |
 | `backend/tests/routes/users.test.ts`               | User-Routes Tests                                 |
@@ -68,6 +74,9 @@
 | `backend/tests/routes/employees.test.ts`           | Employees Tests + Role-Filter + Audit-Log         |
 | `backend/tests/routes/qualification-types.test.ts` | Qualification-Types Tests + IN_USE-Check          |
 | `backend/tests/routes/equipment-types.test.ts`     | Equipment-Types Tests + factor-range              |
+| `backend/tests/routes/employee-skills.test.ts`     | Quali/Equipment/Availability Tests                |
+| `backend/tests/routes/properties.test.ts`          | Properties + Zones + ILIKE-Suche                  |
+| `backend/tests/routes/property-services.test.ts`   | frequency_detail-Validation + alle Frequenzen     |
 
 ## Komponenten
 
