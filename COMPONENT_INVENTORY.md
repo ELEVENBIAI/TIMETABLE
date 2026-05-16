@@ -1,6 +1,6 @@
 # Timetable — Component Inventory
 
-**Version:** 0.3.0 | **Stand:** 2026-05-16
+**Version:** 0.3.1 | **Stand:** 2026-05-16
 
 | Komponente          | Datei / Pfad                                                                 | Status     | Beschreibung                                                                                |
 | ------------------- | ---------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------- |
@@ -11,9 +11,9 @@
 | API                 | `backend/src/routes/`                                                        | **Active** | REST + Zod + Rate-Limit — 15 Routen-Module inkl. schedules + schedule-entries (ELE-179)     |
 | Datenbank           | PostgreSQL 16+                                                               | **Active** | **26 Tabellen (Schicht 1-5) + Pilot-Seed, RLS Multi-Tenancy** (ELE-164..168)                |
 | Auth                | `backend/src/auth/`                                                          | **Active** | JWT + bcryptjs + 6 Rollen + requireRole/canActOnUser (ELE-169 + ELE-170)                    |
-| Scheduling          | `backend/src/services/scheduling/`                                           | **Active** | conflict-check + frequency-engine (ELE-179 + ELE-184); Plan-Generator folgt (ELE-185)       |
+| Scheduling          | `backend/src/services/scheduling/`                                           | **Active** | conflict-check + frequency-engine + plan-generator (ELE-179 + ELE-184 + ELE-185)            |
 | Frequenz-Engine     | `backend/src/services/scheduling/frequency-engine.ts`                        | **Active** | Pure Functions: alle 7 Frequenzen + Saison-Wrap + Waste-Logik, 100% Coverage (ELE-184 done) |
-| Plan-Generator      | `backend/src/services/scheduling/schedule-generator.ts`                      | planned    | Generiert Wochenplan aus Template                                                           |
+| Plan-Generator      | `backend/src/services/scheduling/schedule-generator.ts`                      | **Active** | 6-Phasen aus Template + Frequenz-Engine + Warnings (ELE-185 done)                           |
 | Reassignment-Engine | `backend/src/services/scheduling/reassignment-engine.ts`                     | planned    | Regelbasiertes Scoring (kein LLM)                                                           |
 | Time-Logs           | `backend/src/services/time-logs.ts`                                          | planned    | GPS Check-in/out, Soll-Ist-Berechnung                                                       |
 | Reporting           | `backend/src/services/reporting/`                                            | planned    | Auslastung, Soll-Ist-Analyse                                                                |

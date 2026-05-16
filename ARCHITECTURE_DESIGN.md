@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.3.0 | **Stand:** 2026-05-16
+**Version:** 0.3.1 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -228,6 +228,12 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/scheduling-debug.ts`                                         | GET /api/due-services Debug-Endpoint — ELE-184                 |
 | `backend/tests/services/scheduling/frequency-engine.test.ts`                     | Pure-Function-Tests (23 Cases, 100% Coverage) — ELE-184        |
 | `backend/tests/routes/scheduling-debug.test.ts`                                  | Debug-Route Tests — ELE-184                                    |
+| `backend/src/services/scheduling/plan-generator-pure.ts`                         | Pure Helpers (Overload, Quali-Expiry, Available) — ELE-185     |
+| `backend/src/services/scheduling/schedule-generator.ts`                          | 6-Phasen-Generator + Transaction — ELE-185                     |
+| `backend/src/routes/schedule-generator.ts`                                       | POST /api/schedules/generate — ELE-185                         |
+| `backend/src/schemas/schedule-generator.ts`                                      | Zod Input + Warning-Types — ELE-185                            |
+| `backend/tests/services/scheduling/plan-generator-pure.test.ts`                  | Pure Helper Tests (24 Cases) — ELE-185                         |
+| `backend/tests/routes/schedule-generator.test.ts`                                | Plan-Generator E2E (alle Warnings, Doppel-Gen) — ELE-185       |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                             |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                             |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                                   |

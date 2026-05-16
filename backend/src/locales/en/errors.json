@@ -54,5 +54,6 @@
   "duplicateWeek": "A schedule for this week already exists",
   "scheduleLocked": "Schedule is archived and cannot be modified",
   "bulkTooLarge": "Bulk size exceeds limit ({{limit}})",
-  "scheduleMismatch": "Entry's schedule does not match the provided scheduleId"
+  "scheduleMismatch": "Entry's schedule does not match the provided scheduleId",
+  "templateNotFound": "Schedule template not found"
 }

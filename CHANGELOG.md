@@ -1,5 +1,35 @@
 # Changelog — Timetable
 
+## v0.3.1 — 2026-05-16 (ELE-185: Plan-Generator MVP-CUT)
+
+- **ELE-185 done (Backend):** Wochenplan-Generierung aus Template — der MVP-Abschluss-Stein
+- **Pure Functions** `services/scheduling/plan-generator-pure.ts`:
+  - `pickEntryDate(weekStart, dayOfWeek)` — Datum für Wochentag in ISO-Woche
+  - `computeEmployeeLoad` — Minuten-Summe pro Mitarbeiter
+  - `findOverloadedEmployees` — vergleicht mit weekly_hours
+  - `findExpiringQualifications` — < 30 Tage bis Ablauf
+  - `findAbsenceFor` — Abwesenheit am konkreten Tag
+  - `absenceTypeToReassignmentReason` — Mapping DB-Enums
+  - `isEmployeeAvailable` — Time-Window-Check gegen employee_availability
+- **Service** `services/scheduling/schedule-generator.ts` (6 Phasen, alles in einer DB-Transaction):
+  1. Schedule-Header anlegen (DRAFT, `generation_method = 'FROM_TEMPLATE'`)
+  2. Template-Entries → Pending-Entries mit konkreten Daten
+     3a. Frequenz-Engine: fällige Property-Services matchen (NO_TEMPLATE_MATCH-Warning bei Mismatch)
+     3b. Waste-Schedules → 2 Entries pro Termin (put-out + take-in) mit erstem aktiven Mitarbeiter
+  3. Absences-Check → `status=REASSIGNMENT_NEEDED` + ABSENCE-Warning
+  4. Verfügbarkeits-Check → OUTSIDE_AVAILABILITY-Warning
+  5. Overload + Quali-Expiry → OVERLOAD + QUALIFICATION_EXPIRY Warnings
+- **API** `POST /api/schedules/generate` (ADMIN/PLANNER): Input `{ templateId, weekStart, weekNumber, year }` → 201 mit `{ schedule, entries, warnings, stats }`
+- **Sicherheits-Garantien:**
+  - UNIQUE(tenant, week_start) → 409 DUPLICATE_WEEK bei Doppel-Generierung
+  - DRAFT-only (nie direkt PUBLISHED)
+  - Komplette Transaction → entweder ganzer Plan oder Rollback
+- **Warning-Codes (6)**: OVERLOAD, QUALIFICATION_EXPIRY, NO_TEMPLATE_MATCH, ABSENCE, OUTSIDE_AVAILABILITY, NO_WASTE_SERVICE_TYPE
+- 35 neue Tests (24 Pure + 11 Route), Total **296/296 grün**, TypeScript clean
+- **Frontend deferred** (Warnings-Dialog + "Woche generieren"-Button) → ELE-180
+
+**Wave-1-Backend ist damit komplett.** Plan-Generation funktioniert end-to-end von Stammdaten + Template → fertiger Wochenplan-Vorschlag.
+
 ## v0.3.0 — 2026-05-16 (ELE-184: Frequenz-Engine)
 
 - **ELE-184 done:** Hirn hinter der späteren Wochenplan-Generierung

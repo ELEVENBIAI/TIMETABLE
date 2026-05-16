@@ -54,5 +54,6 @@
   "duplicateWeek": "Für diese Woche existiert bereits ein Plan",
   "scheduleLocked": "Plan ist archiviert und kann nicht mehr geändert werden",
   "bulkTooLarge": "Bulk-Größe überschreitet Limit ({{limit}})",
-  "scheduleMismatch": "Eintrag gehört nicht zum angegebenen Wochenplan"
+  "scheduleMismatch": "Eintrag gehört nicht zum angegebenen Wochenplan",
+  "templateNotFound": "Vorlage nicht gefunden"
 }

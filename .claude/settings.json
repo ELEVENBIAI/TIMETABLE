@@ -96,7 +96,11 @@
       "Bash(node scripts/linear.mjs update-issue \"674f8b55-f7f4-49a5-a144-e150ae65e14e\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
       "Bash(node scripts/linear.mjs comment \"674f8b55-f7f4-49a5-a144-e150ae65e14e\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-179-ac.md\")",
       "Bash(node scripts/linear.mjs update-issue \"674f8b55-f7f4-49a5-a144-e150ae65e14e\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
-      "Bash(node scripts/linear.mjs update-issue \"3be5f78e-25e7-4f98-a3bd-c180209ec318\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
+      "Bash(node scripts/linear.mjs update-issue \"3be5f78e-25e7-4f98-a3bd-c180209ec318\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
+      "Bash(git commit -m 'chore: ignore backend/coverage \\(versehentlich in 7d6c4a8 mitcommittet\\) *)",
+      "Bash(node scripts/linear.mjs comment \"3be5f78e-25e7-4f98-a3bd-c180209ec318\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-184-ac.md\")",
+      "Bash(node scripts/linear.mjs update-issue \"3be5f78e-25e7-4f98-a3bd-c180209ec318\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(node scripts/linear.mjs update-issue \"ba5cf7c6-693e-4b3f-8aa9-f33a15e069d0\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",
