@@ -25,6 +25,8 @@ import { propertyManagerRoutes } from './routes/property-managers.js';
 import { propertyRoutes } from './routes/properties.js';
 import { propertyServiceRoutes } from './routes/property-services.js';
 import { qualificationTypeRoutes } from './routes/qualification-types.js';
+import { scheduleEntryRoutes } from './routes/schedule-entries.js';
+import { scheduleRoutes } from './routes/schedules.js';
 import { serviceTypeRoutes } from './routes/service-types.js';
 import { tenantRoutes } from './routes/tenants.js';
 import { userRoutes } from './routes/users.js';
@@ -181,6 +183,8 @@ export async function buildApp() {
   await fastify.register(propertyServiceRoutes);
   await fastify.register(wasteBinTypeRoutes);
   await fastify.register(wasteScheduleRoutes);
+  await fastify.register(scheduleRoutes);
+  await fastify.register(scheduleEntryRoutes);
 
   return fastify;
 }

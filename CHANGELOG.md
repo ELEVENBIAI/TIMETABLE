@@ -1,5 +1,28 @@
 # Changelog — Timetable
 
+## v0.2.9 — 2026-05-16 (ELE-179: Schedules + Schedule-Entries CRUD)
+
+- **ELE-179 done (Backend):** Die zentrale Wochenplan-Datenstruktur
+- **Pure-Function-Service** `backend/src/services/scheduling/conflict-check.ts`:
+  - `entriesOverlap` — halb-offene Zeitintervall-Logik (Berührung am Endpunkt = kein Overlap)
+  - `isValidStatusTransition` — lineare State-Machine DRAFT → PUBLISHED → ARCHIVED
+  - `timeToMinutes` — Helper für HH:MM/HH:MM:SS → Minuten
+- **Schedules** `/api/schedules` (6 Endpoints):
+  - CRUD + `POST /:id/publish` (strikt DRAFT → PUBLISHED, kein Idempotenz, setzt published_at/by)
+  - Status-Transition-Check (PUT): linear, Sprünge → 400 `INVALID_STATUS_TRANSITION`
+  - UNIQUE(tenant, week_start) → 409 `DUPLICATE_WEEK`
+  - DELETE blockiert wenn Entries → 409
+- **Schedule-Entries** `/api/schedule-entries` (7 Endpoints):
+  - CRUD + `POST /bulk` (max 200, atomare Transaction) + `PATCH /:id/move`
+  - **Time-Conflict-Check** via SQL `tsrange`-Overlap (`&&`) auf TIME-Intervalle
+  - Bei MOVE auf anderen MA: `is_from_reassignment=true`, `original_employee_id` befüllt
+  - Cross-Tenant-Check auf 4 FKs (schedule, employee, property, service_type) + optional property_service
+  - **EMPLOYEE-Filter**: GET sieht nur eigene Entries (Subquery `employees.user_id = actor.userId`)
+  - **ARCHIVED Schedule = read-only** → 403 `SCHEDULE_LOCKED`
+- Locales erweitert (en+de): 8 neue Keys (scheduleNotFound, scheduleEntryNotFound, timeConflict, invalidStatusTransition, duplicateWeek, scheduleLocked, bulkTooLarge, scheduleMismatch)
+- 35 neue Tests (14 Pure conflict-check + 7 Schedules + 14 Schedule-Entries), Total **235/235 grün**, TypeScript clean
+- **Frontend deferred** → wandert zu ELE-180/181/182
+
 ## v0.2.8 — 2026-05-16 (ELE-178: Waste-Bin-Types + Waste-Schedules CRUD)
 
 - **ELE-178 done (Backend):** Mülltonnen-Stammdaten + Abfuhrpläne pro Property

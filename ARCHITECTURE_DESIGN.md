@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.8 | **Stand:** 2026-05-16
+**Version:** 0.2.9 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -126,129 +126,137 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 
 ### Docs (Repo)
 
-| Datei                                                                            | Zweck                                                      |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `CLAUDE.md`                                                                      | AI-Kontext, Regeln, Governance                             |
-| `SYSTEM_ARCHITECTURE.md`                                                         | Komponenten-Tabelle, Flows, Config                         |
-| `ARCHITECTURE_DESIGN.md`                                                         | ADRs, Quality Attributes, Referenzen (Hub)                 |
-| `INDEX.md`                                                                       | Alle Docs kategorisiert                                    |
-| `COMPONENT_INVENTORY.md`                                                         | Alle Komponenten mit Status                                |
-| `GOVERNANCE.md`                                                                  | Entwicklungs-Prozess, Regeln                               |
-| `DEVELOPMENT_PROCESS.md`                                                         | Verweis auf Governance                                     |
-| `SECURITY.md`                                                                    | Security-Policy, DSGVO, API-Key-Regeln                     |
-| `CHANGELOG.md`                                                                   | Version-History                                            |
-| `specs/TEMPLATE.md`                                                              | Story-Template                                             |
-| `lib/config.js`                                                                  | SSoT alle Parameter                                        |
-| `lib/doc-sync.js`                                                                | DocSync zu Obsidian                                        |
-| `journal/learnings.md`                                                           | Learning-Loop L1                                           |
-| `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)         |
-| `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele  |
-| `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                   |
-| `docs/ADR-12-backup-feature-flags.md`                                            | Backup-Strategie + Feature-Flags + Graceful Degradation    |
-| `docs/ADR-13-migration-tooling.md`                                               | Drizzle Kit Migration-Strategie                            |
-| `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)              |
-| `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                    |
-| `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar                |
-| `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                    |
-| `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                             |
-| `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                      |
-| `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                        |
-| `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                      |
-| `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review  |
-| `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                             |
-| `docker-compose.yml`                                                             | PostgreSQL 16-alpine Service mit Init-SQL                  |
-| `backend/src/db/init/01-extensions.sql`                                          | pgcrypto, pg_trgm, cube, earthdistance                     |
-| `backend/src/db/init/02-roles.sql`                                               | hmservice_owner (BYPASSRLS) + hmservice_app (NOBYPASSRLS)  |
-| `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                       |
-| `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs            |
-| `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                         |
-| `backend/src/db/migrations/0002_schicht2.sql` + `.down.sql`                      | Schicht-2: Fähigkeiten (5 Tabellen)                        |
-| `backend/src/db/migrations/0003_schicht3.sql` + `.down.sql`                      | Schicht-3: Leistungen + Waste (3 Tabellen)                 |
-| `backend/src/db/migrations/0004_schicht4.sql` + `.down.sql`                      | Schicht-4: Planung (6 Tabellen)                            |
-| `backend/src/db/migrations/0005_schicht5.sql` + `.down.sql`                      | Schicht-5: Ausführung (2 Tabellen) + Pilot-Tenant-Seed     |
-| `backend/tests/db/schichten2-5.test.ts`                                          | 16 Tests für Schichten 2-5                                 |
-| `backend/src/db/scripts/db-check.mjs`                                            | Health-Check (26 Tabellen, RLS, AUDIT_LOG, Extensions)     |
-| `scripts/setup-dev-db.mjs`                                                       | Einmaliger Setup persistente Dev-DB im eleven_crm_db       |
-| `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                 |
-| `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                    |
-| `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)           |
-| `backend/drizzle.config.ts`                                                      | Drizzle-Kit-Config                                         |
-| `backend/src/db/scripts/db-reset.sh`                                             | DB-Reset + Init + Migrate                                  |
-| `backend/src/db/scripts/db-check.sh`                                             | Health-Check (Tabellen, RLS, GRANTs)                       |
-| `backend/tests/db/schicht1.test.ts`                                              | 9 RLS + Constraint Tests                                   |
-| `backend/tests/db/audit-log.test.ts`                                             | 7 AUDIT_LOG Append-Only + RLS Tests                        |
-| `backend/tests/db/migrations.test.ts`                                            | 2 Migration-Tracking Tests                                 |
-| `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                  |
-| `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                         |
-| `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config  |
-| `backend/package.json` + `backend/vitest.config.ts` + `backend/tsconfig.json`    | Backend Test-Setup                                         |
-| `backend/tests/setup.ts`                                                         | Globaler Vitest-Setup (Testcontainers Boot)                |
-| `backend/tests/helpers/db.ts`                                                    | Testcontainers PostgreSQL + Owner/App-Pools                |
-| `backend/tests/helpers/withTestTenant.ts`                                        | RLS-Test-Helper (`SET app.current_tenant_id`)              |
-| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis ELE-169)               |
-| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis ELE-168)                          |
-| `backend/tests/smoke.test.ts`                                                    | Smoke-Tests für Postgres + Pools + Extensions              |
-| `frontend/package.json` + `frontend/vitest.config.ts` + `frontend/tsconfig.json` | Frontend Test-Setup                                        |
-| `frontend/tests/setup.ts` + `frontend/tests/smoke.test.tsx`                      | Testing-Library + Smoke                                    |
-| `e2e/package.json` + `e2e/playwright.config.ts` + `e2e/tsconfig.json`            | Playwright E2E-Setup                                       |
-| `e2e/tests/smoke.spec.ts`                                                        | Smoke-Test ohne Server                                     |
-| `.husky/pre-commit`                                                              | Pre-Commit-Hook (lint-staged + typecheck)                  |
-| `.github/workflows/test.yml`                                                     | CI-Workflow (Lint, Tests, E2E, Coverage)                   |
-| `backend/src/db/migrations/0006_user_locale.sql` + `.down.sql`                   | users.locale-Spalte (ADR-16, ELE-169-Nachtrag)             |
-| `backend/src/lib/i18n.ts`                                                        | i18next-Setup + `t(key, locale, vars)` (ELE-194)           |
-| `backend/src/lib/locale.ts`                                                      | Locale-Middleware (setInitialLocale + applyUserLocale)     |
-| `backend/src/locales/{en,de}/common.json`                                        | UI-Allgemein                                               |
-| `backend/src/locales/{en,de}/errors.json`                                        | Error-Messages (Hauptnamespace)                            |
-| `backend/src/locales/{en,de}/auth.json`                                          | Auth-Strings                                               |
-| `backend/src/locales/{en,de}/users.json`                                         | User-Module + Plural-Forms                                 |
-| `backend/src/locales/{en,de}/validation.json`                                    | Validation-Variations                                      |
-| `backend/tests/lib/i18n.test.ts`                                                 | i18n-Tests (Interpolation, Plural)                         |
-| `backend/tests/lib/locale.test.ts`                                               | Locale-Middleware Unit-Tests                               |
-| `backend/tests/routes/locale-middleware.test.ts`                                 | E2E: Error-Messages in Request-Locale                      |
-| `backend/src/auth/authorize.ts`                                                  | Rollen-Check-Helper (requireRole, canActOnUser, Forbidden) |
-| `backend/src/routes/tenants.ts`                                                  | Tenant-CRUD (GET/PUT) — ELE-170                            |
-| `backend/src/routes/users.ts`                                                    | User-CRUD + change-password + me/locale — ELE-170          |
-| `backend/src/routes/service-types.ts`                                            | Service-Types CRUD — ELE-171                               |
-| `backend/src/routes/employees.ts`                                                | Employees CRUD + DSGVO-Filter + Audit-Read — ELE-173       |
-| `backend/src/routes/qualification-types.ts`                                      | Qualification-Types CRUD — ELE-172                         |
-| `backend/src/routes/equipment-types.ts`                                          | Equipment-Types CRUD — ELE-172                             |
-| `backend/src/routes/employee-skills.ts`                                          | Quali / Equipment / Availability nested — ELE-174          |
-| `backend/src/routes/properties.ts`                                               | Properties + nested Zones — ELE-176                        |
-| `backend/src/routes/property-services.ts`                                        | Leistungsverzeichnis + Frequency-Validation — ELE-177      |
-| `backend/src/routes/property-managers.ts`                                        | Hausverwaltungen + pg_trgm-Suche — ELE-175                 |
-| `backend/src/routes/contracts.ts`                                                | Verträge mit monthly_value-Filter — ELE-175                |
-| `backend/src/db/migrations/0007_pm_trgm.sql` + `.down.sql`                       | GIN-Trigram-Indexe für PM-Schnellsuche — ELE-175           |
-| `backend/src/routes/waste-bin-types.ts`                                          | Tonnentypen-Stammdaten — ELE-178                           |
-| `backend/src/routes/waste-schedules.ts`                                          | Abfuhrpläne + collection_days JSONB — ELE-178              |
-| `backend/src/db/migrations/0008_waste_codes_en.sql` + `.down.sql`                | waste_bin_types.code DE→EN Migration — ELE-178             |
-| `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
-| `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
-| `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                               |
-| `backend/src/schemas/employees.ts`                                               | Zod Employee + filterEmployeeForActor                      |
-| `backend/src/schemas/qualification-types.ts`                                     | Zod Qualification-Type                                     |
-| `backend/src/schemas/equipment-types.ts`                                         | Zod Equipment-Type + factor 0.30–2.00                      |
-| `backend/src/schemas/employee-skills.ts`                                         | Zod Quali / Equipment / Availability                       |
-| `backend/src/schemas/properties.ts`                                              | Zod Property + Zone                                        |
-| `backend/src/schemas/property-services.ts`                                       | Zod + validateFrequencyDetail (typed JSONB)                |
-| `backend/src/schemas/property-managers.ts`                                       | Zod PropertyManager                                        |
-| `backend/src/schemas/contracts.ts`                                               | Zod Contract + filterContractForActor (monthly_value)      |
-| `backend/src/schemas/waste-bin-types.ts`                                         | Zod WasteBinType + Codes (EN)                              |
-| `backend/src/schemas/waste-schedules.ts`                                         | Zod WasteSchedule + collectionDaysSchema (JSONB-typed)     |
-| `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
-| `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
-| `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)       |
-| `backend/tests/routes/employees.test.ts`                                         | Employees-Tests (Role-Filter, Tenant-Match, Audit-Log)     |
-| `backend/tests/routes/qualification-types.test.ts`                               | Qualification-Types Tests (IN_USE via 2 Quellen, dup code) |
-| `backend/tests/routes/equipment-types.test.ts`                                   | Equipment-Types Tests (factor-range, IN_USE)               |
-| `backend/tests/routes/employee-skills.test.ts`                                   | Quali/Equipment/Availability Tests (Upsert, UNIQUE)        |
-| `backend/tests/routes/properties.test.ts`                                        | Properties + Zones + ILIKE-Suche                           |
-| `backend/tests/routes/property-services.test.ts`                                 | Alle 7 Frequenzen + frequency_detail-Validation            |
-| `backend/tests/routes/property-managers.test.ts`                                 | PM-CRUD + Trigram-Suche + IN_USE-Block (Contracts + Props) |
-| `backend/tests/routes/contracts.test.ts`                                         | Contracts + monthly_value-Filter (Role-based)              |
-| `backend/tests/routes/waste-bin-types.test.ts`                                   | Waste-Bin-Types CRUD + IN_USE-Block                        |
-| `backend/tests/routes/waste-schedules.test.ts`                                   | Waste-Schedules + collection_days JSONB (WEEKLY/BIWEEKLY)  |
-| `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
-| `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
+| Datei                                                                            | Zweck                                                          |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `CLAUDE.md`                                                                      | AI-Kontext, Regeln, Governance                                 |
+| `SYSTEM_ARCHITECTURE.md`                                                         | Komponenten-Tabelle, Flows, Config                             |
+| `ARCHITECTURE_DESIGN.md`                                                         | ADRs, Quality Attributes, Referenzen (Hub)                     |
+| `INDEX.md`                                                                       | Alle Docs kategorisiert                                        |
+| `COMPONENT_INVENTORY.md`                                                         | Alle Komponenten mit Status                                    |
+| `GOVERNANCE.md`                                                                  | Entwicklungs-Prozess, Regeln                                   |
+| `DEVELOPMENT_PROCESS.md`                                                         | Verweis auf Governance                                         |
+| `SECURITY.md`                                                                    | Security-Policy, DSGVO, API-Key-Regeln                         |
+| `CHANGELOG.md`                                                                   | Version-History                                                |
+| `specs/TEMPLATE.md`                                                              | Story-Template                                                 |
+| `lib/config.js`                                                                  | SSoT alle Parameter                                            |
+| `lib/doc-sync.js`                                                                | DocSync zu Obsidian                                            |
+| `journal/learnings.md`                                                           | Learning-Loop L1                                               |
+| `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)             |
+| `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele      |
+| `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                       |
+| `docs/ADR-12-backup-feature-flags.md`                                            | Backup-Strategie + Feature-Flags + Graceful Degradation        |
+| `docs/ADR-13-migration-tooling.md`                                               | Drizzle Kit Migration-Strategie                                |
+| `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)                  |
+| `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                        |
+| `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar                    |
+| `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                        |
+| `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                                 |
+| `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                          |
+| `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                            |
+| `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                          |
+| `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review      |
+| `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                                 |
+| `docker-compose.yml`                                                             | PostgreSQL 16-alpine Service mit Init-SQL                      |
+| `backend/src/db/init/01-extensions.sql`                                          | pgcrypto, pg_trgm, cube, earthdistance                         |
+| `backend/src/db/init/02-roles.sql`                                               | hmservice_owner (BYPASSRLS) + hmservice_app (NOBYPASSRLS)      |
+| `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                           |
+| `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs                |
+| `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                             |
+| `backend/src/db/migrations/0002_schicht2.sql` + `.down.sql`                      | Schicht-2: Fähigkeiten (5 Tabellen)                            |
+| `backend/src/db/migrations/0003_schicht3.sql` + `.down.sql`                      | Schicht-3: Leistungen + Waste (3 Tabellen)                     |
+| `backend/src/db/migrations/0004_schicht4.sql` + `.down.sql`                      | Schicht-4: Planung (6 Tabellen)                                |
+| `backend/src/db/migrations/0005_schicht5.sql` + `.down.sql`                      | Schicht-5: Ausführung (2 Tabellen) + Pilot-Tenant-Seed         |
+| `backend/tests/db/schichten2-5.test.ts`                                          | 16 Tests für Schichten 2-5                                     |
+| `backend/src/db/scripts/db-check.mjs`                                            | Health-Check (26 Tabellen, RLS, AUDIT_LOG, Extensions)         |
+| `scripts/setup-dev-db.mjs`                                                       | Einmaliger Setup persistente Dev-DB im eleven_crm_db           |
+| `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                     |
+| `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                        |
+| `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)               |
+| `backend/drizzle.config.ts`                                                      | Drizzle-Kit-Config                                             |
+| `backend/src/db/scripts/db-reset.sh`                                             | DB-Reset + Init + Migrate                                      |
+| `backend/src/db/scripts/db-check.sh`                                             | Health-Check (Tabellen, RLS, GRANTs)                           |
+| `backend/tests/db/schicht1.test.ts`                                              | 9 RLS + Constraint Tests                                       |
+| `backend/tests/db/audit-log.test.ts`                                             | 7 AUDIT_LOG Append-Only + RLS Tests                            |
+| `backend/tests/db/migrations.test.ts`                                            | 2 Migration-Tracking Tests                                     |
+| `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                      |
+| `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                             |
+| `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config      |
+| `backend/package.json` + `backend/vitest.config.ts` + `backend/tsconfig.json`    | Backend Test-Setup                                             |
+| `backend/tests/setup.ts`                                                         | Globaler Vitest-Setup (Testcontainers Boot)                    |
+| `backend/tests/helpers/db.ts`                                                    | Testcontainers PostgreSQL + Owner/App-Pools                    |
+| `backend/tests/helpers/withTestTenant.ts`                                        | RLS-Test-Helper (`SET app.current_tenant_id`)                  |
+| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis ELE-169)                   |
+| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis ELE-168)                              |
+| `backend/tests/smoke.test.ts`                                                    | Smoke-Tests für Postgres + Pools + Extensions                  |
+| `frontend/package.json` + `frontend/vitest.config.ts` + `frontend/tsconfig.json` | Frontend Test-Setup                                            |
+| `frontend/tests/setup.ts` + `frontend/tests/smoke.test.tsx`                      | Testing-Library + Smoke                                        |
+| `e2e/package.json` + `e2e/playwright.config.ts` + `e2e/tsconfig.json`            | Playwright E2E-Setup                                           |
+| `e2e/tests/smoke.spec.ts`                                                        | Smoke-Test ohne Server                                         |
+| `.husky/pre-commit`                                                              | Pre-Commit-Hook (lint-staged + typecheck)                      |
+| `.github/workflows/test.yml`                                                     | CI-Workflow (Lint, Tests, E2E, Coverage)                       |
+| `backend/src/db/migrations/0006_user_locale.sql` + `.down.sql`                   | users.locale-Spalte (ADR-16, ELE-169-Nachtrag)                 |
+| `backend/src/lib/i18n.ts`                                                        | i18next-Setup + `t(key, locale, vars)` (ELE-194)               |
+| `backend/src/lib/locale.ts`                                                      | Locale-Middleware (setInitialLocale + applyUserLocale)         |
+| `backend/src/locales/{en,de}/common.json`                                        | UI-Allgemein                                                   |
+| `backend/src/locales/{en,de}/errors.json`                                        | Error-Messages (Hauptnamespace)                                |
+| `backend/src/locales/{en,de}/auth.json`                                          | Auth-Strings                                                   |
+| `backend/src/locales/{en,de}/users.json`                                         | User-Module + Plural-Forms                                     |
+| `backend/src/locales/{en,de}/validation.json`                                    | Validation-Variations                                          |
+| `backend/tests/lib/i18n.test.ts`                                                 | i18n-Tests (Interpolation, Plural)                             |
+| `backend/tests/lib/locale.test.ts`                                               | Locale-Middleware Unit-Tests                                   |
+| `backend/tests/routes/locale-middleware.test.ts`                                 | E2E: Error-Messages in Request-Locale                          |
+| `backend/src/auth/authorize.ts`                                                  | Rollen-Check-Helper (requireRole, canActOnUser, Forbidden)     |
+| `backend/src/routes/tenants.ts`                                                  | Tenant-CRUD (GET/PUT) — ELE-170                                |
+| `backend/src/routes/users.ts`                                                    | User-CRUD + change-password + me/locale — ELE-170              |
+| `backend/src/routes/service-types.ts`                                            | Service-Types CRUD — ELE-171                                   |
+| `backend/src/routes/employees.ts`                                                | Employees CRUD + DSGVO-Filter + Audit-Read — ELE-173           |
+| `backend/src/routes/qualification-types.ts`                                      | Qualification-Types CRUD — ELE-172                             |
+| `backend/src/routes/equipment-types.ts`                                          | Equipment-Types CRUD — ELE-172                                 |
+| `backend/src/routes/employee-skills.ts`                                          | Quali / Equipment / Availability nested — ELE-174              |
+| `backend/src/routes/properties.ts`                                               | Properties + nested Zones — ELE-176                            |
+| `backend/src/routes/property-services.ts`                                        | Leistungsverzeichnis + Frequency-Validation — ELE-177          |
+| `backend/src/routes/property-managers.ts`                                        | Hausverwaltungen + pg_trgm-Suche — ELE-175                     |
+| `backend/src/routes/contracts.ts`                                                | Verträge mit monthly_value-Filter — ELE-175                    |
+| `backend/src/db/migrations/0007_pm_trgm.sql` + `.down.sql`                       | GIN-Trigram-Indexe für PM-Schnellsuche — ELE-175               |
+| `backend/src/routes/waste-bin-types.ts`                                          | Tonnentypen-Stammdaten — ELE-178                               |
+| `backend/src/routes/waste-schedules.ts`                                          | Abfuhrpläne + collection_days JSONB — ELE-178                  |
+| `backend/src/db/migrations/0008_waste_codes_en.sql` + `.down.sql`                | waste_bin_types.code DE→EN Migration — ELE-178                 |
+| `backend/src/routes/schedules.ts`                                                | Wochenpläne + Publish-Endpoint — ELE-179                       |
+| `backend/src/routes/schedule-entries.ts`                                         | Entries + Bulk + Move + Time-Conflict — ELE-179                |
+| `backend/src/services/scheduling/conflict-check.ts`                              | Pure Funcs (entriesOverlap, isValidStatusTransition) — ELE-179 |
+| `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                             |
+| `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                             |
+| `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                                   |
+| `backend/src/schemas/employees.ts`                                               | Zod Employee + filterEmployeeForActor                          |
+| `backend/src/schemas/qualification-types.ts`                                     | Zod Qualification-Type                                         |
+| `backend/src/schemas/equipment-types.ts`                                         | Zod Equipment-Type + factor 0.30–2.00                          |
+| `backend/src/schemas/employee-skills.ts`                                         | Zod Quali / Equipment / Availability                           |
+| `backend/src/schemas/properties.ts`                                              | Zod Property + Zone                                            |
+| `backend/src/schemas/property-services.ts`                                       | Zod + validateFrequencyDetail (typed JSONB)                    |
+| `backend/src/schemas/property-managers.ts`                                       | Zod PropertyManager                                            |
+| `backend/src/schemas/contracts.ts`                                               | Zod Contract + filterContractForActor (monthly_value)          |
+| `backend/src/schemas/waste-bin-types.ts`                                         | Zod WasteBinType + Codes (EN)                                  |
+| `backend/src/schemas/waste-schedules.ts`                                         | Zod WasteSchedule + collectionDaysSchema (JSONB-typed)         |
+| `backend/src/schemas/schedules.ts`                                               | Zod Schedule + Status-Enum                                     |
+| `backend/src/schemas/schedule-entries.ts`                                        | Zod Entry + bulk + move                                        |
+| `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                            |
+| `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                              |
+| `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)           |
+| `backend/tests/routes/employees.test.ts`                                         | Employees-Tests (Role-Filter, Tenant-Match, Audit-Log)         |
+| `backend/tests/routes/qualification-types.test.ts`                               | Qualification-Types Tests (IN_USE via 2 Quellen, dup code)     |
+| `backend/tests/routes/equipment-types.test.ts`                                   | Equipment-Types Tests (factor-range, IN_USE)                   |
+| `backend/tests/routes/employee-skills.test.ts`                                   | Quali/Equipment/Availability Tests (Upsert, UNIQUE)            |
+| `backend/tests/routes/properties.test.ts`                                        | Properties + Zones + ILIKE-Suche                               |
+| `backend/tests/routes/property-services.test.ts`                                 | Alle 7 Frequenzen + frequency_detail-Validation                |
+| `backend/tests/routes/property-managers.test.ts`                                 | PM-CRUD + Trigram-Suche + IN_USE-Block (Contracts + Props)     |
+| `backend/tests/routes/contracts.test.ts`                                         | Contracts + monthly_value-Filter (Role-based)                  |
+| `backend/tests/routes/waste-bin-types.test.ts`                                   | Waste-Bin-Types CRUD + IN_USE-Block                            |
+| `backend/tests/routes/waste-schedules.test.ts`                                   | Waste-Schedules + collection_days JSONB (WEEKLY/BIWEEKLY)      |
+| `backend/tests/routes/schedules.test.ts`                                         | Schedules + Publish + Status-Transition + DUPLICATE_WEEK       |
+| `backend/tests/routes/schedule-entries.test.ts`                                  | Entries + Bulk + Move + Time-Conflict + Role-Filter            |
+| `backend/tests/services/scheduling/conflict-check.test.ts`                       | Pure Function Tests (Overlap, Status-Transition)               |
+| `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                           |
+| `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                            |
 
 ### Source-Input (Repo)
 

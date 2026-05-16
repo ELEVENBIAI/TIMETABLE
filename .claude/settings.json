@@ -90,7 +90,10 @@
       "Bash(node scripts/linear.mjs update-issue \"1cdbfd59-c23b-45ff-90c0-7b210a15e740\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
       "Bash(node scripts/linear.mjs comment \"ff3c7f12-8801-4f25-b697-13b980cf7315\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-175-ac.md\")",
       "Bash(node scripts/linear.mjs update-issue \"ff3c7f12-8801-4f25-b697-13b980cf7315\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
-      "Bash(node scripts/linear.mjs update-issue \"9d57a14d-0fb8-4fde-a227-49060a975f1e\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
+      "Bash(node scripts/linear.mjs update-issue \"9d57a14d-0fb8-4fde-a227-49060a975f1e\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
+      "Bash(node scripts/linear.mjs comment \"9d57a14d-0fb8-4fde-a227-49060a975f1e\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-178-ac.md\")",
+      "Bash(node scripts/linear.mjs update-issue \"9d57a14d-0fb8-4fde-a227-49060a975f1e\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(node scripts/linear.mjs update-issue \"674f8b55-f7f4-49a5-a144-e150ae65e14e\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

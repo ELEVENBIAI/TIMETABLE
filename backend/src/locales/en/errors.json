@@ -46,5 +46,13 @@
   "contractNotFound": "Contract not found",
   "wasteBinTypeNotFound": "Waste bin type not found",
   "wasteScheduleNotFound": "Waste schedule not found",
-  "invalidCollectionDays": "Invalid collection_days for selected frequency"
+  "invalidCollectionDays": "Invalid collection_days for selected frequency",
+  "scheduleNotFound": "Schedule not found",
+  "scheduleEntryNotFound": "Schedule entry not found",
+  "timeConflict": "Time conflict with existing entry",
+  "invalidStatusTransition": "Invalid status transition: {{from}} → {{to}}",
+  "duplicateWeek": "A schedule for this week already exists",
+  "scheduleLocked": "Schedule is archived and cannot be modified",
+  "bulkTooLarge": "Bulk size exceeds limit ({{limit}})",
+  "scheduleMismatch": "Entry's schedule does not match the provided scheduleId"
 }

@@ -46,5 +46,13 @@
   "contractNotFound": "Vertrag nicht gefunden",
   "wasteBinTypeNotFound": "Tonnentyp nicht gefunden",
   "wasteScheduleNotFound": "Abfuhrplan nicht gefunden",
-  "invalidCollectionDays": "collection_days passt nicht zur gewählten Frequenz"
+  "invalidCollectionDays": "collection_days passt nicht zur gewählten Frequenz",
+  "scheduleNotFound": "Wochenplan nicht gefunden",
+  "scheduleEntryNotFound": "Wochenplan-Eintrag nicht gefunden",
+  "timeConflict": "Zeitkonflikt mit bestehendem Eintrag",
+  "invalidStatusTransition": "Ungültiger Status-Wechsel: {{from}} → {{to}}",
+  "duplicateWeek": "Für diese Woche existiert bereits ein Plan",
+  "scheduleLocked": "Plan ist archiviert und kann nicht mehr geändert werden",
+  "bulkTooLarge": "Bulk-Größe überschreitet Limit ({{limit}})",
+  "scheduleMismatch": "Eintrag gehört nicht zum angegebenen Wochenplan"
 }
