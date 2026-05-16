@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.4 | **Stand:** 2026-05-16
+**Version:** 0.2.5 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -210,14 +210,20 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/users.ts`                                                    | User-CRUD + change-password + me/locale — ELE-170          |
 | `backend/src/routes/service-types.ts`                                            | Service-Types CRUD — ELE-171                               |
 | `backend/src/routes/employees.ts`                                                | Employees CRUD + DSGVO-Filter + Audit-Read — ELE-173       |
+| `backend/src/routes/qualification-types.ts`                                      | Qualification-Types CRUD — ELE-172                         |
+| `backend/src/routes/equipment-types.ts`                                          | Equipment-Types CRUD — ELE-172                             |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                               |
 | `backend/src/schemas/employees.ts`                                               | Zod Employee + filterEmployeeForActor                      |
+| `backend/src/schemas/qualification-types.ts`                                     | Zod Qualification-Type                                     |
+| `backend/src/schemas/equipment-types.ts`                                         | Zod Equipment-Type + factor 0.30–2.00                      |
 | `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
 | `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
 | `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)       |
 | `backend/tests/routes/employees.test.ts`                                         | Employees-Tests (Role-Filter, Tenant-Match, Audit-Log)     |
+| `backend/tests/routes/qualification-types.test.ts`                               | Qualification-Types Tests (IN_USE via 2 Quellen, dup code) |
+| `backend/tests/routes/equipment-types.test.ts`                                   | Equipment-Types Tests (factor-range, IN_USE)               |
 | `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
 | `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
 

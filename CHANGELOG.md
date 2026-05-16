@@ -1,5 +1,25 @@
 # Changelog — Timetable
 
+## v0.2.5 — 2026-05-16 (ELE-172: Qualification + Equipment Types CRUD)
+
+- **ELE-172 done (Backend):** Zwei verwandte Stammdaten-CRUDs für Wave-3-Scoring
+- **Qualification-Types**:
+  - Routes: `GET /api/qualification-types` (alle Auth), `GET/:id`, `POST` + `PUT` (ADMIN/PLANNER), `DELETE` (ADMIN, IN_USE-Check)
+  - Pflichtfelder `code` (UNIQUE per Tenant), `name`; optional `description`, `requires_proof`
+  - DELETE blockiert wenn in `employee_qualifications` ODER in `service_types.requires_qualification` (Code-Match) referenziert → 409 `IN_USE`
+  - Doppelter Code → 409 `DUPLICATE_CODE`
+  - 7 Tests
+- **Equipment-Types**:
+  - Routes: gleiche Struktur wie Qualifications
+  - Zod-Validierung `hourly_rate_factor` 0.30–2.00 (Handrasenmäher 2.0× vs Fahrrasenmäher 0.3×, Wave-3-Scoring-Faktor)
+  - Category-Enum: RASENMAEHER/REINIGUNG/WINTER/GARTEN/WERKZEUG/FAHRZEUG/OTHER
+  - DELETE blockiert wenn in `employee_equipment` referenziert
+  - 7 Tests
+- Locales erweitert: `qualificationTypeNotFound`, `equipmentTypeNotFound`, `duplicateCode` (en+de)
+- 14 neue Tests (Total **144/144 grün**), TypeScript clean
+- **Frontend deferred** → wandert zu ELE-180
+- Spec-Schema-Abweichung dokumentiert: `qualification_types.category` ist nicht in DB (Spec irrt), `code` ist der UNIQUE-Identifier
+
 ## v0.2.4 — 2026-05-16 (ELE-171: Service-Types CRUD + ELE-173: Employees CRUD)
 
 - **ELE-171 done (Backend):** Service-Types CRUD mit Color-Picker-Validation

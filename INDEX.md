@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.4 | **Stand:** 2026-05-16
+**Version:** 0.2.5 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -47,21 +47,27 @@
 
 ## Backend Routes & Schemas
 
-| Datei                                        | Zweck                                             |
-| -------------------------------------------- | ------------------------------------------------- |
-| `backend/src/routes/tenants.ts`              | Tenant-CRUD (ELE-170)                             |
-| `backend/src/routes/users.ts`                | User-CRUD + change-password + me/locale (ELE-170) |
-| `backend/src/routes/service-types.ts`        | Service-Types CRUD (ELE-171)                      |
-| `backend/src/routes/employees.ts`            | Employees CRUD mit DSGVO-Filter (ELE-173)         |
-| `backend/src/schemas/tenants.ts`             | Zod Tenant                                        |
-| `backend/src/schemas/users.ts`               | Zod User + Passwort-Policy                        |
-| `backend/src/schemas/service-types.ts`       | Zod Service-Type + Hex-Color                      |
-| `backend/src/schemas/employees.ts`           | Zod Employee + filterEmployeeForActor             |
-| `backend/src/auth/authorize.ts`              | requireRole + canActOnUser Helper                 |
-| `backend/tests/routes/tenants.test.ts`       | Tenant-Routes Tests                               |
-| `backend/tests/routes/users.test.ts`         | User-Routes Tests                                 |
-| `backend/tests/routes/service-types.test.ts` | Service-Types Tests                               |
-| `backend/tests/routes/employees.test.ts`     | Employees Tests + Role-Filter + Audit-Log         |
+| Datei                                              | Zweck                                             |
+| -------------------------------------------------- | ------------------------------------------------- |
+| `backend/src/routes/tenants.ts`                    | Tenant-CRUD (ELE-170)                             |
+| `backend/src/routes/users.ts`                      | User-CRUD + change-password + me/locale (ELE-170) |
+| `backend/src/routes/service-types.ts`              | Service-Types CRUD (ELE-171)                      |
+| `backend/src/routes/employees.ts`                  | Employees CRUD mit DSGVO-Filter (ELE-173)         |
+| `backend/src/routes/qualification-types.ts`        | Qualification-Types CRUD (ELE-172)                |
+| `backend/src/routes/equipment-types.ts`            | Equipment-Types CRUD (ELE-172)                    |
+| `backend/src/schemas/tenants.ts`                   | Zod Tenant                                        |
+| `backend/src/schemas/users.ts`                     | Zod User + Passwort-Policy                        |
+| `backend/src/schemas/service-types.ts`             | Zod Service-Type + Hex-Color                      |
+| `backend/src/schemas/employees.ts`                 | Zod Employee + filterEmployeeForActor             |
+| `backend/src/schemas/qualification-types.ts`       | Zod Qualification-Type                            |
+| `backend/src/schemas/equipment-types.ts`           | Zod Equipment-Type + factor 0.30–2.00             |
+| `backend/src/auth/authorize.ts`                    | requireRole + canActOnUser Helper                 |
+| `backend/tests/routes/tenants.test.ts`             | Tenant-Routes Tests                               |
+| `backend/tests/routes/users.test.ts`               | User-Routes Tests                                 |
+| `backend/tests/routes/service-types.test.ts`       | Service-Types Tests                               |
+| `backend/tests/routes/employees.test.ts`           | Employees Tests + Role-Filter + Audit-Log         |
+| `backend/tests/routes/qualification-types.test.ts` | Qualification-Types Tests + IN_USE-Check          |
+| `backend/tests/routes/equipment-types.test.ts`     | Equipment-Types Tests + factor-range              |
 
 ## Komponenten
 

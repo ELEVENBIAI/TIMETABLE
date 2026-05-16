@@ -29,5 +29,8 @@
   "invalidColorCode": "Farbcode muss dem Muster #RRGGBB entsprechen",
   "userTenantMismatch": "User gehört zu einem anderen Tenant",
   "serviceTypeNotFound": "Leistungsart nicht gefunden",
-  "employeeNotFound": "Mitarbeiter nicht gefunden"
+  "employeeNotFound": "Mitarbeiter nicht gefunden",
+  "qualificationTypeNotFound": "Qualifikation nicht gefunden",
+  "equipmentTypeNotFound": "Equipment-Type nicht gefunden",
+  "duplicateCode": "Code existiert bereits in diesem Tenant"
 }

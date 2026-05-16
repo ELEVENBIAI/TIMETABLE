@@ -71,7 +71,13 @@
       "Bash(node scripts/linear.mjs update-issue \"75ec8a64-6c2f-45e3-b301-45cc8e32938e\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
       "Bash(git commit -m 'docs: specs/ELE-194.md Zusammenfassung ergänzt *)",
       "Bash(node scripts/linear.mjs update-issue \"c28c8466-b535-4781-8d24-aa732dfd194a\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
-      "Bash(node scripts/linear.mjs update-issue \"134d94e8-8c35-418b-9df3-a9244cf150e8\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
+      "Bash(node scripts/linear.mjs update-issue \"134d94e8-8c35-418b-9df3-a9244cf150e8\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
+      "Bash(node scripts/linear.mjs comment \"c28c8466-b535-4781-8d24-aa732dfd194a\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-171-ac.md\")",
+      "Bash(node scripts/linear.mjs comment \"134d94e8-8c35-418b-9df3-a9244cf150e8\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-173-ac.md\")",
+      "Bash(node scripts/linear.mjs update-issue \"c28c8466-b535-4781-8d24-aa732dfd194a\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(node scripts/linear.mjs update-issue \"134d94e8-8c35-418b-9df3-a9244cf150e8\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(git commit -m 'docs: specs/ELE-171.md + ELE-173.md Zusammenfassungen ergänzt *)",
+      "Bash(node scripts/linear.mjs update-issue \"a1e7e5e7-bda4-4dd3-a775-89f973d1b0ff\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

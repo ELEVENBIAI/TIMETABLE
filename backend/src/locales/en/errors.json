@@ -29,5 +29,8 @@
   "invalidColorCode": "Color code must match #RRGGBB",
   "userTenantMismatch": "User belongs to a different tenant",
   "serviceTypeNotFound": "Service type not found",
-  "employeeNotFound": "Employee not found"
+  "employeeNotFound": "Employee not found",
+  "qualificationTypeNotFound": "Qualification type not found",
+  "equipmentTypeNotFound": "Equipment type not found",
+  "duplicateCode": "Code already exists in this tenant"
 }
