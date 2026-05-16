@@ -1,0 +1,13 @@
+node_modules/
+.env
+*.log
+*.pid
+*.lock
+.DS_Store
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.claude/settings.local.json
