@@ -67,6 +67,12 @@ Siehe `SYSTEM_ARCHITECTURE.md` und `ARCHITECTURE_DESIGN.md`.
 
 Alle Config-Werte kommen aus `lib/config.js`. VERSION ist dort SSoT.
 
+## Learning-Loop (L1)
+
+Nach jedem Sprint-Review ist ein Eintrag in `journal/learnings.md` Pflicht.
+Format: Was hat funktioniert / Was nicht / Nächste Experimente.
+Trigger: `/sprint-review` (Schritt 7). Wird von `/ideation` gelesen.
+
 ## Handoff-Prozess
 
 Nach Feature-Entwicklung:
