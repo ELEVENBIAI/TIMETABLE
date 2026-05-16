@@ -81,11 +81,11 @@ USE_TESTCONTAINERS=false npm --workspace=backend run test:run
 
 ## Development
 
-Wird in TT-02 (Backend-Skeleton) konkretisiert.
+Wird in ELE-169 (Backend-Skeleton) konkretisiert.
 
 ## Governance
 
-Jede Code-Änderung braucht ein Spec-File unter `specs/TT-XXX.md`. Die Pre-Commit-Hooks erzwingen das (`spec-gate.sh`).
+Jede Code-Änderung braucht ein Spec-File unter `specs/ELE-XXX.md`. Die Pre-Commit-Hooks erzwingen das (`spec-gate.sh`).
 
 Details: [GOVERNANCE.md](GOVERNANCE.md)
 

@@ -138,16 +138,19 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)        |
 | `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele |
 | `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                  |
-| `specs/TT-00.md`                                                                 | Test-Infrastruktur-Spec (vor TT-01a)                      |
-| `specs/TT-01a.md` bis `specs/TT-19.md`                                           | 20 MVP-Specs                                              |
+| `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                            |
+| `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                     |
+| `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                       |
+| `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                     |
+| `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                 |
 | `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                        |
 | `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config |
 | `backend/package.json` + `backend/vitest.config.ts` + `backend/tsconfig.json`    | Backend Test-Setup                                        |
 | `backend/tests/setup.ts`                                                         | Globaler Vitest-Setup (Testcontainers Boot)               |
 | `backend/tests/helpers/db.ts`                                                    | Testcontainers PostgreSQL + Owner/App-Pools               |
 | `backend/tests/helpers/withTestTenant.ts`                                        | RLS-Test-Helper (`SET app.current_tenant_id`)             |
-| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis TT-02)                |
-| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis TT-01e)                          |
+| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis ELE-169)              |
+| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis ELE-168)                         |
 | `backend/tests/smoke.test.ts`                                                    | Smoke-Tests für Postgres + Pools + Extensions             |
 | `frontend/package.json` + `frontend/vitest.config.ts` + `frontend/tsconfig.json` | Frontend Test-Setup                                       |
 | `frontend/tests/setup.ts` + `frontend/tests/smoke.test.tsx`                      | Testing-Library + Smoke                                   |

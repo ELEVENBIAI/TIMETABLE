@@ -20,6 +20,7 @@
 ```
 
 **Wieso diese Verteilung:**
+
 - Frequenz-Engine, Reassignment-Scoring, Validators → viel Logik in Pure Functions → Unit-Tests skalieren
 - DB-Logik (RLS, Transactions) → braucht echte Postgres → Integration
 - User-Flows (Plan generieren, Drag&Drop, Mobile-Tagesplan) → braucht Browser → E2E
@@ -28,18 +29,19 @@
 
 ## Tools
 
-| Ebene | Tool | Begründung |
-|-------|------|------------|
-| Unit | **Vitest** | Schnell, Vite-nativ, ESM-Support, gleiche Config Frontend + Backend |
-| Integration | **Vitest + @testcontainers/postgresql** | Echte Postgres pro Test-Suite, Isolation via separate Schemas |
-| API-Smoke | **Vitest + supertest / fastify.inject** | In-Process-Aufrufe, kein Network-Overhead |
-| Frontend | **Vitest + @testing-library/react** | Component-Tests + Hook-Tests |
-| E2E | **Playwright** | Cross-Browser, Mobile-Emulation, Test-Recorder |
-| Coverage | **Vitest c8** | Default-Integration, HTML-Report |
-| Linting | **ESLint + Prettier + TypeScript strict** | Schon im Bootstrap aktiv |
-| Pre-Commit | **lint-staged** | Nur geänderte Dateien linten |
+| Ebene       | Tool                                      | Begründung                                                          |
+| ----------- | ----------------------------------------- | ------------------------------------------------------------------- |
+| Unit        | **Vitest**                                | Schnell, Vite-nativ, ESM-Support, gleiche Config Frontend + Backend |
+| Integration | **Vitest + @testcontainers/postgresql**   | Echte Postgres pro Test-Suite, Isolation via separate Schemas       |
+| API-Smoke   | **Vitest + supertest / fastify.inject**   | In-Process-Aufrufe, kein Network-Overhead                           |
+| Frontend    | **Vitest + @testing-library/react**       | Component-Tests + Hook-Tests                                        |
+| E2E         | **Playwright**                            | Cross-Browser, Mobile-Emulation, Test-Recorder                      |
+| Coverage    | **Vitest c8**                             | Default-Integration, HTML-Report                                    |
+| Linting     | **ESLint + Prettier + TypeScript strict** | Schon im Bootstrap aktiv                                            |
+| Pre-Commit  | **lint-staged**                           | Nur geänderte Dateien linten                                        |
 
 **Bewusst NICHT:**
+
 - Jest (langsamer, schlechter ESM-Support)
 - Cypress (Playwright ist breiter, schneller, besser)
 - Mocha/Chai (zu viel Boilerplate)
@@ -48,14 +50,14 @@
 
 ## Coverage-Ziele
 
-| Bereich | Ziel | Pflicht |
-|---------|------|---------|
-| Pure Services (frequency-engine, reassignment-engine, validators) | **90%** | ✅ |
-| API-Routen | **70%** | ✅ |
-| DB-Layer (Queries, Migrations) | **60%** | ✅ |
-| Frontend-Components | **50%** | empfohlen |
-| Frontend-Pages | **30%** | empfohlen |
-| Gesamt | **70%** | ✅ |
+| Bereich                                                           | Ziel    | Pflicht   |
+| ----------------------------------------------------------------- | ------- | --------- |
+| Pure Services (frequency-engine, reassignment-engine, validators) | **90%** | ✅        |
+| API-Routen                                                        | **70%** | ✅        |
+| DB-Layer (Queries, Migrations)                                    | **60%** | ✅        |
+| Frontend-Components                                               | **50%** | empfohlen |
+| Frontend-Pages                                                    | **30%** | empfohlen |
+| Gesamt                                                            | **70%** | ✅        |
 
 **CI-Block:** Pull-Request kann nicht gemergt werden wenn Gesamt-Coverage < 70%.
 
@@ -120,7 +122,7 @@ let connectionString: string;
 beforeAll(async () => {
   container = await new PostgreSqlContainer('postgres:16').start();
   connectionString = container.getConnectionUri();
-  await migrate(connectionString);  // Schema + Seed
+  await migrate(connectionString); // Schema + Seed
 });
 
 afterAll(async () => {
@@ -132,10 +134,7 @@ afterAll(async () => {
 
 ```typescript
 // tests/helpers/withTestTenant.ts
-export async function withTestTenant<T>(
-  tenantId: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function withTestTenant<T>(tenantId: string, fn: () => Promise<T>): Promise<T> {
   await pool.query(`SET app.current_tenant_id = '${tenantId}'`);
   try {
     return await fn();
@@ -161,7 +160,7 @@ describe('RLS for PROPERTIES', () => {
   it('hmservice_app with tenant_id sees only own tenant data', async () => {
     await withTestTenant(TENANT_A, async () => {
       const result = await query('SELECT * FROM PROPERTIES');
-      expect(result.rows.every(r => r.tenant_id === TENANT_A)).toBe(true);
+      expect(result.rows.every((r) => r.tenant_id === TENANT_A)).toBe(true);
     });
   });
 
@@ -250,6 +249,7 @@ jobs:
 ## Pre-Commit-Hook (zusätzlich zu spec-gate)
 
 `.husky/pre-commit`:
+
 ```bash
 #!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -259,6 +259,7 @@ npm run typecheck
 ```
 
 `package.json`:
+
 ```json
 {
   "lint-staged": {
@@ -274,22 +275,22 @@ npm run typecheck
 
 Vor jedem Release in den Pilot-Tenant:
 
-| # | Schritt | Erwartet |
-|---|---------|---------|
-| 1 | Login als Robert (PLANNER) | Dashboard |
-| 2 | Template "Standard-Sommer" auswählen | Editor zeigt 4 MA × 5 Tage |
-| 3 | Woche KW 21 generieren | DRAFT mit ~30 Entries |
-| 4 | Daniel auf "krank" setzen für Mi | 3 Entries auf REASSIGNMENT_NEEDED |
-| 5 | 2 Entries auf Anna ziehen (Drag&Drop) | Constraint-Check ok, gespeichert |
-| 6 | Wochenplan veröffentlichen | Status PUBLISHED |
-| 7 | Smartphone-Login als Daniel | Eigener Tagesplan sichtbar |
-| 8 | Offline gehen | Plan immer noch sichtbar |
+| #   | Schritt                               | Erwartet                          |
+| --- | ------------------------------------- | --------------------------------- |
+| 1   | Login als Robert (PLANNER)            | Dashboard                         |
+| 2   | Template "Standard-Sommer" auswählen  | Editor zeigt 4 MA × 5 Tage        |
+| 3   | Woche KW 21 generieren                | DRAFT mit ~30 Entries             |
+| 4   | Daniel auf "krank" setzen für Mi      | 3 Entries auf REASSIGNMENT_NEEDED |
+| 5   | 2 Entries auf Anna ziehen (Drag&Drop) | Constraint-Check ok, gespeichert  |
+| 6   | Wochenplan veröffentlichen            | Status PUBLISHED                  |
+| 7   | Smartphone-Login als Daniel           | Eigener Tagesplan sichtbar        |
+| 8   | Offline gehen                         | Plan immer noch sichtbar          |
 
 ---
 
 ## Testing-Issue (TT-Test-Setup)
 
-Empfehlung: Issue TT-Test-Setup als erstes Issue **vor** TT-01a:
+Empfehlung: Issue TT-Test-Setup als erstes Issue **vor** ELE-164:
 
 - Vitest-Config Backend + Frontend
 - Playwright-Setup mit Mobile-Profil

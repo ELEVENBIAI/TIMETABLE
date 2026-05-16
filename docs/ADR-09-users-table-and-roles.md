@@ -6,7 +6,7 @@
 
 ## Entscheidung
 
-### USERS-Tabelle (Teil von TT-01a, Schicht 1)
+### USERS-Tabelle (Teil von ELE-164, Schicht 1)
 
 ```sql
 CREATE TABLE USERS (
@@ -53,13 +53,14 @@ CREATE POLICY tenant_isolation ON USERS
 
 ### Rollen-Modell: CHECK-Constraint statt separate Tabelle
 
-| Variante | Vorteil | Nachteil |
-|----------|---------|----------|
+| Variante                       | Vorteil                                      | Nachteil                         |
+| ------------------------------ | -------------------------------------------- | -------------------------------- |
 | **CHECK-Constraint** (gewählt) | Einfach, performant, kein Join, DB-erzwungen | Schema-Änderung bei neuen Rollen |
-| Separate ROLES-Tabelle | Flexibel, Hierarchien möglich | Overkill für 6 stabile Rollen |
-| String ohne Constraint | Maximal flexibel | Datenmüll, Tippfehler |
+| Separate ROLES-Tabelle         | Flexibel, Hierarchien möglich                | Overkill für 6 stabile Rollen    |
+| String ohne Constraint         | Maximal flexibel                             | Datenmüll, Tippfehler            |
 
 **Entscheidung:** CHECK-Constraint. Begründung:
+
 - Nur 6 stabile Rollen — keine User-definierten Rollen geplant
 - Performance: kein JOIN bei Auth-Check
 - Type-Safety: TypeScript-Enum spiegelt DB-Constraint
@@ -76,26 +77,27 @@ export const USER_ROLES = [
   'EMPLOYEE',
   'PROPERTY_MANAGER',
 ] as const;
-export type UserRole = typeof USER_ROLES[number];
+export type UserRole = (typeof USER_ROLES)[number];
 ```
 
 ### Rollen-Hierarchie (Berechtigungs-Matrix)
 
-| Aktion | SUPER_ADMIN | ADMIN | PLANNER | FOREMAN | EMPLOYEE | PROPERTY_MANAGER |
-|--------|:-:|:-:|:-:|:-:|:-:|:-:|
-| Tenants verwalten | ✅ | – | – | – | – | – |
-| Users verwalten (eigener Tenant) | ✅ | ✅ | – | – | – | – |
-| Stammdaten CRUD | ✅ | ✅ | ✅ | – | – | – |
-| Wochenplan erstellen | ✅ | ✅ | ✅ | – | – | – |
-| Umplanung (eigenes Team) | ✅ | ✅ | ✅ | ✅ | – | – |
-| Krankmeldung erfassen | ✅ | ✅ | ✅ | ✅ | ✅ (selbst) | – |
-| Eigenen Plan ansehen | – | ✅ | ✅ | ✅ | ✅ | – |
-| Check-in/out | – | – | – | ✅ | ✅ | – |
-| Eigene Objekte ansehen (readonly) | ✅ | ✅ | ✅ | – | – | ✅ |
+| Aktion                            | SUPER_ADMIN | ADMIN | PLANNER | FOREMAN |  EMPLOYEE   | PROPERTY_MANAGER |
+| --------------------------------- | :---------: | :---: | :-----: | :-----: | :---------: | :--------------: |
+| Tenants verwalten                 |     ✅      |   –   |    –    |    –    |      –      |        –         |
+| Users verwalten (eigener Tenant)  |     ✅      |  ✅   |    –    |    –    |      –      |        –         |
+| Stammdaten CRUD                   |     ✅      |  ✅   |   ✅    |    –    |      –      |        –         |
+| Wochenplan erstellen              |     ✅      |  ✅   |   ✅    |    –    |      –      |        –         |
+| Umplanung (eigenes Team)          |     ✅      |  ✅   |   ✅    |   ✅    |      –      |        –         |
+| Krankmeldung erfassen             |     ✅      |  ✅   |   ✅    |   ✅    | ✅ (selbst) |        –         |
+| Eigenen Plan ansehen              |      –      |  ✅   |   ✅    |   ✅    |     ✅      |        –         |
+| Check-in/out                      |      –      |   –   |    –    |   ✅    |     ✅      |        –         |
+| Eigene Objekte ansehen (readonly) |     ✅      |  ✅   |   ✅    |    –    |      –      |        ✅        |
 
 ### EMPLOYEES.USER_ID — Verknüpfung
 
 `EMPLOYEES.USER_ID UUID REFERENCES USERS(ID)` ist **optional**:
+
 - Nicht jeder Mitarbeiter braucht Login (Subunternehmer ohne App-Zugang)
 - Jeder Login (USERS) **kann** Mitarbeiter sein, muss aber nicht (PROPERTY_MANAGER, ADMIN)
 
@@ -128,8 +130,8 @@ INSERT INTO USERS (TENANT_ID, EMAIL, PASSWORD_HASH, DISPLAY_NAME, ROLE, IS_SUPER
 
 ## Konsequenzen
 
-- USERS gehört in **TT-01a** (Schicht 1)
-- EMPLOYEES.USER_ID FK wird in **TT-01a** mit angelegt (verzögert validieren wenn EMPLOYEES später)
-- Auth-Logik gehört in **TT-02** (Backend-Skeleton)
-- User-CRUD ist **TT-03**
+- USERS gehört in **ELE-164** (Schicht 1)
+- EMPLOYEES.USER_ID FK wird in **ELE-164** mit angelegt (verzögert validieren wenn EMPLOYEES später)
+- Auth-Logik gehört in **ELE-169** (Backend-Skeleton)
+- User-CRUD ist **ELE-170**
 - Rollen-Tests sind Pflicht in jedem Issue mit Authorization

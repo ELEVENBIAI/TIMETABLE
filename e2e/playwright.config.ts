@@ -25,7 +25,7 @@ export default defineConfig({
       use: { ...devices['iPhone 13'] },
     },
   ],
-  // Wird in TT-15 aktiviert, wenn Frontend startbar ist:
+  // Wird in ELE-182 aktiviert, wenn Frontend startbar ist:
   // webServer: {
   //   command: 'npm --workspace=frontend run dev',
   //   url: baseURL,

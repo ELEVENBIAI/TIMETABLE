@@ -6,8 +6,8 @@ Vollständige Entwicklungs-Regeln und Governance-Prozesse: siehe `GOVERNANCE.md`
 
 ## Kurzfassung
 
-1. Issue in Linear anlegen (Prefix `TT-`)
-2. Spec-File anlegen: `specs/TT-XXX.md` (aus `specs/TEMPLATE.md`)
+1. Issue in Linear anlegen (Prefix `ELE-`)
+2. Spec-File anlegen: `specs/ELE-XXX.md` (aus `specs/TEMPLATE.md`)
 3. Agent-Pattern wählen + eintragen
 4. Implementieren
 5. Tests + Linting grün

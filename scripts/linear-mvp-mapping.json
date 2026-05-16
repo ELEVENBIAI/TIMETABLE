@@ -1,0 +1,122 @@
+{
+  "TT-00": {
+    "identifier": "ELE-163",
+    "id": "e68a4d46-c4a9-4d22-9021-14a1bbae32ec",
+    "url": "https://linear.app/elevenbi/issue/ELE-163/tt-00-test-infrastruktur-vitest-playwright-testcontainers-ci"
+  },
+  "TT-01a": {
+    "identifier": "ELE-164",
+    "id": "128a0133-b2f6-407a-874f-171b8275ad25",
+    "url": "https://linear.app/elevenbi/issue/ELE-164/tt-01a-db-schicht-1-grunddaten-rls-db-rollen"
+  },
+  "TT-01b": {
+    "identifier": "ELE-165",
+    "id": "8774894c-5c9a-4ceb-8890-d0300998fdb8",
+    "url": "https://linear.app/elevenbi/issue/ELE-165/tt-01b-db-schicht-2-fahigkeiten-qualifikationen-equipment"
+  },
+  "TT-01c": {
+    "identifier": "ELE-166",
+    "id": "b3b49210-94d3-4c79-bc48-a4ba54a4f3bc",
+    "url": "https://linear.app/elevenbi/issue/ELE-166/tt-01c-db-schicht-3-leistungen-mulltonnen"
+  },
+  "TT-01d": {
+    "identifier": "ELE-167",
+    "id": "ba76ca9d-2dc7-4dfa-a0f2-cbfc543fcf08",
+    "url": "https://linear.app/elevenbi/issue/ELE-167/tt-01d-db-schicht-4-planung-templates-schedules-absences"
+  },
+  "TT-01e": {
+    "identifier": "ELE-168",
+    "id": "dedd508d-bf0b-4962-8a5b-e4752f1dcaa2",
+    "url": "https://linear.app/elevenbi/issue/ELE-168/tt-01e-db-schicht-5-seed-inkl-pilot-tenant"
+  },
+  "TT-02": {
+    "identifier": "ELE-169",
+    "id": "f75e29df-28af-428e-bb6d-27b43bf56132",
+    "url": "https://linear.app/elevenbi/issue/ELE-169/tt-02-backend-skeleton-fastify-typescript-auth-swagger"
+  },
+  "TT-03": {
+    "identifier": "ELE-170",
+    "id": "a90d6e24-6d58-46c4-a320-0e493c0b81f1",
+    "url": "https://linear.app/elevenbi/issue/ELE-170/tt-03-tenants-users-crud-inkl-6-rollen"
+  },
+  "TT-04": {
+    "identifier": "ELE-171",
+    "id": "c28c8466-b535-4781-8d24-aa732dfd194a",
+    "url": "https://linear.app/elevenbi/issue/ELE-171/tt-04-service-types-crud"
+  },
+  "TT-05": {
+    "identifier": "ELE-172",
+    "id": "a1e7e5e7-bda4-4dd3-a775-89f973d1b0ff",
+    "url": "https://linear.app/elevenbi/issue/ELE-172/tt-05-qualification-equipment-types-crud"
+  },
+  "TT-06": {
+    "identifier": "ELE-173",
+    "id": "134d94e8-8c35-418b-9df3-a9244cf150e8",
+    "url": "https://linear.app/elevenbi/issue/ELE-173/tt-06-employees-crud"
+  },
+  "TT-07": {
+    "identifier": "ELE-174",
+    "id": "d5294171-e834-4251-a654-a72c317aa555",
+    "url": "https://linear.app/elevenbi/issue/ELE-174/tt-07-employee-skills-qualifications-equipment-availability"
+  },
+  "TT-08": {
+    "identifier": "ELE-175",
+    "id": "ff3c7f12-8801-4f25-b697-13b980cf7315",
+    "url": "https://linear.app/elevenbi/issue/ELE-175/tt-08-property-managers-contracts-crud"
+  },
+  "TT-09": {
+    "identifier": "ELE-176",
+    "id": "1cdbfd59-c23b-45ff-90c0-7b210a15e740",
+    "url": "https://linear.app/elevenbi/issue/ELE-176/tt-09-properties-property-zones-crud"
+  },
+  "TT-10": {
+    "identifier": "ELE-177",
+    "id": "a2a36c27-bfe6-4442-a568-18ffe4c8dba5",
+    "url": "https://linear.app/elevenbi/issue/ELE-177/tt-10-property-services-leistungsverzeichnis"
+  },
+  "TT-11": {
+    "identifier": "ELE-178",
+    "id": "9d57a14d-0fb8-4fde-a227-49060a975f1e",
+    "url": "https://linear.app/elevenbi/issue/ELE-178/tt-11-waste-bin-types-waste-schedules"
+  },
+  "TT-12": {
+    "identifier": "ELE-179",
+    "id": "674f8b55-f7f4-49a5-a144-e150ae65e14e",
+    "url": "https://linear.app/elevenbi/issue/ELE-179/tt-12-schedules-schedule-entries-crud"
+  },
+  "TT-13": {
+    "identifier": "ELE-180",
+    "id": "98b89241-8879-45df-ad27-89e9086fcd8d",
+    "url": "https://linear.app/elevenbi/issue/ELE-180/tt-13-wochenplan-grid-ansicht-frontend"
+  },
+  "TT-14": {
+    "identifier": "ELE-181",
+    "id": "1a4c1496-8b43-4230-af79-ba7f82dba364",
+    "url": "https://linear.app/elevenbi/issue/ELE-181/tt-14-drag-and-drop-umplanung"
+  },
+  "TT-15": {
+    "identifier": "ELE-182",
+    "id": "9ece30e5-29d9-4f9c-ab5b-483e63dbe79a",
+    "url": "https://linear.app/elevenbi/issue/ELE-182/tt-15-mobile-tagesansicht-pwa-wave-1-vorgezogen"
+  },
+  "TT-16": {
+    "identifier": "ELE-183",
+    "id": "66fcfe6e-e920-48aa-80f4-1f154400e2a5",
+    "url": "https://linear.app/elevenbi/issue/ELE-183/tt-16-schedule-templates-template-entries-crud"
+  },
+  "TT-17": {
+    "identifier": "ELE-184",
+    "id": "3be5f78e-25e7-4f98-a3bd-c180209ec318",
+    "url": "https://linear.app/elevenbi/issue/ELE-184/tt-17-frequenz-engine-pure-functions"
+  },
+  "TT-18": {
+    "identifier": "ELE-185",
+    "id": "ba5cf7c6-693e-4b3f-8aa9-f33a15e069d0",
+    "url": "https://linear.app/elevenbi/issue/ELE-185/tt-18-plan-generator-woche-aus-template-erzeugen-mvp-cut"
+  },
+  "TT-19": {
+    "identifier": "ELE-186",
+    "id": "fd828d36-bbbe-4323-bcd2-5b72dda67950",
+    "url": "https://linear.app/elevenbi/issue/ELE-186/tt-19-abwesenheitsverwaltung-absence-records-crud"
+  }
+}

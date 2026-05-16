@@ -1,5 +1,5 @@
 // Fixture-Loader für Test-Daten.
-// Wird ab TT-01a (DB-Schicht 1) mit echten INSERT-Statements gefüllt.
+// Wird ab ELE-164 (DB-Schicht 1) mit echten INSERT-Statements gefüllt.
 
 import { getOwnerPool } from './db.js';
 
@@ -15,12 +15,12 @@ export async function seedFixture(name: FixtureName): Promise<void> {
 
     case 'mini-pilot':
       // 1 Tenant, 1 Admin-User, 2 Employees, 2 Properties — minimaler Smoke-Test-Stand
-      // Wird in TT-01e mit echten Seed-Daten gefüllt
-      throw new Error('mini-pilot Fixture noch nicht implementiert (wird in TT-01e gefüllt)');
+      // Wird in ELE-168 mit echten Seed-Daten gefüllt
+      throw new Error('mini-pilot Fixture noch nicht implementiert (wird in ELE-168 gefüllt)');
 
     case 'full-pilot':
-      // Kompletter Pilot-Tenant aus TT-01e Seed
-      throw new Error('full-pilot Fixture noch nicht implementiert (wird in TT-01e gefüllt)');
+      // Kompletter Pilot-Tenant aus ELE-168 Seed
+      throw new Error('full-pilot Fixture noch nicht implementiert (wird in ELE-168 gefüllt)');
 
     default:
       throw new Error(`Unbekannte Fixture: ${name as string}`);
@@ -32,7 +32,7 @@ export async function seedFixture(name: FixtureName): Promise<void> {
 
 export async function cleanDb(): Promise<void> {
   const pool = getOwnerPool();
-  // Wird ab TT-01a auf alle bekannten Tabellen erweitert
+  // Wird ab ELE-164 auf alle bekannten Tabellen erweitert
   // Aktuell: nur Smoke — kein Schema vorhanden
   await pool.query(`SELECT 1`);
 }

@@ -7,25 +7,27 @@
 ### 1. Issue anlegen (Linear)
 
 - Projekt: ELEVENBI (`https://linear.app/elevenbi/`)
-- Prefix: `TT-`
+- Prefix: `ELE-`
 - Pflicht-Labels: mind. 1 Label pro Issue
 - Status-Flow: Backlog → In Progress → Done (kein Direktsprung)
 
 ### 2. Spec-File anlegen
 
 Vor **jeder** Code-Änderung:
+
 ```
-specs/TT-XXX.md  ← aus specs/TEMPLATE.md erstellen
+specs/ELE-XXX.md  ← aus specs/TEMPLATE.md erstellen
 ```
+
 Pflichtfelder: Agent-Pattern, Why, What, Constraints, Tasks, Acceptance Criteria.
 
 ### 3. Agent-Pattern wählen
 
-| Pattern | Wann |
-|---------|------|
-| Solo | 1 abgegrenzte Story, <5 Dateien |
-| Subagent | Isolierter Task / Recherche |
-| Agent-Team | >3 unabhängige Tasks ODER unklare Ursache |
+| Pattern            | Wann                                        |
+| ------------------ | ------------------------------------------- |
+| Solo               | 1 abgegrenzte Story, <5 Dateien             |
+| Subagent           | Isolierter Task / Recherche                 |
+| Agent-Team         | >3 unabhängige Tasks ODER unklare Ursache   |
 | Parallel-Subagents | Mehrere unabhängige Recherchen gleichzeitig |
 
 ### 4. Implementieren
@@ -38,6 +40,7 @@ Pflichtfelder: Agent-Pattern, Why, What, Constraints, Tasks, Acceptance Criteria
 ### 5. T_last — Dokumentation
 
 Letzter Task **jeder** Story:
+
 - [ ] `ARCHITECTURE_DESIGN.md §9` um neue Dateien ergänzen
 - [ ] `INDEX.md` aktualisieren
 - [ ] `COMPONENT_INVENTORY.md` aktualisieren
@@ -50,7 +53,7 @@ Letzter Task **jeder** Story:
 
 ```bash
 git add <spezifische-dateien>
-git commit -m "feat: TT-XXX — <Beschreibung>"
+git commit -m "feat: ELE-XXX — <Beschreibung>"
 git push
 ```
 

@@ -12,7 +12,22 @@
       "Bash(USE_TESTCONTAINERS=false npm --workspace=frontend run test:run)",
       "Bash(npm --workspace=backend run test:run)",
       "Bash(npx playwright *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(claude mcp *)",
+      "Bash(ls scripts/)",
+      "Bash(mkdir -p scripts)",
+      "Bash(node scripts/linear.mjs whoami)",
+      "Bash(node scripts/linear.mjs teams)",
+      "Bash(node scripts/linear.mjs projects)",
+      "Bash(node scripts/linear.mjs states ELE)",
+      "Bash(node scripts/linear.mjs labels ELE)",
+      "Bash(node scripts/linear.mjs highest-issue ELE)",
+      "Bash(curl -s -X POST https://api.linear.app/graphql -H \"Content-Type: application/json\" -H \"Authorization: $\\(grep '^LINEAR_API_KEY=' .env)",
+      "Bash(python -m json.tool)",
+      "Bash(node scripts/linear-bootstrap-mvp.mjs dry-run)",
+      "Bash(node scripts/linear-bootstrap-mvp.mjs apply)",
+      "Bash(node scripts/rename-specs-to-ele.mjs dry-run)",
+      "Bash(node scripts/rename-specs-to-ele.mjs apply)"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

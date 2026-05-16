@@ -1,7 +1,7 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
 #  SPEC-GATE — Governance Hook
-#  Blockiert git commit wenn specs/TT-XXX.md fehlt oder Agent-Pattern fehlt.
+#  Blockiert git commit wenn specs/ELE-XXX.md fehlt oder Agent-Pattern fehlt.
 #
 #  Claude Code PreToolUse Hook (Bash)
 #  Input: JSON via stdin: {"tool_input": {"command": "..."}}

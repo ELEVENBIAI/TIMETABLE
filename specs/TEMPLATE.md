@@ -1,6 +1,6 @@
 # {Feature Name}
 
-> **Issue:** TT-XXX | **Erstellt:** {Datum} | **Status:** Draft / Approved / Done
+> **Issue:** ELE-XXX | **Erstellt:** {Datum} | **Status:** Draft / Approved / Done
 
 ## Agent-Pattern
 
@@ -28,28 +28,34 @@
 ## Constraints
 
 ### Must
+
 - Bestehende Patterns/Conventions einhalten
 - Config SSoT in lib/config.js
 - TypeScript — keine `any`-Types ohne Begründung
 
 ### Must Not
+
 - Keine neuen Dependencies ohne Begründung
 - Kein Code außerhalb des Scopes ändern
 - Keine Hardcoded Values — alles über config.js
 - Keine Secrets in Code/Logs
 
 ### Out of Scope
+
 - [Explizit ausgeschlossene Features/Änderungen]
 
 ## Current State
 
 **Relevante Dateien:**
+
 - `path/to/file.ts` — [was die Datei tut, warum relevant]
 
 **Bestehende Patterns:**
+
 - [Konvention die eingehalten werden muss, mit Beispiel-Datei]
 
 **Architektur-Dimensionen (betroffen):**
+
 - [Welche Dimensionen sind relevant? Kurze Einschätzung]
 
 ## Tasks
@@ -59,18 +65,22 @@
 > Letzter Task = IMMER Dokumentation + Config.
 
 ### T0: Prozesskatalog-Check
+
 - [ ] Gibt es einen ähnlichen Prozess der erweitert werden kann? (Referenz)
 - [ ] Welche bestehenden Dateien werden berührt?
 
 ### T1: [Erster Task]
+
 - [ ] [Konkrete Aufgabe]
 - [ ] Verify: [Wie prüfen wir dass T1 korrekt ist?]
 
 ### T2: [Zweiter Task]
+
 - [ ] [Konkrete Aufgabe]
 - [ ] Verify: [Wie prüfen wir dass T2 korrekt ist?]
 
 ### T_last: Dokumentation + Config
+
 - [ ] ARCHITECTURE_DESIGN.md §9 Referenzen um neue Dateien ergänzen
 - [ ] INDEX.md um neue Dateien ergänzen
 - [ ] COMPONENT_INVENTORY.md aktualisieren
@@ -81,11 +91,11 @@
 
 ## Dokumentations-Impact
 
-| Datei | Was ändern |
-|-------|------------|
+| Datei                    | Was ändern                          |
+| ------------------------ | ----------------------------------- |
 | `ARCHITECTURE_DESIGN.md` | §9 Referenzen: neue Datei eintragen |
-| `INDEX.md` | Neue Datei eintragen |
-| `CHANGELOG.md` | Version-Eintrag |
+| `INDEX.md`               | Neue Datei eintragen                |
+| `CHANGELOG.md`           | Version-Eintrag                     |
 
 ## Abhängigkeiten
 
