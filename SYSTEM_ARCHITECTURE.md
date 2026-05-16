@@ -1,6 +1,6 @@
 # Timetable — System Architecture
 
-**Version:** 0.2.1 | **Stand:** 2026-05-16
+**Version:** 0.2.2 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -12,17 +12,17 @@ Wellen-Definition: `WAVE_DEFINITION.md`.
 
 ## Komponenten — aktueller Status
 
-| Komponente             | Technologie                          | Pfad                                                                         | Status                        |
-| ---------------------- | ------------------------------------ | ---------------------------------------------------------------------------- | ----------------------------- |
-| **Test-Infrastruktur** | Vitest + Playwright + Testcontainers | `backend/tests/`, `frontend/tests/`, `e2e/`, `.husky/`, `.github/workflows/` | **Active** (ELE-163 done)     |
-| Backend API            | Fastify + TypeScript                 | `backend/src/`                                                               | planned (ELE-169)             |
-| Frontend SPA           | React + Vite + Tailwind + PWA        | `frontend/src/`                                                              | planned (ELE-180/182)         |
-| Datenbank              | PostgreSQL 16+ mit RLS               | `backend/src/db/`                                                            | planned (ELE-164 in progress) |
-| Auth                   | JWT + bcryptjs + 6 Rollen            | `backend/src/auth/`                                                          | planned (ELE-169/170)         |
-| Scheduling-Engine      | TypeScript Pure Functions            | `backend/src/services/scheduling/`                                           | planned (ELE-184/185)         |
-| Routing-Engine         | OpenRouteService-Adapter             | `backend/src/services/routing/`                                              | planned (Wave 5)              |
-| DocSync                | Repo → Obsidian Mirror               | `lib/doc-sync.js`                                                            | Active                        |
-| Linear-Helper          | CLI-Tooling für API                  | `scripts/linear.mjs`                                                         | Active                        |
+| Komponente             | Technologie                          | Pfad                                                                         | Status                         |
+| ---------------------- | ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------ |
+| **Test-Infrastruktur** | Vitest + Playwright + Testcontainers | `backend/tests/`, `frontend/tests/`, `e2e/`, `.husky/`, `.github/workflows/` | **Active** (ELE-163 done)      |
+| Backend API            | Fastify + TypeScript                 | `backend/src/`                                                               | **Active** (ELE-169 + ELE-170) |
+| Frontend SPA           | React + Vite + Tailwind + PWA        | `frontend/src/`                                                              | planned (ELE-180/182)          |
+| Datenbank              | PostgreSQL 16+ mit RLS               | `backend/src/db/`                                                            | planned (ELE-164 in progress)  |
+| Auth                   | JWT + bcryptjs + 6 Rollen            | `backend/src/auth/`                                                          | **Active** (ELE-169 + ELE-170) |
+| Scheduling-Engine      | TypeScript Pure Functions            | `backend/src/services/scheduling/`                                           | planned (ELE-184/185)          |
+| Routing-Engine         | OpenRouteService-Adapter             | `backend/src/services/routing/`                                              | planned (Wave 5)               |
+| DocSync                | Repo → Obsidian Mirror               | `lib/doc-sync.js`                                                            | Active                         |
+| Linear-Helper          | CLI-Tooling für API                  | `scripts/linear.mjs`                                                         | Active                         |
 
 Detaillierte Komponenten-Docs: `TIMETABLE/Components/*.md` im Obsidian-Vault. Komplette Inventur: `COMPONENT_INVENTORY.md`.
 

@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.1 | **Stand:** 2026-05-16
+**Version:** 0.2.2 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -126,74 +126,88 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 
 ### Docs (Repo)
 
-| Datei                                                                            | Zweck                                                     |
-| -------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `CLAUDE.md`                                                                      | AI-Kontext, Regeln, Governance                            |
-| `SYSTEM_ARCHITECTURE.md`                                                         | Komponenten-Tabelle, Flows, Config                        |
-| `ARCHITECTURE_DESIGN.md`                                                         | ADRs, Quality Attributes, Referenzen (Hub)                |
-| `INDEX.md`                                                                       | Alle Docs kategorisiert                                   |
-| `COMPONENT_INVENTORY.md`                                                         | Alle Komponenten mit Status                               |
-| `GOVERNANCE.md`                                                                  | Entwicklungs-Prozess, Regeln                              |
-| `DEVELOPMENT_PROCESS.md`                                                         | Verweis auf Governance                                    |
-| `SECURITY.md`                                                                    | Security-Policy, DSGVO, API-Key-Regeln                    |
-| `CHANGELOG.md`                                                                   | Version-History                                           |
-| `specs/TEMPLATE.md`                                                              | Story-Template                                            |
-| `lib/config.js`                                                                  | SSoT alle Parameter                                       |
-| `lib/doc-sync.js`                                                                | DocSync zu Obsidian                                       |
-| `journal/learnings.md`                                                           | Learning-Loop L1                                          |
-| `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)        |
-| `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele |
-| `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                  |
-| `docs/ADR-12-backup-feature-flags.md`                                            | Backup-Strategie + Feature-Flags + Graceful Degradation   |
-| `docs/ADR-13-migration-tooling.md`                                               | Drizzle Kit Migration-Strategie                           |
-| `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)             |
-| `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                   |
-| `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar               |
-| `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                   |
-| `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                            |
-| `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                     |
-| `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                       |
-| `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                     |
-| `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review |
-| `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                            |
-| `docker-compose.yml`                                                             | PostgreSQL 16-alpine Service mit Init-SQL                 |
-| `backend/src/db/init/01-extensions.sql`                                          | pgcrypto, pg_trgm, cube, earthdistance                    |
-| `backend/src/db/init/02-roles.sql`                                               | hmservice_owner (BYPASSRLS) + hmservice_app (NOBYPASSRLS) |
-| `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                      |
-| `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs           |
-| `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                        |
-| `backend/src/db/migrations/0002_schicht2.sql` + `.down.sql`                      | Schicht-2: Fähigkeiten (5 Tabellen)                       |
-| `backend/src/db/migrations/0003_schicht3.sql` + `.down.sql`                      | Schicht-3: Leistungen + Waste (3 Tabellen)                |
-| `backend/src/db/migrations/0004_schicht4.sql` + `.down.sql`                      | Schicht-4: Planung (6 Tabellen)                           |
-| `backend/src/db/migrations/0005_schicht5.sql` + `.down.sql`                      | Schicht-5: Ausführung (2 Tabellen) + Pilot-Tenant-Seed    |
-| `backend/tests/db/schichten2-5.test.ts`                                          | 16 Tests für Schichten 2-5                                |
-| `backend/src/db/scripts/db-check.mjs`                                            | Health-Check (26 Tabellen, RLS, AUDIT_LOG, Extensions)    |
-| `scripts/setup-dev-db.mjs`                                                       | Einmaliger Setup persistente Dev-DB im eleven_crm_db      |
-| `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                |
-| `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                   |
-| `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)          |
-| `backend/drizzle.config.ts`                                                      | Drizzle-Kit-Config                                        |
-| `backend/src/db/scripts/db-reset.sh`                                             | DB-Reset + Init + Migrate                                 |
-| `backend/src/db/scripts/db-check.sh`                                             | Health-Check (Tabellen, RLS, GRANTs)                      |
-| `backend/tests/db/schicht1.test.ts`                                              | 9 RLS + Constraint Tests                                  |
-| `backend/tests/db/audit-log.test.ts`                                             | 7 AUDIT_LOG Append-Only + RLS Tests                       |
-| `backend/tests/db/migrations.test.ts`                                            | 2 Migration-Tracking Tests                                |
-| `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                 |
-| `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                        |
-| `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config |
-| `backend/package.json` + `backend/vitest.config.ts` + `backend/tsconfig.json`    | Backend Test-Setup                                        |
-| `backend/tests/setup.ts`                                                         | Globaler Vitest-Setup (Testcontainers Boot)               |
-| `backend/tests/helpers/db.ts`                                                    | Testcontainers PostgreSQL + Owner/App-Pools               |
-| `backend/tests/helpers/withTestTenant.ts`                                        | RLS-Test-Helper (`SET app.current_tenant_id`)             |
-| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis ELE-169)              |
-| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis ELE-168)                         |
-| `backend/tests/smoke.test.ts`                                                    | Smoke-Tests für Postgres + Pools + Extensions             |
-| `frontend/package.json` + `frontend/vitest.config.ts` + `frontend/tsconfig.json` | Frontend Test-Setup                                       |
-| `frontend/tests/setup.ts` + `frontend/tests/smoke.test.tsx`                      | Testing-Library + Smoke                                   |
-| `e2e/package.json` + `e2e/playwright.config.ts` + `e2e/tsconfig.json`            | Playwright E2E-Setup                                      |
-| `e2e/tests/smoke.spec.ts`                                                        | Smoke-Test ohne Server                                    |
-| `.husky/pre-commit`                                                              | Pre-Commit-Hook (lint-staged + typecheck)                 |
-| `.github/workflows/test.yml`                                                     | CI-Workflow (Lint, Tests, E2E, Coverage)                  |
+| Datei                                                                            | Zweck                                                      |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `CLAUDE.md`                                                                      | AI-Kontext, Regeln, Governance                             |
+| `SYSTEM_ARCHITECTURE.md`                                                         | Komponenten-Tabelle, Flows, Config                         |
+| `ARCHITECTURE_DESIGN.md`                                                         | ADRs, Quality Attributes, Referenzen (Hub)                 |
+| `INDEX.md`                                                                       | Alle Docs kategorisiert                                    |
+| `COMPONENT_INVENTORY.md`                                                         | Alle Komponenten mit Status                                |
+| `GOVERNANCE.md`                                                                  | Entwicklungs-Prozess, Regeln                               |
+| `DEVELOPMENT_PROCESS.md`                                                         | Verweis auf Governance                                     |
+| `SECURITY.md`                                                                    | Security-Policy, DSGVO, API-Key-Regeln                     |
+| `CHANGELOG.md`                                                                   | Version-History                                            |
+| `specs/TEMPLATE.md`                                                              | Story-Template                                             |
+| `lib/config.js`                                                                  | SSoT alle Parameter                                        |
+| `lib/doc-sync.js`                                                                | DocSync zu Obsidian                                        |
+| `journal/learnings.md`                                                           | Learning-Loop L1                                           |
+| `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)         |
+| `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele  |
+| `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                   |
+| `docs/ADR-12-backup-feature-flags.md`                                            | Backup-Strategie + Feature-Flags + Graceful Degradation    |
+| `docs/ADR-13-migration-tooling.md`                                               | Drizzle Kit Migration-Strategie                            |
+| `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)              |
+| `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                    |
+| `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar                |
+| `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                    |
+| `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                             |
+| `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                      |
+| `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                        |
+| `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                      |
+| `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review  |
+| `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                             |
+| `docker-compose.yml`                                                             | PostgreSQL 16-alpine Service mit Init-SQL                  |
+| `backend/src/db/init/01-extensions.sql`                                          | pgcrypto, pg_trgm, cube, earthdistance                     |
+| `backend/src/db/init/02-roles.sql`                                               | hmservice_owner (BYPASSRLS) + hmservice_app (NOBYPASSRLS)  |
+| `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                       |
+| `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs            |
+| `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                         |
+| `backend/src/db/migrations/0002_schicht2.sql` + `.down.sql`                      | Schicht-2: Fähigkeiten (5 Tabellen)                        |
+| `backend/src/db/migrations/0003_schicht3.sql` + `.down.sql`                      | Schicht-3: Leistungen + Waste (3 Tabellen)                 |
+| `backend/src/db/migrations/0004_schicht4.sql` + `.down.sql`                      | Schicht-4: Planung (6 Tabellen)                            |
+| `backend/src/db/migrations/0005_schicht5.sql` + `.down.sql`                      | Schicht-5: Ausführung (2 Tabellen) + Pilot-Tenant-Seed     |
+| `backend/tests/db/schichten2-5.test.ts`                                          | 16 Tests für Schichten 2-5                                 |
+| `backend/src/db/scripts/db-check.mjs`                                            | Health-Check (26 Tabellen, RLS, AUDIT_LOG, Extensions)     |
+| `scripts/setup-dev-db.mjs`                                                       | Einmaliger Setup persistente Dev-DB im eleven_crm_db       |
+| `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                 |
+| `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                    |
+| `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)           |
+| `backend/drizzle.config.ts`                                                      | Drizzle-Kit-Config                                         |
+| `backend/src/db/scripts/db-reset.sh`                                             | DB-Reset + Init + Migrate                                  |
+| `backend/src/db/scripts/db-check.sh`                                             | Health-Check (Tabellen, RLS, GRANTs)                       |
+| `backend/tests/db/schicht1.test.ts`                                              | 9 RLS + Constraint Tests                                   |
+| `backend/tests/db/audit-log.test.ts`                                             | 7 AUDIT_LOG Append-Only + RLS Tests                        |
+| `backend/tests/db/migrations.test.ts`                                            | 2 Migration-Tracking Tests                                 |
+| `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                  |
+| `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                         |
+| `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config  |
+| `backend/package.json` + `backend/vitest.config.ts` + `backend/tsconfig.json`    | Backend Test-Setup                                         |
+| `backend/tests/setup.ts`                                                         | Globaler Vitest-Setup (Testcontainers Boot)                |
+| `backend/tests/helpers/db.ts`                                                    | Testcontainers PostgreSQL + Owner/App-Pools                |
+| `backend/tests/helpers/withTestTenant.ts`                                        | RLS-Test-Helper (`SET app.current_tenant_id`)              |
+| `backend/tests/helpers/loginAs.ts`                                               | JWT-Generierung für Tests (Stub bis ELE-169)               |
+| `backend/tests/helpers/seedFixture.ts`                                           | Fixture-Loader (Stub bis ELE-168)                          |
+| `backend/tests/smoke.test.ts`                                                    | Smoke-Tests für Postgres + Pools + Extensions              |
+| `frontend/package.json` + `frontend/vitest.config.ts` + `frontend/tsconfig.json` | Frontend Test-Setup                                        |
+| `frontend/tests/setup.ts` + `frontend/tests/smoke.test.tsx`                      | Testing-Library + Smoke                                    |
+| `e2e/package.json` + `e2e/playwright.config.ts` + `e2e/tsconfig.json`            | Playwright E2E-Setup                                       |
+| `e2e/tests/smoke.spec.ts`                                                        | Smoke-Test ohne Server                                     |
+| `.husky/pre-commit`                                                              | Pre-Commit-Hook (lint-staged + typecheck)                  |
+| `.github/workflows/test.yml`                                                     | CI-Workflow (Lint, Tests, E2E, Coverage)                   |
+| `backend/src/db/migrations/0006_user_locale.sql` + `.down.sql`                   | users.locale-Spalte (ADR-16, ELE-169-Nachtrag)             |
+| `backend/src/lib/i18n.ts`                                                        | Mini-i18n-Helper t(key, locale) + Accept-Language-Parser   |
+| `backend/src/locales/en/index.ts`                                                | Englische Resources (Default, ADR-16)                      |
+| `backend/src/locales/de/index.ts`                                                | Deutsche Resources (ADR-16)                                |
+| `backend/tests/lib/i18n.test.ts`                                                 | i18n-Tests                                                 |
+| `backend/src/auth/authorize.ts`                                                  | Rollen-Check-Helper (requireRole, canActOnUser, Forbidden) |
+| `backend/src/routes/tenants.ts`                                                  | Tenant-CRUD (GET/PUT) — ELE-170                            |
+| `backend/src/routes/users.ts`                                                    | User-CRUD + change-password + me/locale — ELE-170          |
+| `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
+| `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
+| `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
+| `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
+| `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
+| `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
 
 ### Source-Input (Repo)
 

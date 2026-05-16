@@ -1,16 +1,16 @@
 # Timetable — Component Inventory
 
-**Version:** 0.2.1 | **Stand:** 2026-05-16
+**Version:** 0.2.2 | **Stand:** 2026-05-16
 
 | Komponente          | Datei / Pfad                                                                 | Status     | Beschreibung                                                                        |
 | ------------------- | ---------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
 | Config              | `lib/config.js`                                                              | Active     | SSoT alle Parameter                                                                 |
 | DocSync             | `lib/doc-sync.js`                                                            | Active     | Spiegelung Repo → Obsidian                                                          |
 | Frontend            | `frontend/`                                                                  | planned    | React + Vite + Tailwind + PWA + @dnd-kit                                            |
-| Backend             | `backend/`                                                                   | planned    | Fastify + TypeScript + OpenAPI                                                      |
-| API                 | `backend/src/routes/`                                                        | planned    | REST + Zod-Schemas + Rate-Limit                                                     |
+| Backend             | `backend/`                                                                   | **Active** | Fastify + TypeScript + OpenAPI (ELE-169 done)                                       |
+| API                 | `backend/src/routes/`                                                        | **Active** | REST + Zod-Schemas + Rate-Limit (auth, tenants, users) — ELE-169 + ELE-170          |
 | Datenbank           | PostgreSQL 16+                                                               | **Active** | **26 Tabellen (Schicht 1-5) + Pilot-Seed, RLS Multi-Tenancy** (ELE-164..168)        |
-| Auth                | `backend/src/auth/`                                                          | planned    | JWT + bcryptjs + 6 Rollen                                                           |
+| Auth                | `backend/src/auth/`                                                          | **Active** | JWT + bcryptjs + 6 Rollen + requireRole/canActOnUser (ELE-169 + ELE-170)            |
 | Scheduling          | `backend/src/services/scheduling/`                                           | planned    | **Kern: Frequenz-Engine + Plan-Generator + Reassignment-Scoring**                   |
 | Frequenz-Engine     | `backend/src/services/scheduling/frequency-engine.ts`                        | planned    | Pure Functions: WEEKLY/BIWEEKLY/MONTHLY/.../Saison                                  |
 | Plan-Generator      | `backend/src/services/scheduling/schedule-generator.ts`                      | planned    | Generiert Wochenplan aus Template                                                   |

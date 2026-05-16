@@ -1,29 +1,27 @@
-// JWT-Erzeugung für Test-User.
-// Wird erst nach ELE-169 (Auth-Skeleton) mit echter JWT-Lib gefüllt — hier nur Interface-Skelett.
+// JWT-Erzeugung für Test-User (ELE-169/170).
+// Generiert einen JWT mit demselben SECRET wie das Backend (process.env.JWT_SECRET).
 
-export type TestRole =
-  | 'SUPER_ADMIN'
-  | 'ADMIN'
-  | 'PLANNER'
-  | 'FOREMAN'
-  | 'EMPLOYEE'
-  | 'PROPERTY_MANAGER';
+import { signJwt } from '../../src/auth/jwt.js';
+import type { Locale } from '../../src/auth/jwt.js';
+import type { UserRole } from '../../src/auth/roles.js';
 
 export interface TestUser {
   userId: string;
   tenantId: string;
-  role: TestRole;
-  isSuperAdmin: boolean;
+  role: UserRole;
+  isSuperAdmin?: boolean;
+  locale?: Locale;
 }
 
-export interface AuthHeader {
-  Authorization: string;
-}
+export type AuthHeader = Record<string, string>;
 
-// Platzhalter — wird in ELE-169 durch echte JWT-Generierung ersetzt.
-// Idee: nimmt User aus Seed-Fixture, generiert JWT mit selbem SECRET wie Backend.
-export function loginAs(_user: Partial<TestUser>): AuthHeader {
-  throw new Error(
-    'loginAs() noch nicht implementiert — wird in ELE-169 (Backend-Skeleton) mit echter JWT-Generierung gefüllt'
-  );
+export function loginAs(user: TestUser): AuthHeader {
+  const token = signJwt({
+    userId: user.userId,
+    tenantId: user.tenantId,
+    role: user.role,
+    isSuperAdmin: user.isSuperAdmin ?? false,
+    locale: user.locale ?? 'en',
+  });
+  return { Authorization: `Bearer ${token}` };
 }

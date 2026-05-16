@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.1 | **Stand:** 2026-05-16
+**Version:** 0.2.2 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -29,6 +29,18 @@
 | Datei                          | Zweck                                      |
 | ------------------------------ | ------------------------------------------ |
 | `docs/ADR-16-i18n-strategy.md` | Internationalisierungs-Strategie (i18next) |
+
+## Backend Routes & Schemas
+
+| Datei                                  | Zweck                                             |
+| -------------------------------------- | ------------------------------------------------- |
+| `backend/src/routes/tenants.ts`        | Tenant-CRUD (ELE-170)                             |
+| `backend/src/routes/users.ts`          | User-CRUD + change-password + me/locale (ELE-170) |
+| `backend/src/schemas/tenants.ts`       | Zod Tenant                                        |
+| `backend/src/schemas/users.ts`         | Zod User + Passwort-Policy                        |
+| `backend/src/auth/authorize.ts`        | requireRole + canActOnUser Helper                 |
+| `backend/tests/routes/tenants.test.ts` | Tenant-Routes Tests                               |
+| `backend/tests/routes/users.test.ts`   | User-Routes Tests                                 |
 
 ## Komponenten
 

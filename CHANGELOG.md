@@ -1,5 +1,25 @@
 # Changelog — Timetable
 
+## v0.2.2 — 2026-05-16 (ELE-170: Tenants + Users CRUD)
+
+- **ELE-170 done (Backend):** Tenant-CRUD + komplette User-Verwaltung mit Authorization-Matrix
+- Routes:
+  - `GET /api/tenants` + `GET/PUT /api/tenants/:id` (ADMIN eigener, SUPER_ADMIN alle)
+  - `GET /api/users` + `GET/POST/PUT/DELETE /api/users/:id`
+  - `POST /api/users/:id/change-password` (Self mit oldPassword, Admin-Reset setzt must_change_password)
+  - `PATCH /api/users/me/locale` (i18n, ELE-195-Vorbereitung)
+- Authorization-Helper `backend/src/auth/authorize.ts`: `requireRole`, `canActOnUser`, `ForbiddenError` mit messageKey
+- Passwort-Policy via Zod: ≥8 Zeichen, ≥1 Großbuchstabe, ≥1 Zahl (NIST-konform, kein Sonderzeichen-Zwang)
+- Self-Delete blockiert (400 `SELF_DELETE_FORBIDDEN`)
+- Self-Update darf weder `role` noch `email` ändern (403 mit messageKey)
+- Email-Unique-Violation → 409 `EMAIL_EXISTS`
+- AUDIT-LOG-Einträge bei `user.create` + `user.delete` (DSGVO Art. 30)
+- bcryptjs cost 12 (aus `SECURITY.BCRYPT_COST`)
+- `loginAs()`-Test-Helper produktiv mit echter JWT-Generierung
+- **Frontend deferred** → wandert zu ELE-180 (Frontend-Grundgerüst)
+- 27 neue Tests (Total 99/99 grün), TypeScript clean
+- ARCHITECTURE_DESIGN §9 + INDEX + COMPONENT_INVENTORY um neue Files erweitert
+
 ## v0.2.1 — 2026-05-16 (i18n-Nachtrag: ADR-16 + Foundation)
 
 - **ADR-16 angelegt:** `docs/ADR-16-i18n-strategy.md` — i18next FE+BE, Default `en`, erste übersetzte Sprache `de`, BCP 47 Codes

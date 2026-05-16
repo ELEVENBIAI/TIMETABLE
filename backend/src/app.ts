@@ -15,6 +15,8 @@ import { sanitizeForLog } from './lib/log-sanitize.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
 import { healthRoutes } from './routes/health.js';
+import { tenantRoutes } from './routes/tenants.js';
+import { userRoutes } from './routes/users.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -138,6 +140,8 @@ export async function buildApp() {
   await fastify.register(healthRoutes);
   await fastify.register(configRoutes);
   await fastify.register(authRoutes);
+  await fastify.register(tenantRoutes);
+  await fastify.register(userRoutes);
 
   return fastify;
 }
