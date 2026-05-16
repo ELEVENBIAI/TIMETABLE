@@ -1,6 +1,6 @@
 # Timetable — Component Inventory
 
-**Version:** 0.1.0 | **Stand:** 2026-05-16
+**Version:** 0.1.1 | **Stand:** 2026-05-16
 
 | Komponente          | Datei / Pfad                                                                 | Status     | Beschreibung                                                           |
 | ------------------- | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
@@ -9,7 +9,7 @@
 | Frontend            | `frontend/`                                                                  | planned    | React + Vite + Tailwind + PWA + @dnd-kit                               |
 | Backend             | `backend/`                                                                   | planned    | Fastify + TypeScript + OpenAPI                                         |
 | API                 | `backend/src/routes/`                                                        | planned    | REST + Zod-Schemas + Rate-Limit                                        |
-| Datenbank           | PostgreSQL 16+                                                               | planned    | 25 Tabellen, 5 Schichten, RLS Multi-Tenancy                            |
+| Datenbank           | PostgreSQL 16+                                                               | **Active** | Schicht 1 done (10 Tabellen + AUDIT_LOG), RLS Multi-Tenancy (ELE-164)  |
 | Auth                | `backend/src/auth/`                                                          | planned    | JWT + bcryptjs + 6 Rollen                                              |
 | Scheduling          | `backend/src/services/scheduling/`                                           | planned    | **Kern: Frequenz-Engine + Plan-Generator + Reassignment-Scoring**      |
 | Frequenz-Engine     | `backend/src/services/scheduling/frequency-engine.ts`                        | planned    | Pure Functions: WEEKLY/BIWEEKLY/MONTHLY/.../Saison                     |

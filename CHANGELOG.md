@@ -1,5 +1,17 @@
 # Changelog — Timetable
 
+## v0.1.1 — 2026-05-16 (ELE-164: DB-Schicht 1 + AUDIT_LOG)
+
+- **ELE-164 done:** PostgreSQL 16 mit RLS Multi-Tenancy, 10 Schicht-1-Tabellen produktiv
+- Tabellen: TENANTS, USERS, REGIONS, EMPLOYEES, PROPERTY_MANAGERS, CONTRACTS, PROPERTIES, PROPERTY_ZONES, SERVICE_TYPES, **AUDIT_LOG**
+- AUDIT_LOG Append-Only per GRANT (App-Rolle nur INSERT+SELECT, kein UPDATE/DELETE/TRUNCATE) — DSGVO Art. 30
+- DB-Rollen: `hmservice_owner` (BYPASSRLS) für Migrations, `hmservice_app` (NOBYPASSRLS) für API
+- Extensions: pgcrypto, pg_trgm, cube, earthdistance
+- Drizzle-Kit-Migration-Runner: `backend/src/db/migrations/0001_schicht1.sql` + Up→Down-Skeleton
+- docker-compose.yml + db-reset.sh + db-check.sh
+- 25 Backend-Tests grün (18 neu für DB, 7 Smoke aus ELE-163)
+- Test-Helper `withTestTenant` korrigiert (PostgreSQL `set_config()` statt `SET LOCAL` — Parameter-Support)
+
 ## v0.1.0 — 2026-05-16 (ELE-163: Test-Infrastruktur)
 
 - **ELE-163 implementiert:** Vitest (Backend + Frontend) + Playwright + Testcontainers

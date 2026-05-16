@@ -1,4 +1,8 @@
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
 import { Pool } from 'pg';
 
 let container: StartedPostgreSqlContainer | null = null;
@@ -7,6 +11,8 @@ let appPool: Pool | null = null;
 
 const APP_ROLE = 'hmservice_app';
 const APP_PASSWORD = 'app_test_pw';
+const INIT_DIR = path.join(import.meta.dirname, '..', '..', 'src', 'db', 'init');
+const MIGRATIONS_DIR = path.join(import.meta.dirname, '..', '..', 'src', 'db', 'migrations');
 
 export async function startTestDb(): Promise<void> {
   if (container) return;
@@ -17,31 +23,26 @@ export async function startTestDb(): Promise<void> {
     .withPassword('owner_test_pw')
     .start();
 
-  ownerPool = new Pool({
-    connectionString: container.getConnectionUri(),
-  });
+  ownerPool = new Pool({ connectionString: container.getConnectionUri() });
 
-  // App-Rolle anlegen (RLS-erzwungen — kein BYPASSRLS)
-  await ownerPool.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${APP_ROLE}') THEN
-        CREATE ROLE ${APP_ROLE} LOGIN PASSWORD '${APP_PASSWORD}' NOBYPASSRLS;
-      END IF;
-    END
-    $$;
-  `);
-
-  // Owner ist BYPASSRLS per ALTER
+  // Init-SQL ausführen (Extensions, Rollen, Funktionen) — analog Docker-Init
+  // Owner-Rolle ist BYPASSRLS, App-Rolle wird hier angelegt
   await ownerPool.query(`ALTER ROLE hmservice_owner BYPASSRLS;`);
 
-  // Extensions (für künftige RLS-Tests + earthdistance)
-  await ownerPool.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto;`);
-  await ownerPool.query(`CREATE EXTENSION IF NOT EXISTS pg_trgm;`);
-  await ownerPool.query(`CREATE EXTENSION IF NOT EXISTS cube;`);
-  await ownerPool.query(`CREATE EXTENSION IF NOT EXISTS earthdistance;`);
+  for (const file of readdirSync(INIT_DIR)
+    .filter((f) => f.endsWith('.sql'))
+    .sort()) {
+    const sql = readFileSync(path.join(INIT_DIR, file), 'utf8')
+      // ersetze die Password-Variable durch unseren Test-Wert
+      .replace(/current_setting\('app\.app_password', true\)/g, `'${APP_PASSWORD}'`);
+    await ownerPool.query(sql);
+  }
 
-  // App-Pool mit App-Rolle
+  // Migrations laufen lassen
+  const db = drizzle(ownerPool);
+  await migrate(db, { migrationsFolder: MIGRATIONS_DIR });
+
+  // App-Pool mit App-Rolle (NOBYPASSRLS)
   const host = container.getHost();
   const port = container.getMappedPort(5432);
   appPool = new Pool({
@@ -81,4 +82,15 @@ export function getAppPool(): Pool {
 export function getConnectionUri(): string {
   if (!container) throw new Error('Test-DB not started. Call startTestDb() first.');
   return container.getConnectionUri();
+}
+
+// Cleanup zwischen Tests: TRUNCATE alle Tabellen außer __drizzle_migrations
+export async function cleanDb(): Promise<void> {
+  if (!ownerPool) return;
+  await ownerPool.query(`
+    TRUNCATE TABLE
+      audit_log, service_types, property_zones, properties, contracts,
+      property_managers, employees, regions, users, tenants
+    RESTART IDENTITY CASCADE;
+  `);
 }

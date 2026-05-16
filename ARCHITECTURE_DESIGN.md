@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.1.0 | **Stand:** 2026-05-16
+**Version:** 0.1.1 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -153,6 +153,21 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                     |
 | `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review |
 | `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                            |
+| `docker-compose.yml`                                                             | PostgreSQL 16-alpine Service mit Init-SQL                 |
+| `backend/src/db/init/01-extensions.sql`                                          | pgcrypto, pg_trgm, cube, earthdistance                    |
+| `backend/src/db/init/02-roles.sql`                                               | hmservice_owner (BYPASSRLS) + hmservice_app (NOBYPASSRLS) |
+| `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                      |
+| `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs           |
+| `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                        |
+| `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                |
+| `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                   |
+| `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)          |
+| `backend/drizzle.config.ts`                                                      | Drizzle-Kit-Config                                        |
+| `backend/src/db/scripts/db-reset.sh`                                             | DB-Reset + Init + Migrate                                 |
+| `backend/src/db/scripts/db-check.sh`                                             | Health-Check (Tabellen, RLS, GRANTs)                      |
+| `backend/tests/db/schicht1.test.ts`                                              | 9 RLS + Constraint Tests                                  |
+| `backend/tests/db/audit-log.test.ts`                                             | 7 AUDIT_LOG Append-Only + RLS Tests                       |
+| `backend/tests/db/migrations.test.ts`                                            | 2 Migration-Tracking Tests                                |
 | `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                 |
 | `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                        |
 | `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config |
