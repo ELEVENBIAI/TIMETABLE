@@ -72,7 +72,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
           { action: 'auth.login.failed', reason: 'user_not_found' },
           'Login fehlgeschlagen'
         );
-        throw new UnauthorizedError('Email oder Passwort falsch');
+        throw new UnauthorizedError('auth.loginFailed');
       }
 
       // Lockout-Check VOR Password-Compare
@@ -81,7 +81,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
           { action: 'auth.login.locked', userId: user.id, lockedUntil: user.locked_until },
           'Login fehlgeschlagen (gesperrt)'
         );
-        throw new LockedError('Konto vorübergehend gesperrt. Bitte später erneut versuchen.');
+        throw new LockedError('errors.accountLocked');
       }
 
       const isValid = await comparePassword(password, user.password_hash);
@@ -105,7 +105,7 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
           { action: 'auth.login.failed', userId: user.id, reason: 'wrong_password' },
           'Login fehlgeschlagen'
         );
-        throw new UnauthorizedError('Email oder Passwort falsch');
+        throw new UnauthorizedError('auth.loginFailed');
       }
 
       // Erfolgreicher Login: failed_login_count reset, last_login_at setzen

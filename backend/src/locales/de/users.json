@@ -1,0 +1,7 @@
+{
+  "created": "Mitarbeiter {{email}} angelegt",
+  "updated": "Mitarbeiter aktualisiert",
+  "deleted": "Mitarbeiter gelöscht",
+  "count_one": "{{count}} Mitarbeiter",
+  "count_other": "{{count}} Mitarbeiter"
+}

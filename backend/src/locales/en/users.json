@@ -1,0 +1,7 @@
+{
+  "created": "User {{email}} created",
+  "updated": "User updated",
+  "deleted": "User deleted",
+  "count_one": "{{count}} user",
+  "count_other": "{{count}} users"
+}

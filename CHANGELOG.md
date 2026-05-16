@@ -1,5 +1,24 @@
 # Changelog — Timetable
 
+## v0.2.3 — 2026-05-16 (ELE-194: i18n Backend Full)
+
+- **ELE-194 done:** Backend-i18n produktiv mit `i18next`
+- Resource-Files als JSON: `backend/src/locales/{en,de}/{common,auth,errors,users,validation}.json` (5 Namespaces)
+- `lib/i18n.ts` umgeschrieben: `initI18n()` synchron, `t(key, locale, vars?)` delegiert an i18next
+  - Interpolation: `t('errors.rateLimited', 'de', { retryAfter: '30s' })` → "Zu viele Anfragen. Bitte 30s warten."
+  - Plural-Forms: `t('users.count', 'en', { count: 1 })` → "1 user", `count: 5` → "5 users"
+  - Key-Konvention `errors.unauthorized` (nsSeparator '.', keySeparator off)
+- **Locale-Resolution-Middleware** `backend/src/lib/locale.ts`:
+  - `onRequest`-Hook setzt `request.locale` aus Accept-Language
+  - `requireAuth` überschreibt mit JWT-Locale (User-Präferenz schlägt Browser)
+  - Fallback en
+- **Error-Klassen-Refactor** (`lib/errors.ts`): Konstruktor jetzt `(messageKey, vars?)` statt `(message, messageKey?)`
+- **Error-Handler in app.ts** rendert `message` in `request.locale` via `t()`
+- Alle Inline-Strings in `routes/{auth,users,tenants}.ts`, `auth/middleware.ts`, `auth/authorize.ts`, `lib/validation.ts` durch Locale-Keys ersetzt
+- Rate-Limit-Error rendert ebenfalls über `t('errors.rateLimited', req.locale, { retryAfter })`
+- 15 neue Tests (Interpolation, Plural, Locale-Middleware E2E) — Total **114/114 grün**
+- TypeScript clean, ESLint clean
+
 ## v0.2.2 — 2026-05-16 (ELE-170: Tenants + Users CRUD)
 
 - **ELE-170 done (Backend):** Tenant-CRUD + komplette User-Verwaltung mit Authorization-Matrix

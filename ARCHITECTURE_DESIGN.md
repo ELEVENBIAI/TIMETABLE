@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.2 | **Stand:** 2026-05-16
+**Version:** 0.2.3 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -195,10 +195,16 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `.husky/pre-commit`                                                              | Pre-Commit-Hook (lint-staged + typecheck)                  |
 | `.github/workflows/test.yml`                                                     | CI-Workflow (Lint, Tests, E2E, Coverage)                   |
 | `backend/src/db/migrations/0006_user_locale.sql` + `.down.sql`                   | users.locale-Spalte (ADR-16, ELE-169-Nachtrag)             |
-| `backend/src/lib/i18n.ts`                                                        | Mini-i18n-Helper t(key, locale) + Accept-Language-Parser   |
-| `backend/src/locales/en/index.ts`                                                | Englische Resources (Default, ADR-16)                      |
-| `backend/src/locales/de/index.ts`                                                | Deutsche Resources (ADR-16)                                |
-| `backend/tests/lib/i18n.test.ts`                                                 | i18n-Tests                                                 |
+| `backend/src/lib/i18n.ts`                                                        | i18next-Setup + `t(key, locale, vars)` (ELE-194)           |
+| `backend/src/lib/locale.ts`                                                      | Locale-Middleware (setInitialLocale + applyUserLocale)     |
+| `backend/src/locales/{en,de}/common.json`                                        | UI-Allgemein                                               |
+| `backend/src/locales/{en,de}/errors.json`                                        | Error-Messages (Hauptnamespace)                            |
+| `backend/src/locales/{en,de}/auth.json`                                          | Auth-Strings                                               |
+| `backend/src/locales/{en,de}/users.json`                                         | User-Module + Plural-Forms                                 |
+| `backend/src/locales/{en,de}/validation.json`                                    | Validation-Variations                                      |
+| `backend/tests/lib/i18n.test.ts`                                                 | i18n-Tests (Interpolation, Plural)                         |
+| `backend/tests/lib/locale.test.ts`                                               | Locale-Middleware Unit-Tests                               |
+| `backend/tests/routes/locale-middleware.test.ts`                                 | E2E: Error-Messages in Request-Locale                      |
 | `backend/src/auth/authorize.ts`                                                  | Rollen-Check-Helper (requireRole, canActOnUser, Forbidden) |
 | `backend/src/routes/tenants.ts`                                                  | Tenant-CRUD (GET/PUT) — ELE-170                            |
 | `backend/src/routes/users.ts`                                                    | User-CRUD + change-password + me/locale — ELE-170          |

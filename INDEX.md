@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.2 | **Stand:** 2026-05-16
+**Version:** 0.2.3 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -29,6 +29,21 @@
 | Datei                          | Zweck                                      |
 | ------------------------------ | ------------------------------------------ |
 | `docs/ADR-16-i18n-strategy.md` | Internationalisierungs-Strategie (i18next) |
+
+## i18n (Backend)
+
+| Datei                                            | Zweck                                               |
+| ------------------------------------------------ | --------------------------------------------------- |
+| `backend/src/lib/i18n.ts`                        | i18next-Setup + `t(key, locale, vars)` Helper       |
+| `backend/src/lib/locale.ts`                      | `setInitialLocale` + `applyUserLocale` (Middleware) |
+| `backend/src/locales/{en,de}/common.json`        | Allgemeine Texte                                    |
+| `backend/src/locales/{en,de}/errors.json`        | Error-Messages (Hauptnamespace)                     |
+| `backend/src/locales/{en,de}/auth.json`          | Auth-bezogene Strings                               |
+| `backend/src/locales/{en,de}/users.json`         | User-Module + Plurals                               |
+| `backend/src/locales/{en,de}/validation.json`    | Validation-Error-Variations                         |
+| `backend/tests/lib/i18n.test.ts`                 | Interpolation + Plural Tests                        |
+| `backend/tests/lib/locale.test.ts`               | setInitialLocale + applyUserLocale Tests            |
+| `backend/tests/routes/locale-middleware.test.ts` | E2E: Error-Message in Request-Locale                |
 
 ## Backend Routes & Schemas
 

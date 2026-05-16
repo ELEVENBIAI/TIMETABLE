@@ -16,8 +16,34 @@ describe('i18n — t(key, locale)', () => {
     expect(t('auth.loginSuccess', 'de')).toBe('Login erfolgreich');
   });
 
-  it('liefert Key selbst zurück wenn nirgends übersetzt', () => {
-    expect(t('does.not.exist', 'de')).toBe('does.not.exist');
+  it('liefert Key-Tail zurück wenn nirgends übersetzt', () => {
+    // Key existiert weder in de noch in en (fallback) — i18next gibt den
+    // Key-Teil nach dem Namespace unverändert zurück (per Default).
+    expect(t('errors.doesNotExist', 'de')).toBe('doesNotExist');
+  });
+
+  it('Interpolation: vars werden ersetzt', () => {
+    expect(t('errors.rateLimited', 'de', { retryAfter: '30s' })).toBe(
+      'Zu viele Anfragen. Bitte 30s warten.'
+    );
+  });
+
+  it('Interpolation: Validation-Details', () => {
+    expect(t('errors.validationDetails', 'en', { details: 'email: missing' })).toBe(
+      'Invalid input: email: missing'
+    );
+  });
+
+  it('Plural: count=1 → singular (en)', () => {
+    expect(t('users.count', 'en', { count: 1 })).toBe('1 user');
+  });
+
+  it('Plural: count=5 → plural (en)', () => {
+    expect(t('users.count', 'en', { count: 5 })).toBe('5 users');
+  });
+
+  it('Plural: count=1 → singular (de)', () => {
+    expect(t('users.count', 'de', { count: 1 })).toBe('1 Mitarbeiter');
   });
 });
 

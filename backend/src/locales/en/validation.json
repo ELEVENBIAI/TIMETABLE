@@ -1,0 +1,8 @@
+{
+  "fieldRequired": "Field '{{field}}' is required",
+  "atLeastOneField": "At least one field must be provided",
+  "invalidEmail": "Invalid email format",
+  "stringTooShort": "'{{field}}' must be at least {{min}} characters",
+  "stringTooLong": "'{{field}}' must be at most {{max}} characters",
+  "enumInvalid": "'{{field}}' must be one of: {{options}}"
+}

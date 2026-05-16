@@ -11,6 +11,8 @@ import { randomUUID } from 'node:crypto';
 
 import { env, PERFORMANCE, VERSION } from './config.js';
 import { HttpError } from './lib/errors.js';
+import { initI18n, t } from './lib/i18n.js';
+import { setInitialLocale } from './lib/locale.js';
 import { sanitizeForLog } from './lib/log-sanitize.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
@@ -19,6 +21,9 @@ import { tenantRoutes } from './routes/tenants.js';
 import { userRoutes } from './routes/users.js';
 
 export async function buildApp() {
+  // i18next synchron initialisieren (idempotent)
+  initI18n();
+
   const fastify = Fastify({
     logger: {
       level: env.LOG_LEVEL,
@@ -64,10 +69,11 @@ export async function buildApp() {
     max: PERFORMANCE.RATE_LIMIT_GLOBAL_PER_MINUTE,
     timeWindow: '1 minute',
     keyGenerator: (req) => req.ip,
-    errorResponseBuilder: (_req, context) => ({
+    errorResponseBuilder: (req, context) => ({
       error: {
         code: 'RATE_LIMITED',
-        message: `Zu viele Anfragen. Bitte ${context.after} warten.`,
+        messageKey: 'errors.rateLimited',
+        message: t('errors.rateLimited', req.locale, { retryAfter: context.after }),
       },
     }),
   });
@@ -93,6 +99,13 @@ export async function buildApp() {
     uiConfig: { docExpansion: 'list', deepLinking: false },
   });
 
+  // ─── Locale-Resolution (ADR-16) ────────────────────────────────────────────
+  // Setzt request.locale aus Accept-Language. JWT-Auth überschreibt sie später
+  // in requireAuth() mit der user-spezifischen Locale.
+  fastify.addHook('onRequest', async (request) => {
+    setInitialLocale(request);
+  });
+
   // ─── Request-Timing-Logging (ADR-14) ───────────────────────────────────────
   fastify.addHook('onResponse', async (request, reply) => {
     const duration = reply.elapsedTime;
@@ -108,14 +121,18 @@ export async function buildApp() {
 
   // ─── Error-Handler (MUSS vor Routes registriert sein, sonst greift er nicht) ─
   // Error-Format (ADR-16): { error: { code, messageKey?, message } }
+  // message wird in request.locale gerendert.
   fastify.setErrorHandler((rawErr, request, reply) => {
     const err = rawErr as Error & { statusCode?: number; code?: string };
     if (err instanceof HttpError) {
+      const localizedMessage = err.messageKey
+        ? t(err.messageKey, request.locale, err.vars)
+        : err.message;
       return reply.code(err.statusCode).send({
         error: {
           code: err.code,
           ...(err.messageKey && { messageKey: err.messageKey }),
-          message: err.message,
+          message: localizedMessage,
         },
       });
     }
@@ -131,7 +148,7 @@ export async function buildApp() {
       error: {
         code: 'INTERNAL_ERROR',
         messageKey: 'errors.internal',
-        message: 'Interner Serverfehler',
+        message: t('errors.internal', request.locale),
       },
     });
   });

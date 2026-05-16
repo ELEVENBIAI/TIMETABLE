@@ -7,8 +7,8 @@ import { HttpError } from '../lib/errors.js';
 import type { UserRole } from './roles.js';
 
 export class ForbiddenError extends HttpError {
-  constructor(message = 'Zugriff verweigert', messageKey = 'errors.forbidden') {
-    super(403, 'FORBIDDEN', message, messageKey);
+  constructor(messageKey = 'errors.forbidden', vars?: Record<string, unknown>) {
+    super(403, 'FORBIDDEN', messageKey, messageKey, vars);
   }
 }
 
@@ -20,11 +20,11 @@ export function requireRole(...allowed: UserRole[]) {
   return async (request: FastifyRequest, _reply: FastifyReply): Promise<void> => {
     const user = request.user;
     if (!user) {
-      throw new ForbiddenError('Nicht authentifiziert', 'errors.unauthorized');
+      throw new ForbiddenError('errors.unauthorized');
     }
     if (user.isSuperAdmin) return;
     if (!allowed.includes(user.role)) {
-      throw new ForbiddenError('Diese Rolle darf diese Aktion nicht ausführen');
+      throw new ForbiddenError('errors.roleNotAllowed');
     }
   };
 }

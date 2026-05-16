@@ -53,7 +53,7 @@ export async function tenantRoutes(fastify: FastifyInstance): Promise<void> {
       const user = request.user!;
       const { id } = request.params;
       if (!user.isSuperAdmin && id !== user.tenantId) {
-        throw new ForbiddenError('Zugriff auf fremden Tenant verweigert');
+        throw new ForbiddenError('errors.tenantCrossAccess');
       }
       const pool = getOwnerPool();
       const result = await pool.query<TenantRow>(
@@ -62,7 +62,7 @@ export async function tenantRoutes(fastify: FastifyInstance): Promise<void> {
         [id]
       );
       const tenant = result.rows[0];
-      if (!tenant) throw new NotFoundError('Tenant nicht gefunden');
+      if (!tenant) throw new NotFoundError('errors.tenantNotFound');
       return tenant;
     },
   });
@@ -84,7 +84,7 @@ export async function tenantRoutes(fastify: FastifyInstance): Promise<void> {
       const user = request.user!;
       const { id } = request.params;
       if (!user.isSuperAdmin && id !== user.tenantId) {
-        throw new ForbiddenError('Zugriff auf fremden Tenant verweigert');
+        throw new ForbiddenError('errors.tenantCrossAccess');
       }
 
       let input;
@@ -92,8 +92,8 @@ export async function tenantRoutes(fastify: FastifyInstance): Promise<void> {
         input = updateTenantSchema.parse(request.body);
       } catch (err) {
         if (err instanceof ZodError) {
-          const issues = err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
-          throw new ValidationError(`Eingabe ungültig: ${issues}`);
+          const details = err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+          throw new ValidationError('errors.validationDetails', { details });
         }
         throw err;
       }
@@ -128,7 +128,7 @@ export async function tenantRoutes(fastify: FastifyInstance): Promise<void> {
         values
       );
       const tenant = result.rows[0];
-      if (!tenant) throw new NotFoundError('Tenant nicht gefunden');
+      if (!tenant) throw new NotFoundError('errors.tenantNotFound');
 
       request.log.info(
         { action: 'tenant.update', tenantId: id, by: user.userId },

@@ -35,12 +35,13 @@ function parseOr400<T>(schema: { parse(v: unknown): T }, body: unknown): T {
     return schema.parse(body);
   } catch (err) {
     if (err instanceof ZodError) {
-      const issues = err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+      const details = err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+      const isPasswordIssue = err.issues.some(
+        (i) => i.path.includes('newPassword') || i.path.includes('password')
+      );
       throw new ValidationError(
-        `Eingabe ungültig: ${issues}`,
-        err.issues.some((i) => i.path.includes('newPassword') || i.path.includes('password'))
-          ? 'errors.passwordPolicy'
-          : 'errors.validation'
+        isPasswordIssue ? 'errors.passwordPolicy' : 'errors.validationDetails',
+        { details }
       );
     }
     throw err;
@@ -49,18 +50,13 @@ function parseOr400<T>(schema: { parse(v: unknown): T }, body: unknown): T {
 
 class SelfDeleteForbiddenError extends HttpError {
   constructor() {
-    super(
-      400,
-      'SELF_DELETE_FORBIDDEN',
-      'Eigenen Account kann man nicht löschen',
-      'errors.selfDeleteForbidden'
-    );
+    super(400, 'SELF_DELETE_FORBIDDEN', 'errors.selfDeleteForbidden', 'errors.selfDeleteForbidden');
   }
 }
 
 class EmailExistsError extends HttpError {
   constructor() {
-    super(409, 'EMAIL_EXISTS', 'Email existiert bereits', 'errors.emailExists');
+    super(409, 'EMAIL_EXISTS', 'errors.emailExists', 'errors.emailExists');
   }
 }
 
@@ -123,9 +119,9 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         [id]
       );
       const user = result.rows[0];
-      if (!user) throw new NotFoundError('User nicht gefunden');
+      if (!user) throw new NotFoundError('errors.userNotFound');
       const { allowed } = canActOnUser(actor, user);
-      if (!allowed) throw new ForbiddenError('Zugriff auf fremden User verweigert');
+      if (!allowed) throw new ForbiddenError('errors.userCrossAccess');
       return user;
     },
   });
@@ -211,26 +207,20 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         [id]
       );
       const target = existing.rows[0];
-      if (!target) throw new NotFoundError('User nicht gefunden');
+      if (!target) throw new NotFoundError('errors.userNotFound');
 
       const { allowed, isSelf, isAdminScope } = canActOnUser(actor, target);
-      if (!allowed) throw new ForbiddenError('Zugriff auf fremden User verweigert');
+      if (!allowed) throw new ForbiddenError('errors.userCrossAccess');
 
       const input = parseOr400(updateUserSchema, request.body);
 
       // Self-Update darf weder role noch email ändern
       if (isSelf && !isAdminScope) {
         if (input.role !== undefined) {
-          throw new ForbiddenError(
-            'Self-Update darf role nicht ändern',
-            'errors.roleChangeForbidden'
-          );
+          throw new ForbiddenError('errors.roleChangeForbidden');
         }
         if (input.email !== undefined) {
-          throw new ForbiddenError(
-            'Self-Update darf email nicht ändern',
-            'errors.emailChangeForbidden'
-          );
+          throw new ForbiddenError('errors.emailChangeForbidden');
         }
       }
 
@@ -266,7 +256,7 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
           values
         );
         const user = result.rows[0];
-        if (!user) throw new NotFoundError('User nicht gefunden');
+        if (!user) throw new NotFoundError('errors.userNotFound');
         request.log.info(
           { action: 'user.update', userId: id, by: actor.userId },
           'User aktualisiert'
@@ -306,10 +296,10 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         [id]
       );
       const target = existing.rows[0];
-      if (!target) throw new NotFoundError('User nicht gefunden');
+      if (!target) throw new NotFoundError('errors.userNotFound');
       const { isAdminScope } = canActOnUser(actor, target);
       if (!isAdminScope) {
-        throw new ForbiddenError('Cross-Tenant-Delete verweigert');
+        throw new ForbiddenError('errors.forbidden');
       }
 
       await pool.query(
@@ -359,10 +349,10 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         [id]
       );
       const target = existing.rows[0];
-      if (!target) throw new NotFoundError('User nicht gefunden');
+      if (!target) throw new NotFoundError('errors.userNotFound');
 
       const { allowed, isSelf, isAdminScope } = canActOnUser(actor, target);
-      if (!allowed) throw new ForbiddenError('Zugriff auf fremden User verweigert');
+      if (!allowed) throw new ForbiddenError('errors.userCrossAccess');
 
       const input = parseOr400(changePasswordSchema, request.body);
 
@@ -370,10 +360,10 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
       // Admin-Reset (für ANDEREN User): kein oldPassword nötig, must_change_password = TRUE.
       if (isSelf) {
         if (!input.oldPassword) {
-          throw new ValidationError('oldPassword erforderlich', 'errors.passwordPolicy');
+          throw new ValidationError('errors.oldPasswordRequired');
         }
         const ok = await comparePassword(input.oldPassword, target.password_hash);
-        if (!ok) throw new UnauthorizedError('Altes Passwort falsch', 'errors.loginFailed');
+        if (!ok) throw new UnauthorizedError('errors.oldPasswordWrong');
       }
 
       const hash = await hashPassword(input.newPassword);
@@ -418,7 +408,7 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         [input.locale, actor.userId]
       );
       const row = result.rows[0];
-      if (!row) throw new NotFoundError('User nicht gefunden');
+      if (!row) throw new NotFoundError('errors.userNotFound');
       request.log.info(
         { action: 'user.locale_update', userId: actor.userId, locale: input.locale },
         'Locale geändert'
