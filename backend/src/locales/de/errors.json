@@ -41,5 +41,7 @@
   "duplicateAssignment": "Bereits zugeordnet",
   "invalidFrequencyDetail": "frequency_detail passt nicht zur gewählten Frequenz",
   "invalidSeasonalRange": "Ungültiger Saison-Bereich (Monate müssen 1..12 sein)",
-  "propertyMismatch": "Ressource gehört nicht zum angegebenen Objekt"
+  "propertyMismatch": "Ressource gehört nicht zum angegebenen Objekt",
+  "propertyManagerNotFound": "Hausverwaltung nicht gefunden",
+  "contractNotFound": "Vertrag nicht gefunden"
 }

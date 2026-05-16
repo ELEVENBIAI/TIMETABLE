@@ -16,10 +16,12 @@ import { setInitialLocale } from './lib/locale.js';
 import { sanitizeForLog } from './lib/log-sanitize.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
+import { contractRoutes } from './routes/contracts.js';
 import { employeeRoutes } from './routes/employees.js';
 import { employeeSkillsRoutes } from './routes/employee-skills.js';
 import { equipmentTypeRoutes } from './routes/equipment-types.js';
 import { healthRoutes } from './routes/health.js';
+import { propertyManagerRoutes } from './routes/property-managers.js';
 import { propertyRoutes } from './routes/properties.js';
 import { propertyServiceRoutes } from './routes/property-services.js';
 import { qualificationTypeRoutes } from './routes/qualification-types.js';
@@ -171,6 +173,8 @@ export async function buildApp() {
   await fastify.register(qualificationTypeRoutes);
   await fastify.register(equipmentTypeRoutes);
   await fastify.register(employeeSkillsRoutes);
+  await fastify.register(propertyManagerRoutes);
+  await fastify.register(contractRoutes);
   await fastify.register(propertyRoutes);
   await fastify.register(propertyServiceRoutes);
 

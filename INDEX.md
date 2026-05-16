@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.6 | **Stand:** 2026-05-16
+**Version:** 0.2.7 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -58,6 +58,8 @@
 | `backend/src/routes/employee-skills.ts`            | Quali / Equipment / Availability nested (ELE-174) |
 | `backend/src/routes/properties.ts`                 | Properties + nested Zones (ELE-176)               |
 | `backend/src/routes/property-services.ts`          | Leistungsverzeichnis + frequency_detail (ELE-177) |
+| `backend/src/routes/property-managers.ts`          | Hausverwaltungen + pg_trgm-Schnellsuche (ELE-175) |
+| `backend/src/routes/contracts.ts`                  | Verträge + monthly_value-Filter (ELE-175)         |
 | `backend/src/schemas/tenants.ts`                   | Zod Tenant                                        |
 | `backend/src/schemas/users.ts`                     | Zod User + Passwort-Policy                        |
 | `backend/src/schemas/service-types.ts`             | Zod Service-Type + Hex-Color                      |
@@ -67,6 +69,8 @@
 | `backend/src/schemas/employee-skills.ts`           | Zod Quali/Equipment/Availability                  |
 | `backend/src/schemas/properties.ts`                | Zod Property + Zone                               |
 | `backend/src/schemas/property-services.ts`         | Zod + validateFrequencyDetail                     |
+| `backend/src/schemas/property-managers.ts`         | Zod PropertyManager                               |
+| `backend/src/schemas/contracts.ts`                 | Zod Contract + filterContractForActor             |
 | `backend/src/auth/authorize.ts`                    | requireRole + canActOnUser Helper                 |
 | `backend/tests/routes/tenants.test.ts`             | Tenant-Routes Tests                               |
 | `backend/tests/routes/users.test.ts`               | User-Routes Tests                                 |
@@ -77,6 +81,8 @@
 | `backend/tests/routes/employee-skills.test.ts`     | Quali/Equipment/Availability Tests                |
 | `backend/tests/routes/properties.test.ts`          | Properties + Zones + ILIKE-Suche                  |
 | `backend/tests/routes/property-services.test.ts`   | frequency_detail-Validation + alle Frequenzen     |
+| `backend/tests/routes/property-managers.test.ts`   | PM-CRUD + Trigram-Suche + IN_USE-Block            |
+| `backend/tests/routes/contracts.test.ts`           | Contracts + monthly_value-Filter + Cross-Tenant   |
 
 ## Komponenten
 

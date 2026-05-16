@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.6 | **Stand:** 2026-05-16
+**Version:** 0.2.7 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -215,6 +215,9 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/employee-skills.ts`                                          | Quali / Equipment / Availability nested — ELE-174          |
 | `backend/src/routes/properties.ts`                                               | Properties + nested Zones — ELE-176                        |
 | `backend/src/routes/property-services.ts`                                        | Leistungsverzeichnis + Frequency-Validation — ELE-177      |
+| `backend/src/routes/property-managers.ts`                                        | Hausverwaltungen + pg_trgm-Suche — ELE-175                 |
+| `backend/src/routes/contracts.ts`                                                | Verträge mit monthly_value-Filter — ELE-175                |
+| `backend/src/db/migrations/0007_pm_trgm.sql` + `.down.sql`                       | GIN-Trigram-Indexe für PM-Schnellsuche — ELE-175           |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                               |
@@ -224,6 +227,8 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/schemas/employee-skills.ts`                                         | Zod Quali / Equipment / Availability                       |
 | `backend/src/schemas/properties.ts`                                              | Zod Property + Zone                                        |
 | `backend/src/schemas/property-services.ts`                                       | Zod + validateFrequencyDetail (typed JSONB)                |
+| `backend/src/schemas/property-managers.ts`                                       | Zod PropertyManager                                        |
+| `backend/src/schemas/contracts.ts`                                               | Zod Contract + filterContractForActor (monthly_value)      |
 | `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
 | `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
 | `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)       |
@@ -233,6 +238,8 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/tests/routes/employee-skills.test.ts`                                   | Quali/Equipment/Availability Tests (Upsert, UNIQUE)        |
 | `backend/tests/routes/properties.test.ts`                                        | Properties + Zones + ILIKE-Suche                           |
 | `backend/tests/routes/property-services.test.ts`                                 | Alle 7 Frequenzen + frequency_detail-Validation            |
+| `backend/tests/routes/property-managers.test.ts`                                 | PM-CRUD + Trigram-Suche + IN_USE-Block (Contracts + Props) |
+| `backend/tests/routes/contracts.test.ts`                                         | Contracts + monthly_value-Filter (Role-based)              |
 | `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
 | `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
 

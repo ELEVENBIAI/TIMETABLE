@@ -41,5 +41,7 @@
   "duplicateAssignment": "Already assigned",
   "invalidFrequencyDetail": "Invalid frequency_detail for selected frequency",
   "invalidSeasonalRange": "Invalid seasonal range (months must be 1..12)",
-  "propertyMismatch": "Resource does not belong to the given property"
+  "propertyMismatch": "Resource does not belong to the given property",
+  "propertyManagerNotFound": "Property manager not found",
+  "contractNotFound": "Contract not found"
 }

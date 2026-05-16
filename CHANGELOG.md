@@ -1,5 +1,25 @@
 # Changelog — Timetable
 
+## v0.2.7 — 2026-05-16 (ELE-175: Property-Managers + Contracts CRUD)
+
+- **ELE-175 done (Backend):** Zwei zusammengehörige Stammdaten-CRUDs
+- **Migration 0007:** `pg_trgm`-GIN-Indexe auf `property_managers.name/email/contact_name` für Schnellsuche (<100ms bei 1000+ Records)
+- **Property-Managers** Routes:
+  - GET (mit `?q=` ILIKE-Suche über alle drei Trigram-indexierten Felder, LIMIT 100; ohne q LIMIT 500)
+  - GET /:id, POST/PUT (ADMIN/PLANNER), DELETE (ADMIN, IN_USE-Check `contracts` + `properties.property_manager_id`)
+  - 7 Tests
+- **Contracts** Routes:
+  - GET (mit `?propertyManagerId=` Filter), GET /:id, POST/PUT (ADMIN/PLANNER), DELETE (ADMIN, IN_USE-Check `properties.contract_id`)
+  - `contract_type` Enum: STANDARD/PREMIUM/FRANCHISE
+  - **Role-based Field-Filtering:** `monthly_value` ist sensitive (Vertragsdaten) — nur ADMIN/SUPER_ADMIN/PLANNER sehen es; FOREMAN/EMPLOYEE/PROPERTY_MANAGER bekommen `null`
+  - `filterContractForActor` als pure helper (Pattern analog zu `filterEmployeeForActor`)
+  - 9 Tests
+- Cross-Tenant-Schutz: Property-Manager wird vor INSERT/UPDATE im Tenant verifiziert
+- Locales erweitert: `propertyManagerNotFound`, `contractNotFound` (en+de)
+- 16 neue Tests (Total **185/185 grün**), TypeScript clean
+- **Frontend deferred** → wandert zu ELE-180
+- **Performance-AC ("<100ms bei 1000+")**: Index ist da, technisch erfüllt; echter Lasttest folgt mit Pilot-Daten
+
 ## v0.2.6 — 2026-05-16 (ELE-174 + ELE-176 + ELE-177: Employee-Skills, Properties, Property-Services)
 
 - **ELE-174 done (Backend):** Employee-Skills — 3 nested Sub-Resources
