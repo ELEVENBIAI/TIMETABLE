@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.7 | **Stand:** 2026-05-16
+**Version:** 0.2.8 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -218,6 +218,9 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/property-managers.ts`                                        | Hausverwaltungen + pg_trgm-Suche — ELE-175                 |
 | `backend/src/routes/contracts.ts`                                                | Verträge mit monthly_value-Filter — ELE-175                |
 | `backend/src/db/migrations/0007_pm_trgm.sql` + `.down.sql`                       | GIN-Trigram-Indexe für PM-Schnellsuche — ELE-175           |
+| `backend/src/routes/waste-bin-types.ts`                                          | Tonnentypen-Stammdaten — ELE-178                           |
+| `backend/src/routes/waste-schedules.ts`                                          | Abfuhrpläne + collection_days JSONB — ELE-178              |
+| `backend/src/db/migrations/0008_waste_codes_en.sql` + `.down.sql`                | waste_bin_types.code DE→EN Migration — ELE-178             |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                         |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                         |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                               |
@@ -229,6 +232,8 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/schemas/property-services.ts`                                       | Zod + validateFrequencyDetail (typed JSONB)                |
 | `backend/src/schemas/property-managers.ts`                                       | Zod PropertyManager                                        |
 | `backend/src/schemas/contracts.ts`                                               | Zod Contract + filterContractForActor (monthly_value)      |
+| `backend/src/schemas/waste-bin-types.ts`                                         | Zod WasteBinType + Codes (EN)                              |
+| `backend/src/schemas/waste-schedules.ts`                                         | Zod WasteSchedule + collectionDaysSchema (JSONB-typed)     |
 | `backend/tests/routes/tenants.test.ts`                                           | Tenant-Routes Tests                                        |
 | `backend/tests/routes/users.test.ts`                                             | User-Routes Tests                                          |
 | `backend/tests/routes/service-types.test.ts`                                     | Service-Types-Tests (Color-Validation, In-Use-Block)       |
@@ -240,6 +245,8 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/tests/routes/property-services.test.ts`                                 | Alle 7 Frequenzen + frequency_detail-Validation            |
 | `backend/tests/routes/property-managers.test.ts`                                 | PM-CRUD + Trigram-Suche + IN_USE-Block (Contracts + Props) |
 | `backend/tests/routes/contracts.test.ts`                                         | Contracts + monthly_value-Filter (Role-based)              |
+| `backend/tests/routes/waste-bin-types.test.ts`                                   | Waste-Bin-Types CRUD + IN_USE-Block                        |
+| `backend/tests/routes/waste-schedules.test.ts`                                   | Waste-Schedules + collection_days JSONB (WEEKLY/BIWEEKLY)  |
 | `scripts/linear-ele194-desc.md` / `linear-ele195-desc.md`                        | Issue-Descriptions i18n Folge-Issues                       |
 | `scripts/linear-i18n-mapping.json`                                               | ELE-194/195 Mapping                                        |
 

@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.2.7 | **Stand:** 2026-05-16
+**Version:** 0.2.8 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -60,6 +60,8 @@
 | `backend/src/routes/property-services.ts`          | Leistungsverzeichnis + frequency_detail (ELE-177) |
 | `backend/src/routes/property-managers.ts`          | Hausverwaltungen + pg_trgm-Schnellsuche (ELE-175) |
 | `backend/src/routes/contracts.ts`                  | Verträge + monthly_value-Filter (ELE-175)         |
+| `backend/src/routes/waste-bin-types.ts`            | Tonnentypen-Stammdaten (ELE-178)                  |
+| `backend/src/routes/waste-schedules.ts`            | Abfuhrpläne + collection_days JSONB (ELE-178)     |
 | `backend/src/schemas/tenants.ts`                   | Zod Tenant                                        |
 | `backend/src/schemas/users.ts`                     | Zod User + Passwort-Policy                        |
 | `backend/src/schemas/service-types.ts`             | Zod Service-Type + Hex-Color                      |
@@ -71,6 +73,8 @@
 | `backend/src/schemas/property-services.ts`         | Zod + validateFrequencyDetail                     |
 | `backend/src/schemas/property-managers.ts`         | Zod PropertyManager                               |
 | `backend/src/schemas/contracts.ts`                 | Zod Contract + filterContractForActor             |
+| `backend/src/schemas/waste-bin-types.ts`           | Zod WasteBinType + Codes (EN)                     |
+| `backend/src/schemas/waste-schedules.ts`           | Zod WasteSchedule + collectionDaysSchema          |
 | `backend/src/auth/authorize.ts`                    | requireRole + canActOnUser Helper                 |
 | `backend/tests/routes/tenants.test.ts`             | Tenant-Routes Tests                               |
 | `backend/tests/routes/users.test.ts`               | User-Routes Tests                                 |
@@ -83,6 +87,8 @@
 | `backend/tests/routes/property-services.test.ts`   | frequency_detail-Validation + alle Frequenzen     |
 | `backend/tests/routes/property-managers.test.ts`   | PM-CRUD + Trigram-Suche + IN_USE-Block            |
 | `backend/tests/routes/contracts.test.ts`           | Contracts + monthly_value-Filter + Cross-Tenant   |
+| `backend/tests/routes/waste-bin-types.test.ts`     | Waste-Bin-Types CRUD + IN_USE-Block               |
+| `backend/tests/routes/waste-schedules.test.ts`     | Waste-Schedules + JSONB-Validation                |
 
 ## Komponenten
 

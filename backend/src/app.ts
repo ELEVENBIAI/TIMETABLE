@@ -28,6 +28,8 @@ import { qualificationTypeRoutes } from './routes/qualification-types.js';
 import { serviceTypeRoutes } from './routes/service-types.js';
 import { tenantRoutes } from './routes/tenants.js';
 import { userRoutes } from './routes/users.js';
+import { wasteBinTypeRoutes } from './routes/waste-bin-types.js';
+import { wasteScheduleRoutes } from './routes/waste-schedules.js';
 
 export async function buildApp() {
   // i18next synchron initialisieren (idempotent)
@@ -177,6 +179,8 @@ export async function buildApp() {
   await fastify.register(contractRoutes);
   await fastify.register(propertyRoutes);
   await fastify.register(propertyServiceRoutes);
+  await fastify.register(wasteBinTypeRoutes);
+  await fastify.register(wasteScheduleRoutes);
 
   return fastify;
 }

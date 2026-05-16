@@ -43,5 +43,8 @@
   "invalidSeasonalRange": "Invalid seasonal range (months must be 1..12)",
   "propertyMismatch": "Resource does not belong to the given property",
   "propertyManagerNotFound": "Property manager not found",
-  "contractNotFound": "Contract not found"
+  "contractNotFound": "Contract not found",
+  "wasteBinTypeNotFound": "Waste bin type not found",
+  "wasteScheduleNotFound": "Waste schedule not found",
+  "invalidCollectionDays": "Invalid collection_days for selected frequency"
 }

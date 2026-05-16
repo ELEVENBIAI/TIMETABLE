@@ -1,5 +1,31 @@
 # Changelog — Timetable
 
+## v0.2.8 — 2026-05-16 (ELE-178: Waste-Bin-Types + Waste-Schedules CRUD)
+
+- **ELE-178 done (Backend):** Mülltonnen-Stammdaten + Abfuhrpläne pro Property
+- **Migration 0008:** waste_bin_types.code auf englische Identifier umgestellt
+  (RESTMUELL → RESIDUAL, PAPIER → PAPER, GELBER_SACK → YELLOW_SACK,
+  GELBE_TONNE → YELLOW_BIN, BIOMUELL → BIO, GLAS → GLASS, SPERRMUELL → BULKY,
+  ANDERE → OTHER) — Codebase ist jetzt sprachneutral, UI übersetzt via i18n (ADR-16)
+  - Idempotente UPDATE-Logik + neuer CHECK-Constraint
+  - Pilot-Seed (in 0005) bleibt unverändert; 0008 konvertiert beim Lauf
+- **Waste-Bin-Types** Routes (5 Endpoints):
+  - GET (alle Auth), GET/:id, POST/PUT (ADMIN/PLANNER), DELETE (ADMIN, IN_USE-Check)
+  - Duplicate code → 409 DUPLICATE_CODE
+  - 7 Tests
+- **Waste-Schedules** Routes (5 Endpoints):
+  - GET (mit ?propertyId= Filter), GET/:id, POST/PUT (ADMIN/PLANNER), DELETE (ADMIN/PLANNER)
+  - **`collection_days` JSONB** typed per Zod:
+    - `{ daysOfWeek: [1..7], frequency: 'WEEKLY' | 'BIWEEKLY' }`
+    - BIWEEKLY: genau eines von `evenWeeks` XOR `oddWeeks` → sonst 400 `invalidCollectionDays`
+  - Cross-Tenant-Check für `propertyId` + `wasteBinTypeId`
+  - `location_description` ist Zod-Pflicht (Spec); DB bleibt nullable für Backward-Compat
+  - `latest_put_out` + `earliest_take_in` als TIME für Rauspflicht-/Wegholen-Zeitfenster
+  - 8 Tests
+- Locales erweitert (en+de): `wasteBinTypeNotFound`, `wasteScheduleNotFound`, `invalidCollectionDays`
+- 15 neue Tests (Total **200/200 grün**), TypeScript clean
+- **Frontend deferred** → wandert zu ELE-180
+
 ## v0.2.7 — 2026-05-16 (ELE-175: Property-Managers + Contracts CRUD)
 
 - **ELE-175 done (Backend):** Zwei zusammengehörige Stammdaten-CRUDs
