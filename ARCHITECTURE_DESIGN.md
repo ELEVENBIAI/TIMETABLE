@@ -151,6 +151,8 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                     |
 | `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                       |
 | `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                     |
+| `scripts/linear-tech-debt-issues.mjs`                                            | Bulk-Setup der 6 Tech-Debt-Issues aus Architecture-Review |
+| `scripts/linear-tech-debt-mapping.json`                                          | Mapping TD-A..H → ELE-188..193                            |
 | `scripts/rename-specs-to-ele.mjs`                                                | Einmaliger Rename TT-XX → ELE-XXX im Repo                 |
 | `README.md`                                                                      | Projekt-Setup + Testing-Quickstart                        |
 | `package.json`                                                                   | npm-Workspaces (backend/frontend/e2e), Lint-Staged-Config |

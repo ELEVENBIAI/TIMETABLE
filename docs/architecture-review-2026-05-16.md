@@ -41,18 +41,22 @@
 | 7   | DSGVO-Pre-Pilot-Issue               | ✅ erledigt | Linear ELE-187                                                            |
 | 8   | ARCHITECTURE_DESIGN §9 + ADR-Liste  | ✅ erledigt | ARCHITECTURE_DESIGN.md                                                    |
 
-## Verbliebenes Tech Debt (geplant, nicht in dieser Review umgesetzt)
+## Verbliebenes Tech Debt — als Linear-Issues angelegt
 
-| #   | Was                                | Wann                         | Ablage                           |
-| --- | ---------------------------------- | ---------------------------- | -------------------------------- |
-| A   | JWT-Secret-Rotation-Strategie      | Vor Pilot (Wave 4)           | Issue noch anzulegen, ADR später |
-| B   | Error-Tracking (Sentry o.ä.)       | Wave 3                       | Issue noch anzulegen             |
-| C   | Scoring-Gewichte als ADR           | Vor TT-21 / Wave 3           | ADR-16 wird mit TT-21 angelegt   |
-| D   | Hosting-Provider-Entscheidung      | Wave 4                       | ADR-16 oder ADR-17               |
-| E   | KPI-Baseline für MVP-Erfolg        | Vor Pilot                    | WAVE_DEFINITION.md erweitern     |
-| F   | Sprint-Review-Frequenz             | Sofort entscheidbar          | Operator-Entscheidung            |
-| G   | Datenbankgröße + Cleanup-Strategie | Mit ELE-187 (Retention-Cron) | im DSGVO-Issue                   |
-| H   | CI-Cost-Monitoring                 | Nach 1. Monat GitHub Actions | Operator-Entscheidung            |
+| #   | Linear                                                        | Was                                       | Wave                     | Status                |
+| --- | ------------------------------------------------------------- | ----------------------------------------- | ------------------------ | --------------------- |
+| A   | [ELE-188](https://linear.app/elevenbi/issue/ELE-188)          | JWT-Secret-Rotation-Strategie             | 4 (Pre-Pilot)            | Backlog               |
+| B   | [ELE-189](https://linear.app/elevenbi/issue/ELE-189)          | Error-Tracking (Sentry/GlitchTip/eigenes) | 3                        | Backlog               |
+| C   | [ELE-190](https://linear.app/elevenbi/issue/ELE-190)          | ADR-17 Scoring-Gewichte für Reassignment  | 3 (zusammen mit TT-21)   | Backlog               |
+| D   | [ELE-191](https://linear.app/elevenbi/issue/ELE-191)          | Hosting-Provider-Entscheidung + Cost      | 4 (Pre-Pilot)            | Backlog               |
+| E   | [ELE-192](https://linear.app/elevenbi/issue/ELE-192)          | KPI-Baseline + Messung MVP-Erfolg         | 4 (Pre-Pilot)            | Backlog               |
+| F   | _kein Issue_                                                  | Sprint-Review-Frequenz (alle 2 Wochen?)   | sofort                   | Operator-Entscheidung |
+| G   | Teil von [ELE-187](https://linear.app/elevenbi/issue/ELE-187) | Datenbankgröße + Cleanup-Strategie        | 4 (DSGVO-Retention-Cron) | siehe ELE-187         |
+| H   | [ELE-193](https://linear.app/elevenbi/issue/ELE-193)          | CI-Cost-Monitoring (GitHub Actions)       | nach 1. Production-Monat | Backlog               |
+
+**Mapping in Repo:** `scripts/linear-tech-debt-mapping.json`
+
+Punkt F (Sprint-Review-Frequenz) ist organisatorisch — keine Tech-Debt im engeren Sinn. Operator-Entscheidung. Vorschlag: alle 2 Wochen, gekoppelt an Wave-Meilensteine.
 
 ## Methodische Anmerkung
 

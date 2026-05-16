@@ -1,0 +1,32 @@
+{
+  "TD-A": {
+    "identifier": "ELE-188",
+    "id": "c16668d3-ee6b-45a8-a11a-0ef77d2b7844",
+    "url": "https://linear.app/elevenbi/issue/ELE-188/jwt-secret-rotation-strategie-pre-pilot"
+  },
+  "TD-B": {
+    "identifier": "ELE-189",
+    "id": "8cb15db6-52e5-4b14-9607-5bbda0c76609",
+    "url": "https://linear.app/elevenbi/issue/ELE-189/error-tracking-einrichten-sentry-glitchtip-eigenes"
+  },
+  "TD-C": {
+    "identifier": "ELE-190",
+    "id": "85940891-be07-4204-93b7-a801e5382eec",
+    "url": "https://linear.app/elevenbi/issue/ELE-190/adr-17-scoring-gewichte-fur-reassignment-engine"
+  },
+  "TD-D": {
+    "identifier": "ELE-191",
+    "id": "33fc897a-02c3-4538-b568-3905ff14e486",
+    "url": "https://linear.app/elevenbi/issue/ELE-191/hosting-provider-entscheidung-cost-schatzung"
+  },
+  "TD-E": {
+    "identifier": "ELE-192",
+    "id": "1edd24e0-441b-450b-855e-12085424386f",
+    "url": "https://linear.app/elevenbi/issue/ELE-192/kpi-baseline-messung-mvp-erfolg-definieren"
+  },
+  "TD-H": {
+    "identifier": "ELE-193",
+    "id": "e72b920c-4240-4bdc-9f48-996fd3f1bfe5",
+    "url": "https://linear.app/elevenbi/issue/ELE-193/ci-cost-monitoring-github-actions-free-tier"
+  }
+}
