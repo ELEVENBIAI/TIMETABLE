@@ -1,5 +1,17 @@
 # Changelog — Timetable
 
+## v0.3.3 — 2026-05-16 (ELE-197: ARCHITECTURE_DESIGN.md §4-§6 nachgezogen)
+
+- **ELE-197 done (Doku):** Drei fehlende Sektionen in `ARCHITECTURE_DESIGN.md` ergänzt
+  - **§4 Layer-to-Pipeline Mapping** — Request-Pipeline-Diagramm (HTTPS → Fastify-Hooks → Auth-Chain → Route → Zod → Service → Pool → Postgres), File-Mapping-Tabelle pro Layer, 6-Phasen-Plan-Generator-Flow als Sub-Pipeline
+  - **§5 Failure Mode Analysis** — 12 Failure-Modes mit Trigger / Detection / Mitigation / Offene Lücken; Cross-Links zu ADR-12, ADR-14, ADR-15, ELE-187, ELE-188, ELE-191
+  - **§6 Component Relationships** — Layering-Regeln (erlaubte Dependency-Direction), 7 konkrete Regeln mit Beispielen, Verbotene-Imports-Sektion, Dependency-Diagramm für Plan-Generator
+- §7 Scalability Roadmap + §8 Testing Architecture sind in **ELE-198** (Backlog, später nach Hosting-Entscheidung ELE-191 und Frontend-Bootstrap ELE-180)
+- **Backlog-Issues angelegt:**
+  - **ELE-196** — Reassignment-Engine (Wave 3, Erbe von TT-21). TT-21-Referenz in `specs/ELE-185.md` auf ELE-196 umgeschrieben (kein verwaister Verweis mehr)
+  - **ELE-198** — §7 + §8 (Scalability + Testing-Architecture, Backlog)
+- VERSION 0.3.2 → 0.3.3 (Doku-only Bump, alle DOC_FILES synchron)
+
 ## v0.3.2 — 2026-05-16 (ELE-183 + ELE-186: Schedule-Templates + Absences CRUD)
 
 - **ELE-183 done (Backend):** Schedule-Templates + Template-Entries CRUD

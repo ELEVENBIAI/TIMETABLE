@@ -1,6 +1,6 @@
 # Timetable — Docs Index
 
-**Version:** 0.3.2 | **Stand:** 2026-05-16
+**Version:** 0.3.3 | **Stand:** 2026-05-16
 
 > Alle Dokumente des Projekts kategorisiert.
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.

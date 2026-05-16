@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.3.2 | **Stand:** 2026-05-16
+**Version:** 0.3.3 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -119,6 +119,221 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | EMPLOYEE         | Nur eigenen Plan + Check-in/out                   |
 | PROPERTY_MANAGER | Eigene Objekte (readonly): Wann war wer da?       |
 
+## 4. Layer-to-Pipeline Mapping
+
+Jeder API-Request durchläuft die folgende Pipeline. Cross-Cutting-Concerns (Logging, Locale, Rate-Limit) sind als Fastify-Hooks/Plugins quer eingehängt und nicht Teil der Domain-Schichten.
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  HTTPS-Request (Browser PWA / Mobile)                            │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │  Bearer-Token (JWT, 7d, ADR-09)
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Fastify-Hooks (cross-cutting, app.ts)                           │
+│  ├── onRequest: setInitialLocale()      (lib/locale.ts)          │
+│  ├── @fastify/rate-limit (200/min global, 10/min auth)           │
+│  ├── @fastify/cors                       (env.CORS_ORIGINS)      │
+│  └── onResponse: Pino-Timing-Log         (ADR-14, ADR-15)        │
+└────────────────────────────┬─────────────────────────────────────┘
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Route-PreHandler-Chain (routes/*.ts)                            │
+│  ├── requireAuth       (auth/middleware.ts)                      │
+│  │     - verifyJwt → request.user = { userId, tenantId, role }   │
+│  │     - applyUserLocale() überschreibt Accept-Language          │
+│  └── requireRole(...)  (auth/authorize.ts)                       │
+│        - prüft request.user.role ∈ allowed ∨ isSuperAdmin        │
+└────────────────────────────┬─────────────────────────────────────┘
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Route-Handler (routes/*.ts)                                     │
+│  ├── parseOr400(zodSchema, request.body)  → ValidationError      │
+│  ├── Cross-Tenant-FK-Checks (assertFksInTenant)                  │
+│  └── Business-Call → Service oder direkt Pool                    │
+└────────────────────────────┬─────────────────────────────────────┘
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Service-Layer (services/scheduling/*.ts)                        │
+│  ├── Pure Functions (-pure.ts: conflict-check, frequency-engine, │
+│  │     plan-generator-pure, reassignment-pure) — KEIN DB-Zugriff │
+│  └── DB-Loader (schedule-generator, frequency-engine)            │
+│        - akzeptiert PoolClient als Parameter                     │
+│        - eigene BEGIN/COMMIT/ROLLBACK für Multi-Step             │
+└────────────────────────────┬─────────────────────────────────────┘
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Pool-Wrapper (db/pools.ts)                                      │
+│  ├── ownerPool  → hmservice_owner  (BYPASSRLS, nur Migration)    │
+│  └── appPool    → hmservice_app    (NOBYPASSRLS, alle Requests)  │
+│        - SET LOCAL app.current_tenant_id = $1 vor jeder Query    │
+└────────────────────────────┬─────────────────────────────────────┘
+                             ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  PostgreSQL 16 (RLS-Enforcement)                                 │
+│  ├── 26 Tabellen mit `tenant_id = current_setting(...)`-Policy   │
+│  ├── Triggers: fn_set_updated_at()                               │
+│  └── AUDIT_LOG: Append-Only, RLS, eigener INSERT-Trigger         │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### File-Mapping pro Layer
+
+| Layer           | Verantwortung                            | Konkrete Files                                                                                       |
+| --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| App-Bootstrap   | Fastify, Hooks, Error-Handler            | `src/app.ts`, `src/server.ts`, `src/config.ts`                                                       |
+| Cross-Cutting   | Logging, Locale, i18n                    | `src/lib/{i18n,locale,log-sanitize,errors}.ts`                                                       |
+| Auth            | JWT-Verify, Rollen-Check, Self-Reporting | `src/auth/{jwt,middleware,authorize,password,roles}.ts`                                              |
+| Routing         | HTTP-Endpoints, Schema-Doku              | `src/routes/*.ts` (23 Module)                                                                        |
+| Validation      | Zod-Schemas, Cross-Field-Checks          | `src/schemas/*.ts` (15 Module)                                                                       |
+| Services (Pure) | Domain-Logik ohne Seiteneffekte          | `src/services/scheduling/{conflict-check,frequency-engine,plan-generator-pure,reassignment-pure}.ts` |
+| Services (DB)   | Transaktionale Multi-Step-Operationen    | `src/services/scheduling/{schedule-generator,reassignment-engine}.ts`                                |
+| Persistence     | Pool-Management, RLS-Enforcement         | `src/db/pools.ts`, `src/db/migrate.ts`                                                               |
+| Migrations      | DDL, RLS-Policies, GRANTs                | `src/db/migrations/*.sql`                                                                            |
+| i18n-Resources  | Locale-Strings (en, de)                  | `src/locales/{en,de}/*.json` (5 Namespaces)                                                          |
+
+### Plan-Generator: 6-Phasen-Flow als Pipeline (Cross-Link: `services/scheduling/schedule-generator.ts`, ELE-185)
+
+```
+POST /api/schedules/generate
+  │
+  ├─ requireAuth + requireRole(ADMIN, PLANNER)
+  ├─ parseOr400(generateScheduleSchema, body)  → { templateId, weekStart, weekNumber, year }
+  │
+  └─ BEGIN TRANSACTION
+       │
+       ├─ Phase 1: INSERT schedules (status=DRAFT, generation_method='FROM_TEMPLATE')
+       │                          ↓ schedule_id
+       ├─ Phase 2: Template-Entries laden, jedes → schedule_entries
+       │   ├─ 3a: frequency-engine.getDueServicesForWeek()
+       │   │       - matchet fällige Property-Services gegen Template-Entries
+       │   │       - kein Match → NO_TEMPLATE_MATCH-Warning
+       │   └─ 3b: frequency-engine.getDueWasteSchedulesForWeek()
+       │           - 2 Entries pro Termin (put-out -1, take-in +1)
+       │           - erster aktiver Mitarbeiter → Reassignment-Engine später
+       │
+       ├─ Phase 4: Absences-Check → status=REASSIGNMENT_NEEDED + ABSENCE-Warning
+       ├─ Phase 5: Availability-Check → OUTSIDE_AVAILABILITY-Warning
+       └─ Phase 6: Overload + Quali-Expiry → OVERLOAD + QUALIFICATION_EXPIRY-Warnings
+       │
+       └─ Bei JEDEM Fehler → ROLLBACK (kein partial state)
+     COMMIT
+       │
+       └─ Response 201: { schedule, entries[], warnings[], stats }
+```
+
+Performance-Budget: gesamte 6-Phasen-Sequenz < 5s für Pilot-Tenant (<50 Entries), siehe ADR-14.
+
+## 5. Failure Mode Analysis
+
+Pro kritische Komponente: Was kann brechen, wer merkt es, was ist die Mitigation. Cross-Links zu ADR-12 (Backup, Feature-Flags, Graceful Degradation) und ADR-15 (Logging-Schema).
+
+| #   | Failure                                                                    | Trigger                                                                    | Detection                                                     | Aktuelle Mitigation                                                                               | Offene Lücken                                                              |
+| --- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 1   | **Postgres komplett down**                                                 | Crash, OOM, Disk-Full                                                      | Connection-Timeout (10s, ADR-14) → 503 von allen Routes       | Health-Check `/api/health/db` failt, Pino-Error-Log. MAINTENANCE_MODE-Flag (ADR-12) als Notbremse | Kein Auto-Restart, kein Replica-Failover (Wave 5, siehe ELE-191 Hosting)   |
+| 2   | **Pool-Exhaustion**                                                        | Long-running Queries, Connection-Leak                                      | pg Pool wirft `acquireTimeout`                                | Fastify connectionTimeout = 10s, Rate-Limit 200/min global                                        | Kein Pool-Size-Monitoring, kein pg-Bouncer                                 |
+| 3   | **JWT-Secret-Rotation falsch deployt**                                     | Neuer Secret aktiv, alte Tokens noch in Umlauf                             | User bekommt 401 INVALID_TOKEN bei jedem Request              | Bei nächstem Login → frischer Token                                                               | **Rotation-Strategie nicht definiert** → ELE-188                           |
+| 4   | **Plan-Generator wirft mid-Transaction**                                   | Inkonsistente Stammdaten (z.B. Employee gelöscht zwischen Read und Insert) | Try/catch → ROLLBACK + 500                                    | Komplette TX wird zurückgerollt, kein partial schedule                                            | Kein Retry, kein Idempotency-Key — User muss manuell neu starten           |
+| 5   | **Tenant-Scoping vergessen in neuer Route**                                | Entwickler vergisst `WHERE tenant_id = $1`                                 | RLS-Layer fängt es ab (POSTGRES setzt LEERE-Resultset zurück) | `hmservice_app` ist NOBYPASSRLS (ADR-08)                                                          | Bei BYPASSRLS-Fehler in Migrationen kein Schutz — Migration-Review-Pflicht |
+| 6   | **i18n-Key fehlt für eine Locale**                                         | Neuer messageKey in Code, aber locale-File nicht synchron                  | i18next Fallback → returnt den Key als String                 | Default-Fallback `en` greift                                                                      | Keine automatische Sync-Validierung — wird Bug erst nach Deploy gefunden   |
+| 7   | **date-fns liefert falsche ISO-KW über Jahreswechsel**                     | Plan-Gen für KW 1/53 grenzwertig                                           | Wäre stillschweigender Bug — kein direkter Error              | Tests in `frequency-engine.test.ts` decken Jahreswechsel ab (23 Cases)                            | Kein Property-Based-Testing für alle Datums-Grenzfälle                     |
+| 8   | **Doppel-Generierung gleiche Woche**                                       | Race-Condition zweier User                                                 | UNIQUE(tenant_id, week_start) → DB-Constraint-Violation       | 409 DUPLICATE_WEEK, sauberer Error                                                                | —                                                                          |
+| 9   | **Absence-Side-Effect kollidiert mit gleichzeitiger Schedule-Bearbeitung** | User A löscht Absence, User B publisht Schedule parallel                   | Wird durch TX-Isolation (Read Committed Default) zur Race     | Kein Optimistic Locking                                                                           | Optimistic-Locking via `updated_at`-Check noch nicht implementiert         |
+| 10  | **OpenRouteService API down (Wave 5)**                                     | Externer Dienst nicht erreichbar                                           | Wave-5-Code: try/catch → Fallback auf Distance-Cache          | Routing-Provider als Feature-Flag (`ROUTING_PROVIDER` in ADR-12)                                  | Implementation steht noch aus (Wave 5)                                     |
+| 11  | **Audit-Log voll**                                                         | DSGVO-Lesezugriffe akkumulieren                                            | Disk-Space-Warning auf DB-Host                                | Append-Only-Tabelle, manuelle Rotation                                                            | Keine automatische Archivierung → ELE-187 (DSGVO-Workflows)                |
+| 12  | **Rate-Limit zu aggressiv**                                                | Pilot-User mit Bulk-Imports                                                | 429 RATE_LIMITED                                              | Konstanten in `lib/config.js` SSoT, per-Tenant override fehlt                                     | Per-User-Rate-Limit nicht möglich (nur per-IP)                             |
+
+**Querverweise:**
+
+- Logging aller obigen Failures: strukturiert via Pino mit `requestId/tenantId/userId` (ADR-15)
+- Feature-Flag-basierte Notbremsen: `MAINTENANCE_MODE`, `PLAN_GENERATOR_ENABLED` (ADR-12, `lib/config.js`)
+- Performance-Trigger: API p95 < 200ms überwacht, sonst Pool-Exhaustion-Verdacht (ADR-14)
+
+## 6. Component Relationships
+
+Layering-Regeln definieren die erlaubte Dependency-Richtung. Verletzungen führen zu zyklischen Imports oder testbarkeitskillenden Side-Effects (z.B. Pure Function importiert `pg` → kann nicht mehr ohne DB getestet werden).
+
+### Erlaubte Dependency-Richtung
+
+```
+┌───────────────────────────────────────────────────────────────────┐
+│ Bootstrap (app.ts, server.ts)                                     │
+│   darf importieren: alles unten                                   │
+└────────────────────────────┬──────────────────────────────────────┘
+                             ▼
+┌───────────────────────────────────────────────────────────────────┐
+│ Routes (routes/*.ts)                                              │
+│   darf: schemas, auth, services, db/pools, lib                    │
+│   darf NICHT: andere routes/* (würde Layering brechen)            │
+└────────────────────────────┬──────────────────────────────────────┘
+                             ▼
+┌───────────────────────────────────────────────────────────────────┐
+│ Services-DB (services/.../schedule-generator.ts,                  │
+│              reassignment-engine.ts)                              │
+│   darf: services/.../-pure, schemas, db/pools, lib                │
+│   darf NICHT: routes, auth, fastify                               │
+└────────────────────────────┬──────────────────────────────────────┘
+                             ▼
+┌───────────────────────────────────────────────────────────────────┐
+│ Services-Pure (services/.../conflict-check.ts,                    │
+│                frequency-engine.ts, plan-generator-pure.ts,       │
+│                reassignment-pure.ts)                              │
+│   darf: nur date-fns, eigene Types                                │
+│   darf NICHT: pg, fastify, db/*, routes, auth, schemas/Network    │
+└────────────────────────────┬──────────────────────────────────────┘
+                             ▼
+┌───────────────────────────────────────────────────────────────────┐
+│ Lib (lib/errors, lib/i18n, lib/locale, lib/log-sanitize)          │
+│   Leaf-Layer — keine eigenen Imports aus Domain                   │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+### Konkrete Regeln (mit Beispielen)
+
+| #   | Regel                                                                  | Beispiel ✓                                                                 | Beispiel ✗                                                                                           |
+| --- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1   | **Routes importieren keine anderen Routes**                            | `routes/absences.ts` ruft Services, nicht `routes/schedules.ts`            | `routes/absences.ts` importiert Funktion aus `routes/schedule-entries.ts`                            |
+| 2   | **Pure Functions importieren niemals `pg` oder `fastify`**             | `conflict-check.ts` nutzt nur `date-fns` + lokale Types                    | `frequency-engine.ts` macht direkt `client.query(...)` (gehört in DB-Loader-Function im selben File) |
+| 3   | **DB-Loader-Functions akzeptieren `client: PoolClient` als Parameter** | `getDueServicesForWeek(client, tenantId, weekStart)`                       | `getDueServicesForWeek(tenantId, weekStart)` ruft selbst `pool.connect()`                            |
+| 4   | **Cross-Tenant-FK-Checks sind im Route-Handler, nicht im Service**     | `assertFksInTenant()` in `routes/template-entries.ts` vor dem Service-Call | Service checkt selbst — würde RLS-Tests brechen                                                      |
+| 5   | **Locale-Resolution nur in `lib/locale.ts` + `auth/middleware.ts`**    | `applyUserLocale(request, payload.locale)`                                 | Route liest direkt `request.headers['accept-language']`                                              |
+| 6   | **Error-Klassen nur in `lib/errors.ts` + `auth/authorize.ts`**         | `throw new NotFoundError('errors.absenceNotFound')`                        | Route definiert eigene `class FooError extends Error`                                                |
+| 7   | **Schemas (Zod) sind reine Type-/Validation-Definitionen**             | `createAbsenceSchema = z.object({...})`                                    | Schema-File importiert `pg` für Type-Erweiterung                                                     |
+
+### Verbotene Imports (Beispiele, die NIE auftauchen dürfen)
+
+```typescript
+// ✗ Pure Function importiert pg
+// services/scheduling/conflict-check.ts
+import type { PoolClient } from 'pg'; // ← VERBOTEN
+
+// ✗ Service importiert Fastify-Request
+// services/scheduling/schedule-generator.ts
+import type { FastifyRequest } from 'fastify'; // ← VERBOTEN
+
+// ✗ Route importiert andere Route
+// routes/absences.ts
+import { scheduleEntryRoutes } from './schedule-entries.js'; // ← VERBOTEN
+
+// ✗ Schema importiert DB-Pool
+// schemas/employees.ts
+import { getOwnerPool } from '../db/pools.js'; // ← VERBOTEN
+```
+
+### Dependency-Diagramm Plan-Generator (ELE-185)
+
+```
+routes/schedule-generator.ts
+  └─ services/scheduling/schedule-generator.ts (DB-Loader, TX-Manager)
+       ├─ services/scheduling/plan-generator-pure.ts (Pure)
+       ├─ services/scheduling/frequency-engine.ts (Pure + DB-Loader)
+       │    └─ services/scheduling/frequency-engine pure helpers
+       ├─ db/pools.ts (Pool-Wrapper)
+       └─ schemas/schedule-generator.ts (Warning-Types)
+```
+
+Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith mit klaren Layern) wird durch diese Regeln operationalisiert.
+
 ## 9. Referenzen (alle Dateien)
 
 > **Pflicht:** Jede neue Datei sofort hier eintragen — vor dem git commit.
@@ -151,6 +366,9 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar                    |
 | `docs/ADR-16-i18n-strategy.md`                                                   | i18n-Strategie (i18next, BCP 47, en+de)                        |
 | `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                                 |
+| `specs/ELE-196.md`                                                               | Reassignment-Engine (Wave 3, ehemals TT-21)                    |
+| `specs/ELE-197.md`                                                               | ARCHITECTURE_DESIGN.md §4-§6 Backfill                          |
+| `specs/ELE-198.md`                                                               | ARCHITECTURE_DESIGN.md §7+§8 Backfill (Backlog)                |
 | `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                          |
 | `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                            |
 | `scripts/linear-mvp-mapping.json`                                                | Mapping TT-XX → ELE-XXX (Audit-Trail)                          |
