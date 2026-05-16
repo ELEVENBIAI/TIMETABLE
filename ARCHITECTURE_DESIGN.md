@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.2.9 | **Stand:** 2026-05-16
+**Version:** 0.3.0 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -224,6 +224,10 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/routes/schedules.ts`                                                | Wochenpläne + Publish-Endpoint — ELE-179                       |
 | `backend/src/routes/schedule-entries.ts`                                         | Entries + Bulk + Move + Time-Conflict — ELE-179                |
 | `backend/src/services/scheduling/conflict-check.ts`                              | Pure Funcs (entriesOverlap, isValidStatusTransition) — ELE-179 |
+| `backend/src/services/scheduling/frequency-engine.ts`                            | Frequenz-Engine + DB-Loader (alle 7 Freq + Saison) — ELE-184   |
+| `backend/src/routes/scheduling-debug.ts`                                         | GET /api/due-services Debug-Endpoint — ELE-184                 |
+| `backend/tests/services/scheduling/frequency-engine.test.ts`                     | Pure-Function-Tests (23 Cases, 100% Coverage) — ELE-184        |
+| `backend/tests/routes/scheduling-debug.test.ts`                                  | Debug-Route Tests — ELE-184                                    |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                             |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                             |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                                   |

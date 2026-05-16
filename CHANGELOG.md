@@ -1,5 +1,29 @@
 # Changelog — Timetable
 
+## v0.3.0 — 2026-05-16 (ELE-184: Frequenz-Engine)
+
+- **ELE-184 done:** Hirn hinter der späteren Wochenplan-Generierung
+- **Pure-Function-Service** `backend/src/services/scheduling/frequency-engine.ts`:
+  - `isInSeason(month, start, end)` — Saison-Check mit Wrap-Around (z.B. Nov–Mär)
+  - `getDueDatesInWeek(propertyService, weekStart)` — alle Tage in einer KW, an denen ein Service fällig ist
+  - `isServiceDueInWeek(propertyService, weekStart)` — boolean-Shortcut
+  - `getWasteCollectionsInWeek(wasteSchedule, weekStart)` — Abfuhrtermine + automatische Berechnung von `putOutDate` (-1) + `takeInDate` (+1)
+- Unterstützt alle 7 Frequenzen aus `property_services.frequency`:
+  - WEEKLY (dayOfWeek/weekdays)
+  - BIWEEKLY (oddWeek-Flag, ISO-KW gerade/ungerade)
+  - MONTHLY (dayOfMonth ODER weekOfMonth+dayOfWeek = "1. Donnerstag im Monat")
+  - QUARTERLY / BIANNUAL / ANNUAL (default-Monate, override via `months: number[]`)
+  - ON_DEMAND (immer leer — wird nicht automatisch eingeplant)
+- Saisonalitäts-Wrap-Around per Tag (Service kann während der Woche Saison wechseln)
+- **DB-Loader** `getDueServicesForWeek` + `getDueWasteSchedulesForWeek` — DB-Query + Pure-Function-Filter
+- **Debug-Endpoint** `GET /api/due-services?weekStart=YYYY-MM-DD` (ADMIN/PLANNER):
+  - Liefert was in der Woche fällig wäre, ohne Schedule-Entries zu erzeugen
+  - Pre-View für Planer vor dem späteren Plan-Generator (ELE-185)
+- date-fns als neue Dependency (ISO-KW, Monatsarithmetik, ADR-05)
+- 26 neue Tests (23 Pure + 3 Route), Total **261/261 grün**
+- **Coverage** auf `src/services/scheduling/`: **100% Statements, 100% Funcs, 93.82% Branches** — übertrifft 90%-AC
+- TypeScript clean
+
 ## v0.2.9 — 2026-05-16 (ELE-179: Schedules + Schedule-Entries CRUD)
 
 - **ELE-179 done (Backend):** Die zentrale Wochenplan-Datenstruktur
