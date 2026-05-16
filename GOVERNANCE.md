@@ -1,6 +1,6 @@
 # Timetable — Governance
 
-**Version:** 0.1.1 | **Stand:** 2026-05-16
+**Version:** 0.1.5 | **Stand:** 2026-05-16
 
 ## Entwicklungs-Workflow
 

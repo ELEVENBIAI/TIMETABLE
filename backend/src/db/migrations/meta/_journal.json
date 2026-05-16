@@ -8,6 +8,34 @@
       "when": 1747353600000,
       "tag": "0001_schicht1",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1747440000000,
+      "tag": "0002_schicht2",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747440100000,
+      "tag": "0003_schicht3",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1747440200000,
+      "tag": "0004_schicht4",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1747440300000,
+      "tag": "0005_schicht5",
+      "breakpoints": true
     }
   ]
 }

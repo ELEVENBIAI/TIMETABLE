@@ -1,5 +1,30 @@
 # Changelog — Timetable
 
+## v0.1.5 — 2026-05-16 (ELE-165..168: DB-Schichten 2-5 + Pilot-Seed)
+
+- **ELE-165 done:** Schicht 2 — Fähigkeiten (5 Tabellen)
+  - `qualification_types`, `equipment_types`, `employee_qualifications` (M:N),
+    `employee_equipment` (M:N), `employee_availability`
+  - CHECK-Constraints: equipment_types.hourly_rate_factor 0.30-2.00, day_of_week 1-7,
+    available_from < available_until
+- **ELE-166 done:** Schicht 3 — Leistungen + Müllabfuhr (3 Tabellen)
+  - `property_services` (Leistungsverzeichnis mit Frequenz + Saison),
+    `waste_bin_types` (Restmüll/Papier/Gelb/Bio/Glas/Sperrmüll),
+    `waste_schedules` (Abfuhrpläne pro Objekt)
+- **ELE-167 done:** Schicht 4 — Planung (6 Tabellen)
+  - `schedule_templates` + `template_entries` — Basis-Wochen
+  - `schedules` + `schedule_entries` — konkrete Wochenpläne (DRAFT/PUBLISHED/ARCHIVED)
+  - `absence_records` — Krankheit/Urlaub
+  - `contingency_rules` — Vordefinierte Vertretungen (CK_NOT_SELF)
+- **ELE-168 done:** Schicht 5 — Ausführung + Pilot-Seed (2 Tabellen + Seed)
+  - `time_logs` — Ist-Zeiterfassung mit GPS
+  - `reassignment_log` — KI-Vertretungsvorschläge mit Confidence
+  - **Pilot-Seed:** 1 Tenant, 6 Users, 4 Employees (Daniel/Anna/Gabi/Jürgen),
+    9 Service-Types, 5 Qualifications, 9 Equipment-Types, 6 Waste-Bin-Types, 4 Properties
+- 16 zusätzliche Backend-Tests (insgesamt 41 grün)
+- `db:check` aktualisiert auf 26 Tabellen
+- Test-Setup: initial-cleanDb nach Migration (Pilot-Seed kollidiert sonst mit Fixtures)
+
 ## v0.1.1 — 2026-05-16 (ELE-164: DB-Schicht 1 + AUDIT_LOG)
 
 - **ELE-164 done:** PostgreSQL 16 mit RLS Multi-Tenancy, 10 Schicht-1-Tabellen produktiv

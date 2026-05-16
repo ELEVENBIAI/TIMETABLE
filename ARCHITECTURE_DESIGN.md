@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.1.1 | **Stand:** 2026-05-16
+**Version:** 0.1.5 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -159,6 +159,13 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/db/init/03-functions.sql`                                           | fn_set_updated_at() Trigger-Funktion                      |
 | `backend/src/db/migrations/0001_schicht1.sql`                                    | Schicht-1: 10 Tabellen + RLS + Indexes + GRANTs           |
 | `backend/src/db/migrations/0001_schicht1.down.sql`                               | Rollback Schicht-1                                        |
+| `backend/src/db/migrations/0002_schicht2.sql` + `.down.sql`                      | Schicht-2: Fähigkeiten (5 Tabellen)                       |
+| `backend/src/db/migrations/0003_schicht3.sql` + `.down.sql`                      | Schicht-3: Leistungen + Waste (3 Tabellen)                |
+| `backend/src/db/migrations/0004_schicht4.sql` + `.down.sql`                      | Schicht-4: Planung (6 Tabellen)                           |
+| `backend/src/db/migrations/0005_schicht5.sql` + `.down.sql`                      | Schicht-5: Ausführung (2 Tabellen) + Pilot-Tenant-Seed    |
+| `backend/tests/db/schichten2-5.test.ts`                                          | 16 Tests für Schichten 2-5                                |
+| `backend/src/db/scripts/db-check.mjs`                                            | Health-Check (26 Tabellen, RLS, AUDIT_LOG, Extensions)    |
+| `scripts/setup-dev-db.mjs`                                                       | Einmaliger Setup persistente Dev-DB im eleven_crm_db      |
 | `backend/src/db/migrations/meta/_journal.json`                                   | Drizzle Migration-Tracking                                |
 | `backend/src/db/migrate.ts`                                                      | Migration-Runner (drizzle-orm/migrator)                   |
 | `backend/src/db/schema.ts`                                                       | Drizzle-Schema-Stub (Drizzle-Kit-Kompatibilität)          |

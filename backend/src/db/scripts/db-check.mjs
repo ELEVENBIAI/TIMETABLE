@@ -42,25 +42,57 @@ async function expect(label, query, expected) {
 
 let allOk = true;
 
-console.log('[db-check] Schicht-1-Tabellen…');
+const ALL_TABLES = [
+  // Schicht 1
+  'tenants',
+  'users',
+  'employees',
+  'properties',
+  'property_zones',
+  'property_managers',
+  'contracts',
+  'regions',
+  'service_types',
+  'audit_log',
+  // Schicht 2
+  'qualification_types',
+  'equipment_types',
+  'employee_qualifications',
+  'employee_equipment',
+  'employee_availability',
+  // Schicht 3
+  'property_services',
+  'waste_bin_types',
+  'waste_schedules',
+  // Schicht 4
+  'schedule_templates',
+  'template_entries',
+  'schedules',
+  'schedule_entries',
+  'absence_records',
+  'contingency_rules',
+  // Schicht 5
+  'time_logs',
+  'reassignment_log',
+];
+const tableList = ALL_TABLES.map((t) => `'${t}'`).join(',');
+
+console.log('[db-check] Schichten 1-5 Tabellen…');
 allOk &= await expect(
-  '10 Tabellen erwartet',
+  `${ALL_TABLES.length} Tabellen erwartet`,
   `SELECT count(*)::text as value FROM pg_tables
-   WHERE schemaname = 'public'
-     AND tablename IN ('tenants','users','employees','properties','property_zones',
-                       'property_managers','contracts','regions','service_types','audit_log')`,
-  '10'
+   WHERE schemaname = 'public' AND tablename IN (${tableList})`,
+  String(ALL_TABLES.length)
 );
 
 console.log('\n[db-check] RLS-Status…');
 allOk &= await expect(
-  '10 Tabellen mit RLS',
+  `${ALL_TABLES.length} Tabellen mit RLS`,
   `SELECT count(*)::text as value FROM pg_tables t
    JOIN pg_class c ON c.relname = t.tablename
    WHERE t.schemaname = 'public' AND c.relrowsecurity = true
-     AND t.tablename IN ('tenants','users','employees','properties','property_zones',
-                         'property_managers','contracts','regions','service_types','audit_log')`,
-  '10'
+     AND t.tablename IN (${tableList})`,
+  String(ALL_TABLES.length)
 );
 
 console.log('\n[db-check] DB-Rollen…');

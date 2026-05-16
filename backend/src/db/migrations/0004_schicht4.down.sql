@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS contingency_rules CASCADE;
+DROP TABLE IF EXISTS absence_records CASCADE;
+DROP TABLE IF EXISTS schedule_entries CASCADE;
+DROP TABLE IF EXISTS schedules CASCADE;
+DROP TABLE IF EXISTS template_entries CASCADE;
+DROP TABLE IF EXISTS schedule_templates CASCADE;

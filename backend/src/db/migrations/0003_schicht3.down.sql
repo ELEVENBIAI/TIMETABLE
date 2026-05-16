@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS waste_schedules CASCADE;
+DROP TABLE IF EXISTS waste_bin_types CASCADE;
+DROP TABLE IF EXISTS property_services CASCADE;

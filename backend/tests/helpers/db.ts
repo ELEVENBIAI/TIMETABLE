@@ -42,6 +42,22 @@ export async function startTestDb(): Promise<void> {
   const db = drizzle(ownerPool);
   await migrate(db, { migrationsFolder: MIGRATIONS_DIR });
 
+  // Migration 0005 enthält Pilot-Seed — in Tests wollen wir eine leere DB als Startpunkt.
+  // cleanDb() wird vor jedem Test in afterEach() aufgerufen, aber der erste Test sieht
+  // den Seed sonst. Initial-Cleanup:
+  await ownerPool.query(`
+    TRUNCATE TABLE
+      reassignment_log, time_logs,
+      contingency_rules, absence_records, schedule_entries, schedules,
+      template_entries, schedule_templates,
+      waste_schedules, waste_bin_types, property_services,
+      employee_availability, employee_equipment, employee_qualifications,
+      equipment_types, qualification_types,
+      audit_log, service_types, property_zones, properties, contracts,
+      property_managers, employees, regions, users, tenants
+    RESTART IDENTITY CASCADE;
+  `);
+
   // App-Pool mit App-Rolle (NOBYPASSRLS)
   const host = container.getHost();
   const port = container.getMappedPort(5432);
@@ -85,10 +101,17 @@ export function getConnectionUri(): string {
 }
 
 // Cleanup zwischen Tests: TRUNCATE alle Tabellen außer __drizzle_migrations
+// Schicht 5 → 4 → 3 → 2 → 1 (CASCADE räumt FK-Abhängigkeiten ab)
 export async function cleanDb(): Promise<void> {
   if (!ownerPool) return;
   await ownerPool.query(`
     TRUNCATE TABLE
+      reassignment_log, time_logs,
+      contingency_rules, absence_records, schedule_entries, schedules,
+      template_entries, schedule_templates,
+      waste_schedules, waste_bin_types, property_services,
+      employee_availability, employee_equipment, employee_qualifications,
+      equipment_types, qualification_types,
       audit_log, service_types, property_zones, properties, contracts,
       property_managers, employees, regions, users, tenants
     RESTART IDENTITY CASCADE;
