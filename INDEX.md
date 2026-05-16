@@ -16,13 +16,15 @@
 
 ## Governance
 
-| Datei                    | Zweck                        |
-| ------------------------ | ---------------------------- |
-| `GOVERNANCE.md`          | Entwicklungs-Prozess, Regeln |
-| `DEVELOPMENT_PROCESS.md` | Kurz-Verweis auf Governance  |
-| `SECURITY.md`            | Security-Policy, DSGVO       |
-| `CHANGELOG.md`           | Version-History              |
-| `specs/TEMPLATE.md`      | Story-Template               |
+| Datei                    | Zweck                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| `GOVERNANCE.md`          | Entwicklungs-Prozess, Regeln                                                              |
+| `DEVELOPMENT_PROCESS.md` | Kurz-Verweis auf Governance                                                               |
+| `SECURITY.md`            | Security-Policy, DSGVO                                                                    |
+| `CHANGELOG.md`           | Version-History                                                                           |
+| `specs/TEMPLATE.md`      | Story-Template                                                                            |
+| `PRODUCT.md`             | Frontend-Designkontext (impeccable-Pflichtfile): Users, Brand, Tone, Anti-References      |
+| `DESIGN.md`              | Stitch-Format Design-System: Tokens + Colors, Typography, Elevation, Components, Do/Don't |
 
 ## ADRs / Strategie-Dokumente
 
