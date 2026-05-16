@@ -1,0 +1,132 @@
+# DB-Schicht 1 — Grunddaten + RLS-Setup
+
+> **Issue:** TT-01a | **Erstellt:** 2026-05-16 | **Status:** Draft
+
+## Agent-Pattern
+
+- [x] **Solo** — abgegrenzte Schicht-1-Tabellen, klare Reihenfolge
+- [ ] Subagent
+- [ ] Agent-Team
+- [ ] Parallel-Subagents
+
+**Gewähltes Pattern:** Solo
+**Begründung:** Eine klar abgegrenzte Schema-Ebene (8 Tabellen), kann in einer Session umgesetzt werden. Keine parallele Komponenten-Arbeit nötig.
+**Team-Komposition:** n/a
+
+---
+
+## Why
+
+Datenmodell ist die absolute Grundlage. Ohne Schicht-1-Stammdaten (Tenants, Users, Employees, Properties, Property Managers, Contracts, Regions, Service Types, Property Zones) kann nichts anderes aufgesetzt werden. RLS muss von Tag 1 stehen, sonst sind alle nachfolgenden Sicherheits-Annahmen falsch.
+
+## What
+
+PostgreSQL 16 mit RLS Multi-Tenancy, 9 Schicht-1-Tabellen + USERS, zwei DB-Rollen (`hmservice_owner`, `hmservice_app`), Extensions, Trigger-Funktionen, Indexes.
+
+## Constraints
+
+### Must
+- PostgreSQL 16+ (Docker-Compose)
+- 9 Tabellen: TENANTS, USERS, EMPLOYEES, PROPERTIES, PROPERTY_ZONES, PROPERTY_MANAGERS, CONTRACTS, REGIONS, SERVICE_TYPES
+- RLS auf allen Tabellen mit `TENANT_ID = current_setting('app.current_tenant_id', true)::uuid`
+- DB-Rollen: `hmservice_owner` (BYPASSRLS), `hmservice_app` (NOBYPASSRLS)
+- Extensions: pgcrypto, pg_trgm, cube, earthdistance
+- Trigger `fn_set_updated_at()` auf allen Tabellen mit UPDATED_AT
+- Soft-Delete-Pattern: IS_DELETED + DELETED_AT
+- Audit: CREATED_BY, UPDATED_BY, CREATED_AT, UPDATED_AT
+- Partial Indexes mit `WHERE IS_DELETED = FALSE`
+- CHECK-Constraint für USERS.ROLE (siehe `docs/ADR-09-users-table-and-roles.md`)
+
+### Must Not
+- Keine Schicht-2/3/4/5-Tabellen in diesem Issue
+- Keine Seed-Daten (kommt in TT-01e)
+- Keine Auth-Logik (kommt in TT-02)
+- Keine ORM-Migration-Tools — direkt `schema.sql`
+
+### Out of Scope
+- Drizzle-ORM-Setup (kommt in TT-02)
+- Backup-Strategie
+- Performance-Tuning über Defaults hinaus
+
+## Current State
+
+**Relevante Dateien:** keine — Greenfield.
+
+**Bestehende Patterns:**
+- Datenmodell-Spec: `developer_input/DATENMODELL_Erklaerung_Stundenplan.md`
+- Feature-Spec SQL: `developer_input/FEATURE_SPEC_Stundenplan_Einsatzplanung.md`
+- USERS + Rollen: `docs/ADR-09-users-table-and-roles.md`
+
+**Architektur-Dimensionen:**
+- Security (RLS, DB-Rollen, USERS-PW-Hash)
+- Data Integrity (CHECK-Constraints, FKs)
+- Privacy/DSGVO (Audit-Felder)
+
+## Tasks
+
+### T0: Prozesskatalog-Check
+- [ ] `developer_input/DATENMODELL_Erklaerung_Stundenplan.md` Schicht 1 vollständig lesen
+- [ ] `docs/ADR-09` USERS-Tabelle einarbeiten
+
+### T1: Docker-Compose + DB-Init-Setup
+- [ ] `docker-compose.yml` mit PostgreSQL 16
+- [ ] `backend/src/db/init/01-extensions.sql` (pgcrypto, pg_trgm, cube, earthdistance)
+- [ ] `backend/src/db/init/02-roles.sql` (hmservice_owner BYPASSRLS, hmservice_app NOBYPASSRLS)
+- [ ] `backend/src/db/init/03-functions.sql` (`fn_set_updated_at()`)
+- Verify: `docker compose up -d && psql -U hmservice_owner -c '\du'` zeigt beide Rollen
+
+### T2: Schicht-1-Tabellen anlegen
+- [ ] `backend/src/db/schema/01-schicht1.sql` mit allen 9 Tabellen
+- [ ] FK-Reihenfolge: TENANTS → USERS, REGIONS → EMPLOYEES → PROPERTY_MANAGERS → CONTRACTS → PROPERTIES → PROPERTY_ZONES, SERVICE_TYPES
+- [ ] Alle UPDATED_AT-Trigger registrieren
+- [ ] Partial Indexes auf häufige Queries (TENANT_ID, EMAIL, CITY, LAT/LNG)
+- Verify: `\dt` zeigt 9 Tabellen + `\d users` zeigt CHECK-Constraint auf ROLE
+
+### T3: RLS-Policies
+- [ ] Pro Tabelle: `ALTER TABLE … ENABLE ROW LEVEL SECURITY;`
+- [ ] Pro Tabelle: `CREATE POLICY tenant_isolation ON … USING (TENANT_ID = current_setting('app.current_tenant_id', true)::uuid);`
+- [ ] USERS-Policy mit Super-Admin-Bypass (siehe ADR-09)
+- [ ] GRANT auf hmservice_app: SELECT/INSERT/UPDATE/DELETE auf alle 9 Tabellen
+- Verify: Test-Query mit `SET ROLE hmservice_app; SET app.current_tenant_id = '<tenant-a>'; SELECT … FROM PROPERTIES;` → nur Tenant-A-Daten
+
+### T4: db-reset.sh + db-check.sh
+- [ ] `backend/src/db/scripts/db-reset.sh` (DROP DATABASE + Re-Create + Schema)
+- [ ] `backend/src/db/scripts/db-check.sh` (Tabellen-Count, RLS-Status, Rollen)
+- [ ] Beide Scripts in `package.json` als npm-Scripts (`db:reset`, `db:check`)
+
+### T_last: Dokumentation + Config
+- [ ] `ARCHITECTURE_DESIGN.md §9` um neue SQL-Files ergänzen
+- [ ] `INDEX.md` ergänzen
+- [ ] `COMPONENT_INVENTORY.md` Datenbank-Status auf "Schicht 1 active"
+- [ ] `CHANGELOG.md` Eintrag
+- [ ] `lib/config.js` VERSION auf 0.1.1
+- [ ] Alle DOC_FILES auf v0.1.1
+- [ ] Component-Doc `db.md` aktualisieren (Phase 0 → Phase 1)
+
+## Dokumentations-Impact
+
+| Datei | Was ändern |
+|-------|------------|
+| `ARCHITECTURE_DESIGN.md` | §9: 4 SQL-Files + docker-compose.yml eintragen |
+| `INDEX.md` | docker-compose.yml + db-Scripts |
+| `COMPONENT_INVENTORY.md` | Datenbank-Status Phase 1 |
+| `CHANGELOG.md` | v0.1.1 Eintrag |
+
+## Abhängigkeiten
+
+- **Blockiert durch:** —
+- **Blockiert:** TT-01b, TT-01c, TT-01d, TT-01e, TT-02, alle CRUD-Issues
+
+## Acceptance Criteria
+
+- [ ] `docker compose up -d` startet PostgreSQL 16+ ohne Fehler
+- [ ] `npm run db:reset` setzt Schema komplett neu auf
+- [ ] `npm run db:check` zeigt: 9 Tabellen, RLS aktiv auf 9 Tabellen, 2 Rollen
+- [ ] Test: `hmservice_app` ohne `app.current_tenant_id` sieht NICHTS
+- [ ] Test: `hmservice_app` mit korrekt gesetztem `app.current_tenant_id` sieht nur Tenant-Daten
+- [ ] Test: `hmservice_owner` umgeht RLS (sieht alle Tenants)
+- [ ] Test: USERS-INSERT mit ungültiger Rolle ('INVALID') wird abgelehnt
+- [ ] Test: UPDATED_AT-Trigger wird bei UPDATE automatisch gesetzt
+- [ ] Unit-Tests (Vitest): 5+ Tests für RLS-Verhalten
+- [ ] spec-gate.sh + doc-version-sync.sh + orphan-check.sh grün
+- [ ] ESLint + TypeScript: 0 Errors

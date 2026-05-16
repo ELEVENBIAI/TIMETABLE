@@ -1,0 +1,97 @@
+# DB-Schicht 5 — Ausführung + Seed inkl. Pilot-Tenant
+
+> **Issue:** TT-01e | **Erstellt:** 2026-05-16 | **Status:** Draft
+
+## Agent-Pattern
+
+- [x] **Solo**
+
+**Gewähltes Pattern:** Solo
+**Begründung:** 2 Tabellen + ein Seed-Script.
+**Team-Komposition:** n/a
+
+## Why
+
+TIME_LOGS und REASSIGNMENT_LOG sind die Lerneffekt-Tabellen. Außerdem braucht die Entwicklung realistische Seed-Daten — sonst kann niemand UI / API sinnvoll testen.
+
+## What
+
+2 Tabellen Schicht 5: TIME_LOGS, REASSIGNMENT_LOG.
+Plus: Komplettes Seed-Script mit Pilot-Tenant, 4 Mitarbeitern, 4 Objekten, 9 Service-Types, Standard-Equipment, Standard-Qualifikationen, 1 Beispiel-Template.
+
+## Constraints
+
+### Must
+- TIME_LOGS.STATUS CHECK ('PENDING','CHECKED_IN','CHECKED_OUT','AUTO_CLOSED')
+- TIME_LOGS.DEVIATION_MIN GENERATED ALWAYS AS (ACTUAL_DURATION_MIN - SCHEDULE_ENTRIES.DURATION_MIN) STORED
+- REASSIGNMENT_LOG.METHOD CHECK ('MANUAL','AI_SUGGESTED','AI_AUTO','CONTINGENCY_RULE')
+- REASSIGNMENT_LOG.AI_CONFIDENCE DECIMAL(3,2) CHECK 0.00–1.00
+- RLS auf beiden Tabellen
+- Seed: Pilot-Tenant ID `11111111-1111-1111-1111-111111111111`
+- Seed: bcryptjs-Hash für Pilot-User Passwort "ChangeMe123!" mit MUST_CHANGE_PASSWORD=true
+
+### Must Not
+- Echte Klartext-Passwörter im Seed
+- Echte personenbezogene Daten
+
+## Current State
+
+**Relevante Dateien:**
+- Schemas Schicht 1–4 aus TT-01a/b/c/d
+- `developer_input/DATENMODELL_Erklaerung_Stundenplan.md` Schicht 5
+
+**Architektur-Dimensionen:** Data Integrity, Privacy (Seed-Daten dürfen nicht echte Personen sein)
+
+## Tasks
+
+### T1: Schicht-5-Tabellen
+- [ ] `backend/src/db/schema/05-schicht5.sql`
+- [ ] FK TIME_LOGS → SCHEDULE_ENTRIES, EMPLOYEES
+- [ ] FK REASSIGNMENT_LOG → SCHEDULES, EMPLOYEES, ABSENCE_RECORDS, SCHEDULE_ENTRIES
+
+### T2: Seed-Script (Pilot-Tenant)
+- [ ] `backend/src/db/seed/01-pilot-tenant.sql`
+- [ ] Pilot-Tenant + 3 Test-Users (Admin, Planner, Employee) mit MUST_CHANGE_PASSWORD=true
+- [ ] 4 Mitarbeiter (Daniel, Anna, Gabi, Jürgen aus Transkript)
+- [ ] 4 Objekte (Porzer Str. 12, Deutschlandstr. 7, Lorweg 3, Hochhaus Am Park)
+- [ ] 9 Service-Types (Treppenhaus, Garten, Hof, Müll raus/rein, Winter, Fenster, Dachrinne, Keller)
+- [ ] 5 Qualification-Types (Winterdienst, Motorsäge, Hebebühne, Gebäudereinigung, Premium)
+- [ ] 9 Equipment-Types (Handrasenmäher, Elektro, Benzin, Fahrrasenmäher, Wischmopp, Räumfahrzeug, Schneeschieber, Heckenschere E, Heckenschere M)
+- [ ] Property-Services mit realistischen Frequenzen
+- [ ] Waste-Schedules für Köln (Restmüll, Papier, Gelb, Bio)
+- [ ] 1 Beispiel-Template "Standard-Sommer"
+
+### T3: bcryptjs-Hashes generieren
+- [ ] `backend/src/db/seed/generate-hashes.ts` — Helper-Script, generiert bcryptjs(cost=12) für die Test-Passwörter
+- [ ] In Seed-SQL einfügen
+
+### T4: db-reset.sh erweitern
+- [ ] Nach Schema-Load auch alle Seeds einspielen
+- [ ] `npm run db:reset` zeigt am Ende: "Pilot-Tenant ready"
+
+### T5: Tests
+- [ ] Test: Pilot-Tenant nach `db:reset` vorhanden
+- [ ] Test: 4 Mitarbeiter mit korrekten Qualifikationen
+- [ ] Test: TIME_LOGS DEVIATION_MIN wird automatisch berechnet
+- [ ] Test: REASSIGNMENT_LOG.METHOD='INVALID' wird abgelehnt
+
+### T_last
+- [ ] `ARCHITECTURE_DESIGN.md §9` ergänzen (alle Schemas + Seeds)
+- [ ] `INDEX.md` + `COMPONENT_INVENTORY.md` aktualisieren
+- [ ] `CHANGELOG.md` Eintrag — "Datenbank komplett, Pilot-Tenant bereit"
+- [ ] VERSION 0.1.5 + alle DOC_FILES sync
+- [ ] `Components/db.md` Phase 4 → "complete"
+
+## Abhängigkeiten
+
+- **Blockiert durch:** TT-01a, TT-01b, TT-01c, TT-01d
+- **Blockiert:** TT-02 (Backend-Skeleton)
+
+## Acceptance Criteria
+
+- [ ] DB komplett: 25 Tabellen + 2 Hilfsfunktionen + RLS auf allen
+- [ ] `npm run db:reset` läuft in < 10 Sekunden durch
+- [ ] Pilot-Tenant + 3 Users + 4 Employees + 4 Properties existieren
+- [ ] Vitest: ≥3 Seed-Tests
+- [ ] spec-gate.sh + doc-version-sync.sh + orphan-check.sh grün
+- [ ] Manueller Smoke-Test: `SELECT COUNT(*) FROM EMPLOYEES;` als hmservice_app mit Pilot-Tenant gibt 4 zurück

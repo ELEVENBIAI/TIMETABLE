@@ -1,0 +1,81 @@
+# DB-Schicht 2 — Fähigkeiten (Qualifikationen, Equipment, Verfügbarkeit)
+
+> **Issue:** TT-01b | **Erstellt:** 2026-05-16 | **Status:** Draft
+
+## Agent-Pattern
+
+- [x] **Solo**
+
+**Gewähltes Pattern:** Solo
+**Begründung:** 5 Tabellen, klar abgegrenzt, baut auf TT-01a auf.
+**Team-Komposition:** n/a
+
+## Why
+
+Ohne Qualifikations- und Equipment-Daten kann der KI-Scoring-Algorithmus (TT-21) keine validen Vertretungsvorschläge machen. Verfügbarkeit ist HARTER Filter — ein MA darf an einem freien Tag keine Aufgabe bekommen.
+
+## What
+
+5 Tabellen Schicht 2: QUALIFICATION_TYPES, EQUIPMENT_TYPES, EMPLOYEE_QUALIFICATIONS (M:N), EMPLOYEE_EQUIPMENT (M:N), EMPLOYEE_AVAILABILITY.
+
+## Constraints
+
+### Must
+- M:N-Tabellen mit FK auf EMPLOYEES + Type-Tabelle
+- EMPLOYEE_QUALIFICATIONS.VALID_UNTIL → Ablaufdatum-Pflicht für nachweispflichtige Qualifikationen
+- EQUIPMENT_TYPES.HOURLY_RATE_FACTOR DECIMAL(3,2) — Zeitfaktor 0.30–2.00
+- EMPLOYEE_AVAILABILITY mit CHECK-Constraint auf DAY_OF_WEEK 1–7
+- RLS auf allen 5 Tabellen
+
+### Must Not
+- Keine M:N zwischen QUALIFICATION_TYPES und SERVICE_TYPES in diesem Issue (kommt erst wenn nötig)
+
+### Out of Scope
+- KI-Scoring-Logik (kommt in TT-21)
+- Frontend für Qualifikations-Verwaltung (kommt in TT-05/TT-07)
+
+## Current State
+
+**Relevante Dateien:**
+- `backend/src/db/schema/01-schicht1.sql` aus TT-01a
+- `developer_input/DATENMODELL_Erklaerung_Stundenplan.md` Schicht 2
+
+**Architektur-Dimensionen:** Data Integrity, Maintainability
+
+## Tasks
+
+### T0: Prozesskatalog-Check
+- [ ] TT-01a Schema durchgehen — EMPLOYEES.ID + SERVICE_TYPES.ID als FK-Quellen vorhanden?
+
+### T1: Schicht-2-Tabellen
+- [ ] `backend/src/db/schema/02-schicht2.sql` mit 5 Tabellen
+- [ ] FKs zu EMPLOYEES, SERVICE_TYPES (aus TT-01a)
+- [ ] Trigger UPDATED_AT
+- [ ] Partial Indexes
+- Verify: `\dt` zeigt jetzt 14 Tabellen gesamt
+
+### T2: RLS auf 5 Tabellen
+- [ ] Policy `tenant_isolation` analog Schicht 1
+- [ ] GRANT auf hmservice_app
+
+### T3: Tests
+- [ ] Test: EMPLOYEE_AVAILABILITY DAY_OF_WEEK=0 wird abgelehnt
+- [ ] Test: EQUIPMENT_TYPES HOURLY_RATE_FACTOR=3.0 wird abgelehnt
+- [ ] Test: EMPLOYEE_QUALIFICATIONS mit ungültigem QUAL_ID wird abgelehnt
+
+### T_last: Dokumentation
+- [ ] `ARCHITECTURE_DESIGN.md §9` ergänzen
+- [ ] `INDEX.md` + `COMPONENT_INVENTORY.md` aktualisieren
+- [ ] `CHANGELOG.md` Eintrag
+- [ ] VERSION 0.1.2 + alle DOC_FILES sync
+
+## Abhängigkeiten
+
+- **Blockiert durch:** TT-01a
+- **Blockiert:** TT-05 (Quali+Equipment Types Frontend), TT-07 (Employee Skills Frontend), TT-21 (Scoring)
+
+## Acceptance Criteria
+
+- [ ] 5 neue Tabellen mit RLS, Triggers, Indexes
+- [ ] Vitest: ≥4 Tests für Constraints + RLS
+- [ ] spec-gate.sh + doc-version-sync.sh + orphan-check.sh grün

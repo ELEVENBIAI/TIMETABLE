@@ -30,14 +30,32 @@
 |-------|-------|
 | `COMPONENT_INVENTORY.md` | Alle Komponenten mit Status |
 | `lib/config.js` | SSoT Konfiguration |
+| `lib/doc-sync.js` | DocSync zu Obsidian |
+
+## Source-Input (developer_input/)
+
+| Datei | Zweck |
+|-------|-------|
+| `developer_input/Tool_Beschreibung_Hausmeisterservice.md` | Tool-Beschreibung, Pain Points, Wellen, Marktvergleich |
+| `developer_input/DATENMODELL_Erklaerung_Stundenplan.md` | Datenmodell-Erklärung (5 Schichten) |
+| `developer_input/FEATURE_SPEC_Stundenplan_Einsatzplanung.md` | Feature-Spec F01–F11 |
+| `developer_input/LINEAR_ISSUES_Stundenplan.md` | 27 Linear-Issues (Wave 1–5) |
+
+## Learning
+
+| Datei | Zweck |
+|-------|-------|
+| `journal/learnings.md` | Learning-Loop L1 |
 
 ## Obsidian (SecondBrain)
 
 | Pfad | Zweck |
 |------|-------|
 | `TIMETABLE - PMO HUB.md` | Projekt-Hub |
+| `Architektur-Vorgaben.md` | Stack-Entscheidungen |
 | `Components/frontend.md` | Frontend |
 | `Components/backend.md` | Backend |
 | `Components/api.md` | API-Layer |
-| `Components/db.md` | Datenbank |
-| `Components/auth.md` | Auth |
+| `Components/db.md` | Datenbank — 25 Tabellen, 5 Schichten |
+| `Components/auth.md` | Auth + 6 Rollen |
+| `Components/scheduling.md` | **Kern: Plan-Generator + Vertretungs-Scoring** |
