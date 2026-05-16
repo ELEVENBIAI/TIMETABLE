@@ -7,7 +7,12 @@
       "Bash(git remote *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Read(//c/Users/Ren�Goebels-ELEVENBI/.claude/**)"
+      "Read(//c/Users/Ren�Goebels-ELEVENBI/.claude/**)",
+      "Bash(npm install *)",
+      "Bash(USE_TESTCONTAINERS=false npm --workspace=frontend run test:run)",
+      "Bash(npm --workspace=backend run test:run)",
+      "Bash(npx playwright *)",
+      "Bash(npm run *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

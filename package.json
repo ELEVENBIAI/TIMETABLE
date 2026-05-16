@@ -1,0 +1,45 @@
+{
+  "name": "timetable",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hausmeisterservice Stundenplan-Plattform (Gepard / Immobilienbutler / Paul)",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "e2e"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "test": "npm test --workspaces --if-present",
+    "test:run": "npm run test:run --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "e2e": "npm --workspace=e2e run test",
+    "e2e:install": "npm --workspace=e2e exec -- playwright install chromium webkit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "eslint": "^9.18.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.59.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
