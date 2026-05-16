@@ -40,6 +40,10 @@ Quelle: `developer_input/` (Tool-Beschreibung, Datenmodell, Feature-Spec, Linear
 | ADR-09 | 2026-05-16 | USERS-Tabelle + 6 Rollen als CHECK-Constraint              | Active |
 | ADR-10 | 2026-05-16 | Vitest + Playwright + Testcontainers — Coverage 70% min    | Active |
 | ADR-11 | 2026-05-16 | OpenRouteService primär für Geocoding + Routing (DSGVO)    | Active |
+| ADR-12 | 2026-05-16 | Backup-Strategie + Feature-Flags + Graceful Degradation    | Active |
+| ADR-13 | 2026-05-16 | Migration-Tooling Drizzle Kit                              | Active |
+| ADR-14 | 2026-05-16 | Performance-Budgets (Backend / Frontend / DB)              | Active |
+| ADR-15 | 2026-05-16 | Logging-Schema (Pino strukturiert + AUDIT_LOG)             | Active |
 
 ### ADR-01: Monolith mit Fastify + React
 
@@ -138,6 +142,11 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `WAVE_DEFINITION.md`                                                             | Endgültige Wellen-Definition (löst Inkonsistenzen)        |
 | `TESTING_STRATEGY.md`                                                            | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele |
 | `docs/ADR-09-users-table-and-roles.md`                                           | USERS-Tabelle + 6 Rollen                                  |
+| `docs/ADR-12-backup-feature-flags.md`                                            | Backup-Strategie + Feature-Flags + Graceful Degradation   |
+| `docs/ADR-13-migration-tooling.md`                                               | Drizzle Kit Migration-Strategie                           |
+| `docs/ADR-14-performance-budgets.md`                                             | Performance-Targets (Backend / Frontend / DB)             |
+| `docs/ADR-15-logging-schema.md`                                                  | Pino-Logging-Schema + AUDIT_LOG-Pattern                   |
+| `docs/architecture-review-2026-05-16.md`                                         | System-Review Report mit Tech-Debt-Inventar               |
 | `specs/ELE-163.md` bis `specs/ELE-186.md`                                        | 24 MVP-Specs (Wave 1 + Wave 2)                            |
 | `scripts/linear.mjs`                                                             | Linear-API-CLI-Helper                                     |
 | `scripts/linear-bootstrap-mvp.mjs`                                               | Bulk-Setup-Script der 24 MVP-Issues                       |

@@ -177,10 +177,10 @@ const commands = {
     console.log(JSON.stringify(data.issueLabelCreate, null, 2));
   },
 
-  async createIssue(teamId, stateId, title, labelsCsv, descFile) {
+  async createIssue(teamId, stateId, title, labelsCsv, descFile, projectId) {
     if (!teamId || !stateId || !title) {
       throw new Error(
-        'Usage: create-issue <team-id> <state-id> <title> [labels-csv] [description-file]'
+        'Usage: create-issue <team-id> <state-id> <title> [labels-csv] [description-file] [project-id]'
       );
     }
     const labelIds = labelsCsv ? labelsCsv.split(',').filter(Boolean) : [];
@@ -190,7 +190,7 @@ const commands = {
       `mutation($input: IssueCreateInput!) {
         issueCreate(input: $input) {
           success
-          issue { id identifier title url }
+          issue { id identifier title url project { name } }
         }
       }`,
       {
@@ -200,6 +200,7 @@ const commands = {
           title,
           ...(description ? { description } : {}),
           ...(labelIds.length ? { labelIds } : {}),
+          ...(projectId ? { projectId } : {}),
         },
       }
     );

@@ -27,12 +27,18 @@
       "Bash(node scripts/linear-bootstrap-mvp.mjs dry-run)",
       "Bash(node scripts/linear-bootstrap-mvp.mjs apply)",
       "Bash(node scripts/rename-specs-to-ele.mjs dry-run)",
-      "Bash(node scripts/rename-specs-to-ele.mjs apply)"
+      "Bash(node scripts/rename-specs-to-ele.mjs apply)",
+      "Bash(node scripts/linear.mjs comment \"e68a4d46-c4a9-4d22-9021-14a1bbae32ec\" \"C:/Users/RENGOE~1/AppData/Local/Temp/ele-163-ac-verification.md\")",
+      "Bash(node scripts/linear.mjs issues ELE)",
+      "Bash(python -c \"import sys, json; data=json.load\\(sys.stdin\\); ele=[i for i in data if i['identifier'].startswith\\('ELE-1'\\) and int\\(i['identifier'].split\\('-'\\)[1]\\) >= 163]; print\\(json.dumps\\(ele, indent=2\\)\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(node scripts/linear.mjs create-issue \"9b49011f-e099-4acf-809e-bc0bb5e2efa6\" \"2a45168a-e6b0-41ad-967d-3d7a76af5f3c\" \"DSGVO-Workflows — Auskunft / Löschung / Audit-Auswertung \\(Pre-Pilot Pflicht\\)\" \"8914533d-ae68-4910-a543-925ee2a45f5b,1d2e1441-283e-4165-a6ec-cac677b0f258,d66693f5-2e17-41b8-bf20-4c00cc903feb\" \"C:/Users/RENGOE~1/AppData/Local/Temp/ele-dsgvo-body.md\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE",
-      "C:\\Users\\RenéGoebels-ELEVENBI\\.claude\\projects\\c--Users-Ren-Goebels-ELEVENBI-Codex_projects-SERVICE-APP\\memory"
+      "C:\\Users\\RenéGoebels-ELEVENBI\\.claude\\projects\\c--Users-Ren-Goebels-ELEVENBI-Codex_projects-SERVICE-APP\\memory",
+      "C:\\Users\\RENGOE~1\\AppData\\Local\\Temp"
     ]
   }
 }
