@@ -1,5 +1,26 @@
 # Changelog — Timetable
 
+## v0.2.4 — 2026-05-16 (ELE-171: Service-Types CRUD + ELE-173: Employees CRUD)
+
+- **ELE-171 done (Backend):** Service-Types CRUD mit Color-Picker-Validation
+  - Routes: `GET /api/service-types`, `GET/:id`, `POST` (ADMIN/PLANNER), `PUT` (ADMIN/PLANNER), `DELETE` (ADMIN, blockiert wenn referenziert)
+  - Zod-Validation für Hex-Color `/^#[0-9A-Fa-f]{6}$/` → `errors.invalidColorCode`
+  - 6 Kategorien Enum (CLEANING/GARDEN/WASTE/WINTER/MAINTENANCE/OTHER)
+  - DELETE-Block-Check: `EXISTS` auf `property_services` + `schedule_entries` → 409 `IN_USE`
+  - 7 Tests
+- **ELE-173 done (Backend):** Employees CRUD mit DSGVO-Schutz
+  - Routes: GET (List/Detail), POST (ADMIN), PUT (ADMIN), DELETE (ADMIN, IN_USE-Check)
+  - **Role-based Field-Filtering:** `hourly_rate` wird nur an ADMIN/SUPER_ADMIN ausgeliefert (für EMPLOYEE/PLANNER/FOREMAN → `null`)
+  - **DSGVO-Audit-Log** (Art. 30): jeder Detail-Read `GET /:id` schreibt `employee.read` in `audit_log`
+  - **User-Tenant-Match-Check:** `user_id` muss zum selben Tenant gehören → 400 `USER_TENANT_MISMATCH`
+  - DELETE-Block-Check: `schedule_entries` + `time_logs` → 409 `IN_USE`
+  - **Geocoding deferred** zu Welle 5 (ELE-184/185) — `home_lat`/`home_lng` werden direkt entgegengenommen
+  - 9 Tests
+- Authorization-Helper `requireRole('ADMIN', 'PLANNER')` (Mehrfach-Rolle) bestätigt
+- Locales erweitert: `errors.inUse`, `errors.invalidColorCode`, `errors.userTenantMismatch`, `errors.serviceTypeNotFound`, `errors.employeeNotFound` (en+de)
+- 16 neue Tests (Total **130/130 grün**), TypeScript clean
+- **Frontend deferred** für beide Issues → wandert zu ELE-180
+
 ## v0.2.3 — 2026-05-16 (ELE-194: i18n Backend Full)
 
 - **ELE-194 done:** Backend-i18n produktiv mit `i18next`

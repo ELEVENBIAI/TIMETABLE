@@ -1,6 +1,6 @@
 # Timetable — Component Inventory
 
-**Version:** 0.2.3 | **Stand:** 2026-05-16
+**Version:** 0.2.4 | **Stand:** 2026-05-16
 
 | Komponente          | Datei / Pfad                                                                 | Status     | Beschreibung                                                                     |
 | ------------------- | ---------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------- |
@@ -8,7 +8,7 @@
 | DocSync             | `lib/doc-sync.js`                                                            | Active     | Spiegelung Repo → Obsidian                                                       |
 | Frontend            | `frontend/`                                                                  | planned    | React + Vite + Tailwind + PWA + @dnd-kit                                         |
 | Backend             | `backend/`                                                                   | **Active** | Fastify + TypeScript + OpenAPI (ELE-169 done)                                    |
-| API                 | `backend/src/routes/`                                                        | **Active** | REST + Zod-Schemas + Rate-Limit (auth, tenants, users) — ELE-169 + ELE-170       |
+| API                 | `backend/src/routes/`                                                        | **Active** | REST + Zod-Schemas + Rate-Limit (auth, tenants, users, service-types, employees) |
 | Datenbank           | PostgreSQL 16+                                                               | **Active** | **26 Tabellen (Schicht 1-5) + Pilot-Seed, RLS Multi-Tenancy** (ELE-164..168)     |
 | Auth                | `backend/src/auth/`                                                          | **Active** | JWT + bcryptjs + 6 Rollen + requireRole/canActOnUser (ELE-169 + ELE-170)         |
 | Scheduling          | `backend/src/services/scheduling/`                                           | planned    | **Kern: Frequenz-Engine + Plan-Generator + Reassignment-Scoring**                |

@@ -24,5 +24,10 @@
   "passwordNeedsDigit": "Passwort braucht mindestens eine Zahl",
   "oldPasswordRequired": "oldPassword erforderlich",
   "oldPasswordWrong": "Altes Passwort falsch",
-  "roleNotAllowed": "Diese Rolle darf diese Aktion nicht ausführen"
+  "roleNotAllowed": "Diese Rolle darf diese Aktion nicht ausführen",
+  "inUse": "Löschen nicht möglich: noch in Verwendung",
+  "invalidColorCode": "Farbcode muss dem Muster #RRGGBB entsprechen",
+  "userTenantMismatch": "User gehört zu einem anderen Tenant",
+  "serviceTypeNotFound": "Leistungsart nicht gefunden",
+  "employeeNotFound": "Mitarbeiter nicht gefunden"
 }

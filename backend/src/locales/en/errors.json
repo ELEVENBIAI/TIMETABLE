@@ -24,5 +24,10 @@
   "passwordNeedsDigit": "Password must contain at least one digit",
   "oldPasswordRequired": "Old password required",
   "oldPasswordWrong": "Old password incorrect",
-  "roleNotAllowed": "Your role is not allowed to perform this action"
+  "roleNotAllowed": "Your role is not allowed to perform this action",
+  "inUse": "Cannot delete: still referenced by other records",
+  "invalidColorCode": "Color code must match #RRGGBB",
+  "userTenantMismatch": "User belongs to a different tenant",
+  "serviceTypeNotFound": "Service type not found",
+  "employeeNotFound": "Employee not found"
 }

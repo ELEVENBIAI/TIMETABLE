@@ -16,7 +16,9 @@ import { setInitialLocale } from './lib/locale.js';
 import { sanitizeForLog } from './lib/log-sanitize.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
+import { employeeRoutes } from './routes/employees.js';
 import { healthRoutes } from './routes/health.js';
+import { serviceTypeRoutes } from './routes/service-types.js';
 import { tenantRoutes } from './routes/tenants.js';
 import { userRoutes } from './routes/users.js';
 
@@ -159,6 +161,8 @@ export async function buildApp() {
   await fastify.register(authRoutes);
   await fastify.register(tenantRoutes);
   await fastify.register(userRoutes);
+  await fastify.register(serviceTypeRoutes);
+  await fastify.register(employeeRoutes);
 
   return fastify;
 }
