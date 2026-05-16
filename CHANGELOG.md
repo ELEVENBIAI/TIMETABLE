@@ -1,5 +1,23 @@
 # Changelog — Timetable
 
+## v0.2.0 — 2026-05-16 (ELE-169: Backend-Skeleton mit Fastify + Auth + Swagger)
+
+- **ELE-169 done:** Fastify-Backend produktiv mit komplettem Auth-Stack
+- Routes: `GET /api/health`, `GET /api/config`, `POST /api/auth/login`, `GET /api/docs` (Swagger UI)
+- Auth: JWT (jsonwebtoken) mit Pflicht-Claims `{userId, tenantId, role, isSuperAdmin}`
+- bcryptjs cost 12 + DUMMY_HASH für Timing-Attack-Schutz
+- Login-Lockout nach 5 Fehlversuchen (15 Min) inkl. Reset bei erfolgreichem Login
+- Plugins: @fastify/cors, @fastify/jwt, @fastify/rate-limit, @fastify/swagger, @fastify/sensible
+- Pino-Logging strukturiert mit Pflicht-Feldern (ADR-15): requestId, tenantId, userId, route, duration, status
+- PII-Sanitize-Helper: redacted password/token, maskEmail
+- Zod-Validation-Helper + strukturierte HttpError-Klassen
+- Feature-Flags via /api/config (whitelisted Subset aus lib/config.js)
+- DB-Pools (owner + app) mit RLS-Erzwingung — process.env zur Laufzeit (test-friendly)
+- Dev-Password-Seed-Script: bcrypt-Hashes für Pilot-User (Passwort "ChangeMe123!")
+- Smoke: Server startet, Robert@pilot.local Login → JWT mit allen Claims
+- 22 neue Tests (Total: 63/63 grün), TypeScript + ESLint clean
+- lib/config.js: neue Sektionen FEATURES, SECURITY, PERFORMANCE
+
 ## v0.1.5 — 2026-05-16 (ELE-165..168: DB-Schichten 2-5 + Pilot-Seed)
 
 - **ELE-165 done:** Schicht 2 — Fähigkeiten (5 Tabellen)

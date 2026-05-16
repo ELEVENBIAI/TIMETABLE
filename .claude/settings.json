@@ -43,7 +43,15 @@
       "Bash(node scripts/setup-dev-db.mjs)",
       "Bash(npm --workspace=backend run db:migrate)",
       "Bash(bash backend/src/db/scripts/db-check.sh)",
-      "Bash(npm --workspace=backend run db:check)"
+      "Bash(npm --workspace=backend run db:check)",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(48\\).toString\\('base64'\\)\\)\")",
+      "Bash(sed -i 's|^JWT_SECRET=.*|JWT_SECRET=__TRACKED_VAR__|' .env)",
+      "Bash(npm --workspace=backend run db:seed-dev-passwords)",
+      "Bash(npm --workspace=backend run test:run -- tests/routes/auth.test.ts)",
+      "Bash(node scripts/linear.mjs comment \"f75e29df-28af-428e-bb6d-27b43bf56132\" \"C:/Users/RENGOE~1/AppData/Local/Temp/ele-169-ac.md\")",
+      "Bash(node scripts/linear.mjs update-issue \"f75e29df-28af-428e-bb6d-27b43bf56132\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(npm --workspace=backend run typecheck)",
+      "Bash(git commit -m 'ELE-169 — Backend-Skeleton \\(Fastify + JWT + Swagger, 63/63 Tests\\) *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",
