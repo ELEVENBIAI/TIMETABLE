@@ -1,5 +1,30 @@
 # Changelog — Timetable
 
+## v0.3.2 — 2026-05-16 (ELE-183 + ELE-186: Schedule-Templates + Absences CRUD)
+
+- **ELE-183 done (Backend):** Schedule-Templates + Template-Entries CRUD
+  - Routes `backend/src/routes/schedule-templates.ts` + `template-entries.ts`
+  - GET (mit Filter `?isDefault`, `?validForDate`), GET /:id, POST, PUT, DELETE für beide Ressourcen
+  - **POST /api/schedule-templates/:id/duplicate** — kopiert Template + alle Entries in einer DB-Transaction (z.B. für saisonale Varianten)
+  - **IS_DEFAULT-Konflikt-Check:** maximal ein Default-Template pro Tenant pro überlappendem Gültigkeitsbereich. Überlappung erkannt → 409 `DEFAULT_TEMPLATE_CONFLICT` mit `conflictingTemplateId` im Vars-Block. NULL-Boundaries werden als ±∞ behandelt.
+  - DELETE blockt mit 409 `IN_USE` wenn `schedules.template_id` referenziert
+  - Cross-Tenant-Checks auf alle FKs in Template-Entries (template, employee, property, service_type) vor INSERT/UPDATE
+  - Soft-Delete pattern; ADMIN für DELETE Template, ADMIN/PLANNER sonst
+- **ELE-186 done (Backend):** Absence-Records CRUD + automatische Side-Effects
+  - Route `backend/src/routes/absences.ts`
+  - **POST setzt betroffene Schedule-Entries auf `REASSIGNMENT_NEEDED`**: alle PLANNED-Entries des Mitarbeiters im Absence-Zeitraum bekommen `status = 'REASSIGNMENT_NEEDED'`, `reassignment_reason` (SICK/VACATION/OTHER abgeleitet aus `absence_type`) und `original_employee_id`
+  - **DELETE rollt Entries auf PLANNED zurück** — aber NUR für Tage, die nicht von einer anderen aktiven Absence desselben Mitarbeiters abgedeckt sind (NOT EXISTS-Check im Update)
+  - `PATCH /api/absences/:id/handle` markiert eine Absence als "behandelt" (Vertretung organisiert)
+  - **Self-Reporting** für EMPLOYEE: darf eigene `SICK` oder `PERSONAL` Absences anlegen (über `employees.user_id` verknüpft), keine anderen Typen, kein fremder Mitarbeiter (403 `FORBIDDEN` mit `errors.absenceSelfReportingForbidden`)
+  - EMPLOYEE sieht in GET nur eigene Absences; ADMIN/PLANNER sehen alle
+  - Date-Range-Validierung (`start_date <= end_date`) via Zod-Refine + Cross-Field-Check in PUT
+- **Neue Locale-Keys** (en + de): `templateNotFound`, `templateEntryNotFound`, `absenceNotFound`, `defaultTemplateConflict`, `absenceSelfReportingForbidden`, `absenceInvalidDateRange`
+- **App-Registrierung:** `scheduleTemplateRoutes`, `templateEntryRoutes`, `absenceRoutes` in `app.ts` registriert
+- 20 neue Tests (7 Schedule-Templates + 4 Template-Entries + 9 Absences), Total **316/316 grün**, TypeScript clean
+- **Frontend deferred** (Template-Editor + Calendar + Quick-Form) → ELE-180/182
+
+**Wave-1-Backend ist damit final komplett.** Alle 16 Stammdaten-CRUDs + Frequenz-Engine + Plan-Generator + Templates + Absences mit Side-Effects sind end-to-end getestet.
+
 ## v0.3.1 — 2026-05-16 (ELE-185: Plan-Generator MVP-CUT)
 
 - **ELE-185 done (Backend):** Wochenplan-Generierung aus Template — der MVP-Abschluss-Stein

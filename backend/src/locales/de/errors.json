@@ -55,5 +55,10 @@
   "scheduleLocked": "Plan ist archiviert und kann nicht mehr geändert werden",
   "bulkTooLarge": "Bulk-Größe überschreitet Limit ({{limit}})",
   "scheduleMismatch": "Eintrag gehört nicht zum angegebenen Wochenplan",
-  "templateNotFound": "Vorlage nicht gefunden"
+  "templateNotFound": "Vorlage nicht gefunden",
+  "templateEntryNotFound": "Vorlagen-Eintrag nicht gefunden",
+  "absenceNotFound": "Abwesenheit nicht gefunden",
+  "defaultTemplateConflict": "Eine andere Standard-Vorlage überlappt mit diesem Gültigkeitsbereich",
+  "absenceSelfReportingForbidden": "Mitarbeiter können nur eigene Krankheits- oder persönliche Abwesenheiten melden",
+  "absenceInvalidDateRange": "start_date muss vor oder gleich end_date sein"
 }

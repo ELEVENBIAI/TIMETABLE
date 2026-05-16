@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.3.1 | **Stand:** 2026-05-16
+**Version:** 0.3.2 | **Stand:** 2026-05-16
 
 ## Übersicht
 
@@ -234,6 +234,14 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `backend/src/schemas/schedule-generator.ts`                                      | Zod Input + Warning-Types — ELE-185                            |
 | `backend/tests/services/scheduling/plan-generator-pure.test.ts`                  | Pure Helper Tests (24 Cases) — ELE-185                         |
 | `backend/tests/routes/schedule-generator.test.ts`                                | Plan-Generator E2E (alle Warnings, Doppel-Gen) — ELE-185       |
+| `backend/src/routes/schedule-templates.ts`                                       | Templates CRUD + Duplicate + Default-Conflict — ELE-183        |
+| `backend/src/routes/template-entries.ts`                                         | Template-Entries CRUD + Cross-Tenant-Checks — ELE-183          |
+| `backend/src/schemas/schedule-templates.ts`                                      | Zod Schedule-Template + Template-Entry                         |
+| `backend/tests/routes/schedule-templates.test.ts`                                | Templates CRUD + Default-Conflict + Duplicate — ELE-183        |
+| `backend/tests/routes/template-entries.test.ts`                                  | Template-Entries CRUD + Cross-Tenant — ELE-183                 |
+| `backend/src/routes/absences.ts`                                                 | Absences CRUD + Side-Effects (REASSIGNMENT_NEEDED) — ELE-186   |
+| `backend/src/schemas/absences.ts`                                                | Zod Absence + Self-Reporting-Types                             |
+| `backend/tests/routes/absences.test.ts`                                          | Absences CRUD + Side-Effects + Self-Reporting — ELE-186        |
 | `backend/src/schemas/tenants.ts`                                                 | Zod-Schemas Tenant                                             |
 | `backend/src/schemas/users.ts`                                                   | Zod-Schemas User + Passwort-Policy                             |
 | `backend/src/schemas/service-types.ts`                                           | Zod Service-Type + Hex-Color                                   |
