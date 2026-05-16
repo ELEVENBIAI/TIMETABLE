@@ -59,3 +59,5 @@
 | `Components/db.md` | Datenbank — 25 Tabellen, 5 Schichten |
 | `Components/auth.md` | Auth + 6 Rollen |
 | `Components/scheduling.md` | **Kern: Plan-Generator + Vertretungs-Scoring** |
+| `Components/routing.md` | Tourenoptimierung Welle 5 |
+| `Components/test-infrastructure.md` | Test-Infrastruktur (Vitest + Playwright) |

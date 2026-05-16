@@ -28,7 +28,8 @@
 
 | TT- | Was | Abhängig |
 |-----|-----|---------|
-| TT-01a | DB-Schicht 1 (Grunddaten, 8 Tabellen) + RLS + DB-Rollen | — |
+| **TT-00** | **Test-Infrastruktur (Vitest + Playwright + Testcontainers + husky + CI)** | — |
+| TT-01a | DB-Schicht 1 (Grunddaten, 8 Tabellen) + RLS + DB-Rollen | TT-00 |
 | TT-01b | DB-Schicht 2 (Fähigkeiten, 5 Tabellen) | TT-01a |
 | TT-01c | DB-Schicht 3 (Leistungen + Waste, 3 Tabellen) | TT-01a |
 | TT-01d | DB-Schicht 4 (Planung, 6 Tabellen) | TT-01a |

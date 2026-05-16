@@ -17,3 +17,5 @@
 | Reassignment-Engine | `backend/src/services/scheduling/reassignment-engine.ts` | planned | Regelbasiertes Scoring (kein LLM) |
 | Time-Logs | `backend/src/services/time-logs.ts` | planned | GPS Check-in/out, Soll-Ist-Berechnung |
 | Reporting | `backend/src/services/reporting/` | planned | Auslastung, Soll-Ist-Analyse |
+| Test-Infrastruktur | `backend/tests/`, `frontend/tests/`, `e2e/`, `.husky/`, `.github/workflows/` | planned | Vitest + Playwright + Testcontainers, Coverage-Gate 70% |
+| Routing | `backend/src/services/routing/` | planned | OpenRouteService-Adapter, DISTANCE_CACHE, TSP-Solver (Welle 5) |

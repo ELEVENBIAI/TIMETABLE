@@ -130,6 +130,7 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `WAVE_DEFINITION.md` | Endgültige Wellen-Definition (löst Inkonsistenzen) |
 | `TESTING_STRATEGY.md` | Test-Pyramide, Tools (Vitest, Playwright), Coverage-Ziele |
 | `docs/ADR-09-users-table-and-roles.md` | USERS-Tabelle + 6 Rollen |
+| `specs/TT-00.md` | Test-Infrastruktur-Spec (vor TT-01a) |
 | `specs/TT-01a.md` bis `specs/TT-19.md` | 20 MVP-Specs |
 
 ### Source-Input (Repo)
@@ -154,3 +155,4 @@ Schicht 1: TENANTS, EMPLOYEES, PROPERTIES, CONTRACTS, REGIONS, SERVICE_TYPES (Gr
 | `TIMETABLE/Components/auth.md` | JWT + bcryptjs + 6 Rollen |
 | `TIMETABLE/Components/scheduling.md` | **Kern-Komponente: Plan-Generator, Frequenz-Engine, Vertretungs-Scoring** |
 | `TIMETABLE/Components/routing.md` | Tourenoptimierung Welle 5 (OpenRouteService primär, Google fallback) |
+| `TIMETABLE/Components/test-infrastructure.md` | Test-Infrastruktur (Vitest + Playwright + Testcontainers) |
