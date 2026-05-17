@@ -13,6 +13,7 @@ import enValidation from '@/locales/en/validation.json';
 import enHealth from '@/locales/en/health.json';
 import enSchedule from '@/locales/en/schedule.json';
 import enMyday from '@/locales/en/myday.json';
+import enDsgvo from '@/locales/en/dsgvo.json';
 
 import deCommon from '@/locales/de/common.json';
 import deErrors from '@/locales/de/errors.json';
@@ -22,6 +23,7 @@ import deValidation from '@/locales/de/validation.json';
 import deHealth from '@/locales/de/health.json';
 import deSchedule from '@/locales/de/schedule.json';
 import deMyday from '@/locales/de/myday.json';
+import deDsgvo from '@/locales/de/dsgvo.json';
 
 export const SUPPORTED_LOCALES = ['en', 'de'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -42,6 +44,7 @@ const resources = {
     health: enHealth,
     schedule: enSchedule,
     myday: enMyday,
+    dsgvo: enDsgvo,
   },
   de: {
     common: deCommon,
@@ -52,6 +55,7 @@ const resources = {
     health: deHealth,
     schedule: deSchedule,
     myday: deMyday,
+    dsgvo: deDsgvo,
   },
 } as const;
 
@@ -66,7 +70,17 @@ export async function initI18n(initialLocale?: string | null): Promise<typeof i1
       fallbackLng: DEFAULT_LOCALE,
       supportedLngs: SUPPORTED_LOCALES as unknown as string[],
       lng,
-      ns: ['common', 'errors', 'auth', 'users', 'validation', 'health', 'schedule', 'myday'],
+      ns: [
+        'common',
+        'errors',
+        'auth',
+        'users',
+        'validation',
+        'health',
+        'schedule',
+        'myday',
+        'dsgvo',
+      ],
       defaultNS: 'common',
       interpolation: { escapeValue: false },
       detection: {

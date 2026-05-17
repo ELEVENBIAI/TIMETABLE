@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.2 | **Stand:** 2026-05-17
+**Version:** 0.5.3 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -412,6 +412,18 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/locales/{en,de}/myday.json`                                                                                                     | i18n Myday-Namespace — ELE-182                                                                          |
 | `frontend/tests/components/{MyDayPage,maps}.test.{tsx,ts}`                                                                                    | Vitest MyDay-Page + Maps-URL-Tests — ELE-182                                                            |
 | `e2e/tests/myday-mobile.spec.ts`                                                                                                              | Playwright Mobile-MyDay-E2E — ELE-182                                                                   |
+| `specs/ELE-187.md`                                                                                                                            | DSGVO-Workflows Spec                                                                                    |
+| `backend/src/db/migrations/0010_dsgvo_hard_delete_at.sql` + `.down.sql`                                                                       | Migration `users.hard_delete_at` Spalte + Index — ELE-187                                               |
+| `backend/src/services/dsgvo/{audit,delete,export}.ts`                                                                                         | DSGVO-Services (Audit-Log-Query/CSV, Soft-Delete, User-Daten-Aggregation) — ELE-187                     |
+| `backend/src/routes/dsgvo.ts` + `backend/src/schemas/dsgvo.ts`                                                                                | DSGVO-Routes (data-export, delete-request, audit-log) — ELE-187                                         |
+| `backend/scripts/dsgvo-retention.mjs`                                                                                                         | Retention-Cron-Script (--dry-run / --apply) — ELE-187                                                   |
+| `backend/tests/routes/dsgvo.test.ts` + `backend/tests/services/dsgvo.test.ts`                                                                 | Vitest: 14 Route-Tests + 6 Service-Unit-Tests — ELE-187                                                 |
+| `frontend/src/pages/settings/{AuditTrailPage,DataExportPage}.tsx`                                                                             | Settings-Pages: Audit-Trail (ADMIN) + Self-Service-Export — ELE-187                                     |
+| `frontend/src/api/dsgvo.ts`                                                                                                                   | TanStack-Query-Hooks + downloadDataExport — ELE-187                                                     |
+| `frontend/src/locales/{en,de}/dsgvo.json`                                                                                                     | i18n Namespace `dsgvo` — ELE-187                                                                        |
+| `e2e/tests/dsgvo.spec.ts`                                                                                                                     | Playwright DSGVO-E2E (Self-Service-Export + Audit-Trail) — ELE-187                                      |
+| `docs/dsgvo/datenschutzerklaerung.md`                                                                                                         | Datenschutzerklärung-Vorlage (DE, Pilot-parametrisierbar) — ELE-187                                     |
+| `docs/dsgvo/avv/{openrouteservice,hosting}.md`                                                                                                | AVV-Templates (Art. 28 DSGVO) — ELE-187                                                                 |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

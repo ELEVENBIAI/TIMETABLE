@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "auditTrail": "Audit-Trail",
+    "dataExport": "Meine Daten"
+  },
+  "audit": {
+    "title": "Audit-Trail",
+    "subtitle": "Alle protokollierten Aktionen in diesem Mandanten (DSGVO Art. 30).",
+    "forbidden": "Nur Administratoren können den Audit-Trail einsehen.",
+    "loading": "Audit-Log wird geladen…",
+    "empty": "Keine Einträge passen zu diesen Filtern.",
+    "filter": {
+      "action": "Aktion",
+      "dateFrom": "Von",
+      "dateTo": "Bis"
+    },
+    "cols": {
+      "createdAt": "Zeitpunkt",
+      "user": "Benutzer",
+      "action": "Aktion",
+      "target": "Ziel"
+    },
+    "export": "CSV exportieren",
+    "pagination": {
+      "summary": "Zeige {{shown}} von {{total}}",
+      "prev": "Zurück",
+      "next": "Weiter"
+    }
+  },
+  "export": {
+    "title": "Meine Daten",
+    "subtitle": "Alle zu dir gespeicherten Daten herunterladen (DSGVO Art. 15).",
+    "button": "Meine Daten herunterladen (.zip)",
+    "legal": {
+      "heading": "Was enthalten ist",
+      "point1": "Dein Konto, Mitarbeiter-Profil, Qualifikationen und Audit-Historie.",
+      "point2": "Vergangene und zukünftige geplante Aufgaben für dich.",
+      "point3": "Abwesenheiten, die du gemeldet hast oder die für dich erfasst wurden."
+    }
+  }
+}

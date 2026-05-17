@@ -1,9 +1,18 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, ClipboardList, Database, FileBarChart, Home } from 'lucide-react';
+import {
+  Calendar,
+  ClipboardList,
+  Database,
+  FileBarChart,
+  FileText,
+  Home,
+  ShieldCheck,
+} from 'lucide-react';
 import { getCurrentTenant } from '@/lib/theme';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { UserMenu } from '@/components/UserMenu';
+import { useAuth } from '@/lib/auth';
 
 const NAV_ITEMS = [
   { to: '/', icon: Home, key: 'nav.home' },
@@ -15,6 +24,9 @@ const NAV_ITEMS = [
 
 export function DesktopLayout() {
   const { t } = useTranslation('common');
+  const { t: tD } = useTranslation('dsgvo');
+  const { payload } = useAuth();
+  const isAdmin = payload?.role === 'ADMIN' || payload?.isSuperAdmin === true;
   const tenant = getCurrentTenant();
 
   return (
@@ -51,6 +63,40 @@ export function DesktopLayout() {
               <span>{t(key)}</span>
             </NavLink>
           ))}
+
+          <div className="mt-4 px-3 text-label uppercase tracking-wide text-text-muted">
+            {t('appName')} · Privacy
+          </div>
+          <NavLink
+            to="/settings/data-export"
+            className={({ isActive }) =>
+              [
+                'flex items-center gap-3 rounded-md px-3 py-2 text-label transition-colors',
+                isActive
+                  ? 'bg-brand-primary text-brand-on-primary'
+                  : 'text-text-secondary hover:bg-surface hover:text-text-primary',
+              ].join(' ')
+            }
+          >
+            <FileText size={16} aria-hidden="true" />
+            <span>{tD('nav.dataExport')}</span>
+          </NavLink>
+          {isAdmin ? (
+            <NavLink
+              to="/settings/audit-trail"
+              className={({ isActive }) =>
+                [
+                  'flex items-center gap-3 rounded-md px-3 py-2 text-label transition-colors',
+                  isActive
+                    ? 'bg-brand-primary text-brand-on-primary'
+                    : 'text-text-secondary hover:bg-surface hover:text-text-primary',
+                ].join(' ')
+              }
+            >
+              <ShieldCheck size={16} aria-hidden="true" />
+              <span>{tD('nav.auditTrail')}</span>
+            </NavLink>
+          ) : null}
         </nav>
 
         <div className="flex flex-col gap-3 border-t border-border px-3 py-3">

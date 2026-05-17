@@ -60,5 +60,8 @@
   "absenceNotFound": "Abwesenheit nicht gefunden",
   "defaultTemplateConflict": "Eine andere Standard-Vorlage überlappt mit diesem Gültigkeitsbereich",
   "absenceSelfReportingForbidden": "Mitarbeiter können nur eigene Krankheits- oder persönliche Abwesenheiten melden",
-  "absenceInvalidDateRange": "start_date muss vor oder gleich end_date sein"
+  "absenceInvalidDateRange": "start_date muss vor oder gleich end_date sein",
+  "dsgvo": {
+    "confirmEmailMismatch": "Bitte tippe deine Konto-E-Mail exakt zur Bestätigung der Löschung"
+  }
 }

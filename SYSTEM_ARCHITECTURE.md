@@ -1,6 +1,6 @@
 # Timetable — System Architecture
 
-**Version:** 0.5.2 | **Stand:** 2026-05-17
+**Version:** 0.5.3 | **Stand:** 2026-05-17
 
 ## Übersicht
 

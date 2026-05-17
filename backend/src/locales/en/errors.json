@@ -60,5 +60,8 @@
   "absenceNotFound": "Absence not found",
   "defaultTemplateConflict": "Another default template overlaps this validity range",
   "absenceSelfReportingForbidden": "Employees can only self-report SICK or PERSONAL absences for themselves",
-  "absenceInvalidDateRange": "start_date must be on or before end_date"
+  "absenceInvalidDateRange": "start_date must be on or before end_date",
+  "dsgvo": {
+    "confirmEmailMismatch": "Please type your account email exactly to confirm deletion"
+  }
 }

@@ -42,6 +42,12 @@ interface LibConfig {
     RATE_LIMIT_GLOBAL_PER_MINUTE: number;
     RATE_LIMIT_AUTH_PER_MINUTE: number;
   };
+  DSGVO_RETENTION: {
+    EMPLOYEE_DATA_AFTER_LEAVING_DAYS: number;
+    TIME_LOGS_DAYS: number;
+    GPS_DATA_DAYS: number;
+    AUDIT_LOG_DAYS: number;
+  };
 }
 
 const libConfig = require(path.join(PROJECT_ROOT, 'lib', 'config.js')) as LibConfig;
@@ -50,6 +56,7 @@ export const VERSION = libConfig.VERSION;
 export const FEATURES = libConfig.FEATURES;
 export const SECURITY = libConfig.SECURITY;
 export const PERFORMANCE = libConfig.PERFORMANCE;
+export const DSGVO_RETENTION = libConfig.DSGVO_RETENTION;
 export const PROJECT = libConfig.CONFIG;
 
 // Runtime-Config aus .env

@@ -7,6 +7,8 @@ import { ChangePasswordPage } from '@/pages/ChangePasswordPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { SchedulePage } from '@/pages/SchedulePage';
 import { MyDayPage } from '@/pages/MyDayPage';
+import { AuditTrailPage } from '@/pages/settings/AuditTrailPage';
+import { DataExportPage } from '@/pages/settings/DataExportPage';
 import { HomeRedirect } from '@/components/HomeRedirect';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
@@ -36,6 +38,9 @@ export const router = createBrowserRouter([
       { path: 'today', element: <MyDayPage /> },
       { path: 'schedule', element: <SchedulePage /> },
       { path: 'health', element: <HealthPage /> },
+      // Settings (ELE-187)
+      { path: 'settings/audit-trail', element: <AuditTrailPage /> },
+      { path: 'settings/data-export', element: <DataExportPage /> },
       // Platzhalter — Inhalt kommt mit Folge-Issues
       { path: 'templates', element: <Navigate to="/" replace /> },
       { path: 'data', element: <Navigate to="/" replace /> },

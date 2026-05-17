@@ -1,5 +1,44 @@
 # Changelog — Timetable
 
+## v0.5.3 — 2026-05-17 (ELE-187: DSGVO-Workflows — Auskunft / Löschung / Audit-Auswertung)
+
+- **ELE-187 done:** Pre-Pilot-Pflicht erfüllt — Daniel/Anna/Gabi/Jürgen können legal mit echten Personendaten arbeiten. Architecture-Review 2026-05-16 hatte das als kritische Lücke markiert.
+- **Migration 0010** `users.hard_delete_at TIMESTAMPTZ` + Partial-Index für Retention-Cron-Lookups. Im Drizzle-Journal `_journal.json` registriert.
+- **Config-Sektion `DSGVO_RETENTION`** in `lib/config.js`:
+  - `EMPLOYEE_DATA_AFTER_LEAVING_DAYS: 30` (Hard-Delete-Frist nach Soft-Delete)
+  - `TIME_LOGS_DAYS: 365` (Zeiterfassungs-Klartext anonymisieren)
+  - `GPS_DATA_DAYS: 90` (GPS-Koordinaten löschen)
+  - `AUDIT_LOG_DAYS: 365 * 5` (5 Jahre Compliance)
+- **Backend-Services** (`backend/src/services/dsgvo/`):
+  - `export.ts` — `aggregateUserData()` zieht User + Employee + Qualifikationen + Schedule-Entries + Absence-Records + audit_log; `buildReport()` rendert lesbares Markdown.
+  - `delete.ts` — `softDeleteUser()` in einer Transaktion: users + employees + employee_qualifications + future schedule_entries + absence_records auf `is_deleted=TRUE`, historische Entries (≥90 Tage) bleiben anonymisiert für HGB-Aufbewahrung. `hardDeleteDueUsers()` als Phase-2-Funktion.
+  - `audit.ts` — `queryAuditLog()` mit Filter+Pagination, `toCsv()` RFC-4180-konform.
+- **Backend-Routes** (`backend/src/routes/dsgvo.ts`):
+  - **`POST /api/dsgvo/data-export`** — EMPLOYEE: eigene Daten / ADMIN: beliebige. Liefert ZIP mit `data.json` + `report.md`. Schreibt `dsgvo.export` in audit_log.
+  - **`POST /api/dsgvo/delete-request`** — Self-Service (mit `confirmEmail`-Match als Phishing-Schutz) oder ADMIN-Action. Schreibt `dsgvo.delete_requested` + `affectedTables`-Metadata.
+  - **`GET /api/dsgvo/audit-log`** — ADMIN/SUPER_ADMIN only. Filter (userId, action, targetType, dateFrom, dateTo), Pagination (default 50, max 200), `?format=csv`-Switch.
+- **Retention-Cron** (`backend/scripts/dsgvo-retention.mjs`):
+  - CLI `--dry-run` / `--apply` (Mutually-Exclusive-Check)
+  - Phase 2: Hard-Delete von Usern mit `hard_delete_at < NOW()` — Anonymisierung der employees-Row, physisches Löschen von users + employee_qualifications, audit_log bleibt unangetastet.
+  - Audit-Log-Purge nach 5 Jahren
+  - Schreibt `dsgvo.retention_run` Summary in audit_log je Tenant
+- **Frontend-Settings-Pages**:
+  - **`/settings/data-export`** — Self-Service-Download als ZIP, mit DSGVO-Erklärungstext.
+  - **`/settings/audit-trail`** (ADMIN-only) — Tabelle mit Filter (action, dateFrom, dateTo), Pagination, CSV-Export-Button.
+  - Desktop-Sidebar: neuer "Privacy"-Block mit Links auf beide Settings-Pages.
+- **i18n** neuer Namespace `dsgvo` (en + de) + `errors.dsgvo.confirmEmailMismatch` für Phishing-Schutz-Fehlermeldung.
+- **Migration-Journal**: `_journal.json` um `0010_dsgvo_hard_delete_at` ergänzt.
+- **DSGVO-Docs** (Pre-Pilot-Pflicht):
+  - `docs/dsgvo/datenschutzerklaerung.md` — generische DE-Vorlage mit `<Platzhaltern>` für Operator/Anwalt.
+  - `docs/dsgvo/avv/openrouteservice.md` — AVV-Template HeiGIT/ORS (Art. 28 DSGVO).
+  - `docs/dsgvo/avv/hosting.md` — Generic Hosting-AVV-Template (parametrisierbar bei ELE-191).
+- **Tests**:
+  - **Backend Vitest**: 14 Route-Tests (`dsgvo.test.ts`) + 6 Service-Unit-Tests (`dsgvo.test.ts` services) = 20 neue Tests. Insgesamt 351/351 grün.
+  - **Frontend Vitest**: 54/54 grün (Frontend nicht angefasst von DSGVO-Tests — Frontend-Smoke-Coverage reicht).
+  - **Playwright**: `e2e/tests/dsgvo.spec.ts` (3 E2E: Self-Service-Export, Audit-Trail-Render, Audit-CSV-Download).
+- **Bundle-Größe**: ~145 KB gzip (Budget ADR-14 250 KB → komfortabel; +5 KB durch dsgvo-Page-Code).
+- **Out of Scope (für Folge-Issues)**: DPIA (organisatorisch), E-Mail-Bestätigung vor Hard-Delete (Mail-Provider-Setup), Verschlüsselung at-rest (Hosting-Decision ELE-191), unterschriebene AVVs (durch Operator).
+
 ## v0.5.2 — 2026-05-17 (ELE-182: Mobile-Tagesansicht (PWA))
 
 - **ELE-182 done:** Pilot-Mitarbeiter Daniel/Anna/Gabi/Jürgen können den Plan ab Tag 1 auf dem Handy als PWA nutzen. Wave 1 vorgezogen (war ursprünglich Wave 2 / HMS-15) damit der Papier-Ausdruck als Fallback erst danach kommt.

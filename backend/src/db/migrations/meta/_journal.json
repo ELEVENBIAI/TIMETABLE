@@ -57,6 +57,13 @@
       "when": 1747699200000,
       "tag": "0008_waste_codes_en",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1747785600000,
+      "tag": "0010_dsgvo_hard_delete_at",
+      "breakpoints": true
     }
   ]
 }

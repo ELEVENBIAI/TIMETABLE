@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "auditTrail": "Audit trail",
+    "dataExport": "My data"
+  },
+  "audit": {
+    "title": "Audit trail",
+    "subtitle": "All recorded actions in this tenant (GDPR Art. 30).",
+    "forbidden": "Only administrators can view the audit trail.",
+    "loading": "Loading audit log…",
+    "empty": "No events match these filters.",
+    "filter": {
+      "action": "Action",
+      "dateFrom": "From",
+      "dateTo": "To"
+    },
+    "cols": {
+      "createdAt": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "target": "Target"
+    },
+    "export": "Export CSV",
+    "pagination": {
+      "summary": "Showing {{shown}} of {{total}}",
+      "prev": "Previous",
+      "next": "Next"
+    }
+  },
+  "export": {
+    "title": "My data",
+    "subtitle": "Download all data stored about you (GDPR Art. 15).",
+    "button": "Download my data (.zip)",
+    "legal": {
+      "heading": "What is included",
+      "point1": "Your account, employee profile, qualifications, and audit history.",
+      "point2": "Past and future scheduled tasks assigned to you.",
+      "point3": "Absences you reported or that were recorded for you."
+    }
+  }
+}
