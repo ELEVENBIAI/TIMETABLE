@@ -6,6 +6,7 @@
 // - JWT-Issue mit Pflicht-Claims (ADR-09)
 
 import type { FastifyInstance } from 'fastify';
+import { createHash } from 'node:crypto';
 import { SECURITY } from '../config.js';
 import { DEFAULT_LOCALE, isLocale, signJwt, type Locale } from '../auth/jwt.js';
 import { comparePassword, DUMMY_HASH } from '../auth/password.js';
@@ -13,7 +14,12 @@ import { isUserRole, type UserRole } from '../auth/roles.js';
 import { getOwnerPool } from '../db/pools.js';
 import { LockedError, UnauthorizedError } from '../lib/errors.js';
 import { validateBody } from '../lib/validation.js';
-import { loginRequestSchema, type LoginResponse } from '../schemas/auth.js';
+import {
+  forgotPasswordRequestSchema,
+  loginRequestSchema,
+  type ForgotPasswordResponse,
+  type LoginResponse,
+} from '../schemas/auth.js';
 
 interface UserRow {
   id: string;
@@ -139,6 +145,70 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
         expiresIn: SECURITY.JWT_EXPIRES_IN,
         mustChangePassword: user.must_change_password,
       };
+    },
+  });
+
+  // ─── POST /api/auth/forgot-password ──────────────────────────────────────
+  // Anti-Enumeration-Stub (ELE-201). Antwortet IMMER 200, egal ob User existiert.
+  // Im MVP kein Mail-Send — wenn User existiert, wird die Anfrage geloggt für
+  // späteres Audit / Wave-2-Mail-Integration. Bei unbekannter Email loggen wir
+  // nur einen SHA-256-Hash der Email (DSGVO: kein Klartext-PII in Logs).
+  fastify.post('/api/auth/forgot-password', {
+    config: {
+      // Strenger Rate-Limit gegen Email-Probing. In Test-Modus deaktiviert.
+      rateLimit: process.env.NODE_ENV === 'test' ? false : { max: 5, timeWindow: '1 minute' },
+    },
+    schema: {
+      description:
+        'Password-Reset anfordern. Antwortet immer 200 (Anti-Enumeration). Im MVP kein Mail-Versand.',
+      tags: ['auth'],
+      body: {
+        type: 'object',
+        required: ['email'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+        },
+      },
+    },
+    handler: async (request): Promise<ForgotPasswordResponse> => {
+      const { email } = validateBody(forgotPasswordRequestSchema, request);
+      const pool = getOwnerPool();
+
+      const result = await pool.query<{ id: string; tenant_id: string }>(
+        `SELECT id, tenant_id FROM users
+         WHERE LOWER(email) = LOWER($1) AND is_deleted = FALSE`,
+        [email]
+      );
+      const user = result.rows[0];
+
+      if (user) {
+        // TODO Wave 2: Mail-Service-Integration (Reset-Token generieren + per Mail versenden)
+        request.log.info(
+          {
+            action: 'auth.forgot_password_requested',
+            userId: user.id,
+            tenantId: user.tenant_id,
+            ip: request.ip,
+          },
+          'Password-Reset angefordert (kein Mail-Versand im MVP)'
+        );
+      } else {
+        // DSGVO: keine Klartext-Email im Log. Nur Hash für mögliche Korrelations-Analyse.
+        const emailHash = createHash('sha256')
+          .update(email.toLowerCase())
+          .digest('hex')
+          .slice(0, 16);
+        request.log.warn(
+          {
+            action: 'auth.forgot_password_unknown_email',
+            emailHash,
+            ip: request.ip,
+          },
+          'Password-Reset für unbekannte Email'
+        );
+      }
+
+      return { ok: true };
     },
   });
 }

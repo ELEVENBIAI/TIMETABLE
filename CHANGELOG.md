@@ -1,5 +1,25 @@
 # Changelog — Timetable
 
+## v0.4.1 — 2026-05-17 (ELE-201: Backend Auth-Endpoints Ergänzung)
+
+- **ELE-201 done:** Zwei fehlende Backend-Endpoints für den ELE-200 Frontend-Login-Flow ergänzt.
+- **`POST /api/auth/forgot-password`** — Anti-Enumeration-Stub:
+  - Body: `{ email }` (Zod-validiert)
+  - **Antwortet IMMER 200** mit `{ ok: true }` — egal ob User existiert (kein Enumeration-Channel)
+  - Bei existierendem User: Audit-Log `action: 'auth.forgot_password_requested', userId, tenantId, ip`
+  - Bei unbekannter Email: Audit-Log `action: 'auth.forgot_password_unknown_email', emailHash` (SHA-256 erste 16 Zeichen, **kein Klartext** wegen DSGVO)
+  - Strenger Rate-Limit `5/min/IP` (Override Default 200/min) gegen Email-Probing
+  - **Kein Mail-Versand im MVP** — TODO-Comment für Wave-2-Mail-Integration
+- **`GET /api/users/me`** — Self-Profile-Endpoint:
+  - Requires Auth
+  - Returnt `{ id, tenantId, email, displayName, role, isSuperAdmin, locale, mustChangePassword, lastLoginAt, createdAt }` als camelCase-JSON
+  - Soft-deleted User → 401 (Token wurde nach Delete nicht invalidiert)
+- **Schemas:** `forgotPasswordRequestSchema` + `ForgotPasswordResponse` in `schemas/auth.ts`, `UserMeResponse` in `schemas/users.ts`
+- **Tests**: 4 forgot-password + 4 GET-me-Tests grün. Total **324/324 Tests** grün, Coverage 83.87% lines / 77.25% branches / 82.75% functions, services/scheduling 95.49%/91.17%/100%
+- VERSION 0.4.0 → **0.4.1** (Patch-Bump — Backend-Endpoints Ergänzung)
+
+**Damit kann ELE-200 (Frontend-Login) starten.**
+
 ## v0.4.0 — 2026-05-17 (ELE-199: Frontend-Bootstrap)
 
 - **ELE-199 done:** Frontend-Workspace produktiv lauffähig. `frontend/src/` von 0 auf vollständiges Gerüst.

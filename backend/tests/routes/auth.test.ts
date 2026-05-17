@@ -139,3 +139,44 @@ describe('POST /api/auth/login', () => {
     expect(r.rows[0].last_login_at).not.toBeNull();
   });
 });
+
+describe('POST /api/auth/forgot-password (ELE-201)', () => {
+  it('antwortet 200 für existierenden User', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/auth/forgot-password',
+      payload: { email: 'test@auth.local' },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ ok: true });
+  });
+
+  it('antwortet 200 für unbekannte Email (Anti-Enumeration)', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/auth/forgot-password',
+      payload: { email: 'ghost@example.local' },
+    });
+    // Identischer Status + Body wie bei bekanntem User → kein Enumeration-Channel
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ ok: true });
+  });
+
+  it('antwortet 200 case-insensitive (Email-Normalisierung)', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/auth/forgot-password',
+      payload: { email: 'TEST@AUTH.LOCAL' },
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it('lehnt invalides Email-Format ab', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/auth/forgot-password',
+      payload: { email: 'not-an-email' },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+});

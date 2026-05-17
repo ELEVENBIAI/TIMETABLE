@@ -67,3 +67,18 @@ export interface UserPublicRow {
   created_at: Date;
   updated_at: Date;
 }
+
+// Self-Profile Response (GET /api/users/me, ELE-201).
+// camelCase für Frontend-Konsum. Soft-deleted Users werden vor Mapping als 401 abgewiesen.
+export interface UserMeResponse {
+  id: string;
+  tenantId: string;
+  email: string;
+  displayName: string;
+  role: string;
+  isSuperAdmin: boolean;
+  locale: string;
+  mustChangePassword: boolean;
+  lastLoginAt: string | null;
+  createdAt: string;
+}

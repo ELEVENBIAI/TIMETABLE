@@ -24,6 +24,7 @@ import {
   createUserSchema,
   updateLocaleSchema,
   updateUserSchema,
+  type UserMeResponse,
   type UserPublicRow,
 } from '../schemas/users.js';
 
@@ -386,6 +387,45 @@ export async function userRoutes(fastify: FastifyInstance): Promise<void> {
         'Passwort geändert'
       );
       return { ok: true };
+    },
+  });
+
+  // ─── GET /api/users/me ───────────────────────────────────────────────────
+  // Self-Profile-Endpoint (ELE-201). Frontend nutzt das nach Login um die
+  // aktuellen User-Daten ohne JWT-Payload-Parsing zu holen, und für
+  // periodische Refreshes (Locale-Change, Rollen-Change durch Admin).
+  fastify.get('/api/users/me', {
+    preHandler: requireAuth,
+    schema: {
+      description: 'Liefert das Profil des eingeloggten Users',
+      tags: ['users'],
+      security: [{ bearerAuth: [] }],
+    },
+    handler: async (request): Promise<UserMeResponse> => {
+      const actor = request.user!;
+      const pool = getOwnerPool();
+
+      const result = await pool.query<UserPublicRow>(
+        `SELECT ${USER_COLUMNS} FROM users
+         WHERE id = $1 AND is_deleted = FALSE`,
+        [actor.userId]
+      );
+      const row = result.rows[0];
+      // Soft-deleted oder gelöscht → 401 (Token wurde nach Delete nicht invalidiert)
+      if (!row) throw new UnauthorizedError('errors.userNotFound');
+
+      return {
+        id: row.id,
+        tenantId: row.tenant_id,
+        email: row.email,
+        displayName: row.display_name,
+        role: row.role,
+        isSuperAdmin: row.is_super_admin,
+        locale: row.locale,
+        mustChangePassword: row.must_change_password,
+        lastLoginAt: row.last_login_at ? row.last_login_at.toISOString() : null,
+        createdAt: row.created_at.toISOString(),
+      };
     },
   });
 

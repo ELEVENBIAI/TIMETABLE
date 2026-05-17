@@ -335,3 +335,66 @@ describe('PATCH /api/users/me/locale', () => {
     expect(res.statusCode).toBe(400);
   });
 });
+
+describe('GET /api/users/me (ELE-201)', () => {
+  it('liefert 401 ohne JWT', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/users/me',
+    });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it('liefert das Self-Profile bei gültigem JWT', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/users/me',
+      headers: loginAs({ userId: ADMIN_A, tenantId: TENANT_A, role: 'ADMIN' }),
+    });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body).toMatchObject({
+      id: ADMIN_A,
+      tenantId: TENANT_A,
+      email: 'admin-a@test.local',
+      displayName: 'Admin A',
+      role: 'ADMIN',
+      isSuperAdmin: false,
+      mustChangePassword: false,
+    });
+    expect(body.locale).toBeTypeOf('string');
+    expect(body.createdAt).toBeTypeOf('string');
+    // ISO-Datums-Format
+    expect(body.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it('liefert 401 wenn der User soft-deleted ist', async () => {
+    // Soft-Delete den User direkt in der DB
+    const pool = getOwnerPool();
+    await pool.query(`UPDATE users SET is_deleted = TRUE, deleted_at = NOW() WHERE id = $1`, [
+      ADMIN_A,
+    ]);
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/users/me',
+      headers: loginAs({ userId: ADMIN_A, tenantId: TENANT_A, role: 'ADMIN' }),
+    });
+    expect(res.statusCode).toBe(401);
+    expect(res.json().error.code).toBe('UNAUTHORIZED');
+  });
+
+  it('SUPER_ADMIN-Flag wird korrekt zurückgegeben', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/users/me',
+      headers: loginAs({
+        userId: SUPER,
+        tenantId: TENANT_A,
+        role: 'SUPER_ADMIN',
+        isSuperAdmin: true,
+      }),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().isSuperAdmin).toBe(true);
+  });
+});

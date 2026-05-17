@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.4.0 | **Stand:** 2026-05-17
+**Version:** 0.4.1 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -372,6 +372,8 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `specs/ELE-197.md`                                                                                                                            | ARCHITECTURE_DESIGN.md §4-§6 Backfill                                                           |
 | `specs/ELE-198.md`                                                                                                                            | ARCHITECTURE_DESIGN.md §7+§8 Backfill (Backlog)                                                 |
 | `specs/ELE-199.md`                                                                                                                            | Frontend-Bootstrap (Vite + Tailwind + Theme + i18n + Router + PWA + API + Tests) — Wave 1       |
+| `specs/ELE-200.md`                                                                                                                            | Frontend Login + Auth-Flow + Brand-Polish via impeccable craft — Wave 1                         |
+| `specs/ELE-201.md`                                                                                                                            | Backend Auth-Endpoints (forgot-password + GET /users/me) — Wave 1                               |
 | `frontend/package.json` + `tsconfig.json` + `vite.config.ts` + `vitest.config.ts` + `tailwind.config.ts` + `postcss.config.js` + `index.html` | Frontend Build-Setup                                                                            |
 | `frontend/src/main.tsx` + `App.tsx` + `router.tsx` + `vite-env.d.ts`                                                                          | App-Bootstrap + Routing                                                                         |
 | `frontend/src/layouts/{DesktopLayout,MobileLayout,AdaptiveLayout}.tsx`                                                                        | Desktop-Sidebar + Mobile-Bottom-Tabs + Media-Query-Switch (ELE-199)                             |
