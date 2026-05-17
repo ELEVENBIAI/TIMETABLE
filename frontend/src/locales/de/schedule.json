@@ -1,0 +1,48 @@
+{
+  "title": "Wochenplan",
+  "loading": "Wochenplan wird geladen …",
+  "navigator": {
+    "label": "Wochen-Navigation",
+    "previous": "Vorwoche",
+    "next": "Nächste",
+    "today": "Heute"
+  },
+  "status": {
+    "DRAFT": "Entwurf",
+    "PUBLISHED": "Veröffentlicht",
+    "ARCHIVED": "Archiviert"
+  },
+  "viewMode": {
+    "label": "Ansicht",
+    "team": "Team",
+    "employee": "Mitarbeiter",
+    "day": "Tag",
+    "property": "Objekt"
+  },
+  "filter": {
+    "employee": "Mitarbeiter",
+    "selectEmployee": "Mitarbeiter wählen …",
+    "day": "Tag",
+    "property": "Objekt",
+    "selectProperty": "Objekt wählen …"
+  },
+  "entry": {
+    "reassignedFrom": "vertritt {{name}}"
+  },
+  "workload": {
+    "label": "Auslastung",
+    "section": "Auslastung diese Woche"
+  },
+  "publish": {
+    "button": "Plan freigeben",
+    "confirmTitle": "Plan freigeben?",
+    "confirmBody": "Nach der Freigabe sehen die Mitarbeiter den Plan auf ihrem Handy. Du kannst ihn weiterhin bearbeiten.",
+    "confirm": "Jetzt freigeben",
+    "cancel": "Abbrechen"
+  },
+  "empty": {
+    "title": "Diese Woche hat noch keinen Plan",
+    "subtitle": "Aus der Standard-Vorlage generieren — dauert nur Sekunden.",
+    "generateButton": "Plan aus Vorlage generieren"
+  }
+}

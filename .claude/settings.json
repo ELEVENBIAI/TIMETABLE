@@ -159,7 +159,11 @@
       "Bash(ls /c/Users/Ren*/AppData/Local/Temp/ele-202-desc.md 2>&1 | head -3)",
       "Read(//c/Users/**)",
       "Bash(node scripts/linear.mjs create-issue \"9b49011f-e099-4acf-809e-bc0bb5e2efa6\" \"70c3bb67-9f51-4cca-ab53-707219b18a1b\" \"Demo-Seed Wave-1 \\(Pilot-Daten für Wochenplan-Vorschau\\)\" \"1d2e1441-283e-4165-a6ec-cac677b0f258,4ec33857-79ed-48b4-8af7-3ba36ef73cb6\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-202-desc.md\")",
-      "Bash(node scripts/linear.mjs update-issue \"7a1d2219-8c89-40af-9a91-824da2a523d3\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")"
+      "Bash(node scripts/linear.mjs update-issue \"7a1d2219-8c89-40af-9a91-824da2a523d3\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
+      "Bash(node scripts/linear.mjs comment \"7a1d2219-8c89-40af-9a91-824da2a523d3\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-202-ac.md\")",
+      "Bash(node scripts/linear.mjs update-issue \"7a1d2219-8c89-40af-9a91-824da2a523d3\" state \"b700f52a-4201-4498-8606-3bbfa140dbe4\")",
+      "Bash(node scripts/linear.mjs update-issue \"98b89241-8879-45df-ad27-89e9086fcd8d\" state \"71afd024-6331-436d-bcb1-b226a0991acf\")",
+      "PowerShell(npm install 2>&1)"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

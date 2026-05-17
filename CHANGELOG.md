@@ -1,5 +1,36 @@
 # Changelog — Timetable
 
+## v0.5.0 — 2026-05-17 (ELE-180: Wochenplan-Grid — Roberts Hauptansicht)
+
+- **ELE-180 done:** Wochenplan-Grid live. Robert kann seine Idealwoche im Browser sehen — das eigentliche Kern-Feature von Wave 1.
+- **/impeccable shape** durchgeführt für `/schedule` — Outlook-Kalender-Layout mit echter Zeitskala (07–18 Uhr, 60px/h), detaillierte Entry-Cards, knapper Empty-State. Linear-Style kompakt, Card-Container, Brand-Akzent zurückhaltend.
+- **TanStack Query** als Daten-Layer (Provider in App.tsx, eigener QueryClient mit 30s staleTime für Schedules, 5min für Stammdaten, kein refetchOnWindowFocus, smart retry-Strategie für 4xx vs 5xx).
+- **date-fns** für ISO-Wochen-Berechnung (Frontend gespiegelt zum Backend ADR-05).
+- **Komponenten** (alle Tokens aus DESIGN.md, keine externe UI-Lib):
+  - `WeekNavigator` — Vorwoche/Heute/Nächste mit Datum-Range "KW 21 · 18.–22. Mai 2026"
+  - `ScheduleStatusBadge` — DRAFT (gray) / PUBLISHED (green) / ARCHIVED (muted)
+  - `PublishScheduleButton` — mit Bestätigungs-Modal, nur sichtbar bei DRAFT
+  - `WorkloadBar` — Auslastungs-Anzeige "32h / 40h" + Bar, Color-coded < 80% / 80-100% / > 100%
+  - `WorkloadSummary` — Sektion mit allen Mitarbeitern + Bar
+  - `ViewModeSwitcher` — 4-Tab (Team / Mitarbeiter / Tag / Objekt)
+  - `WeekGrid` — Outlook-Kalender mit Y-Achse links + Tages-Spalten
+  - `TimeAxis` + `HourGridBackground` — Stunden-Linien + Half-Hour dashed
+  - `ScheduleEntryCard` — 3px Service-Type-Color-Stripe links, Property + Service + Time + Duration + Status-Indikator + Reassignment-Badge bei is_from_reassignment
+- **SchedulePage** als Orchestrator:
+  - Route `/` und `/schedule` (statt vorherigem HealthPage-Default — HealthPage nach `/health` verschoben)
+  - URL-Parameter `?week=YYYY-MM-DD` für Direct-Linking
+  - Empty-State mit "Plan aus Vorlage generieren"-Button → ruft `POST /api/schedules/generate` mit dem Pilot-Template
+  - Filter-Selectors für Employee/Day/Property-View-Modi
+- **i18n** `schedule.json` (en + de) mit allen UI-Strings (Navigator, Status, ViewMode, Filter, Workload, Publish-Confirm-Modal, Empty-State).
+- **Status-Modifier auf Entry-Cards**: PLANNED default, IN_PROGRESS ring, COMPLETED opacity 60% + strikethrough, SKIPPED/REASSIGNED opacity, REASSIGNMENT_NEEDED Background-Tint + Border.
+- **Tests**:
+  - Vitest: 11 neue Tests (ScheduleStatusBadge, WorkloadBar, ScheduleEntryCard, ViewModeSwitcher, Date-Utils) → **Total 42/42 Frontend-Tests grün** in 2.5s
+  - Playwright: 5 neue Schedule-E2E-Tests grün (KW-Nav rendert, Entry-Cards aus Pilot-Seed sichtbar, Empty-State mit Generate-Button, KW-Nav-URL-Update, ViewMode-Switch) → **Total 12/12 E2E grün** in 5s
+- **Build**: 394 KB JS / **gzip 122 KB** (unter ADR-14-Budget 250 KB, neue Spec-Grenze 350 KB).
+- VERSION 0.4.3 → **0.5.0** (Minor — Roberts Hauptansicht ist sichtbar).
+
+**Damit ist das Kern-Feature von Wave 1 live**: Robert loggt sich ein, landet direkt auf seinem Wochenplan, sieht die 16 Demo-Einträge der KW 21/2026 im Outlook-Kalender-Layout mit Service-Type-Color-Coding, sieht die Auslastung pro Mitarbeiter, kann zwischen 4 View-Modi switchen, durch Wochen navigieren, leere Wochen via Plan-Generator füllen, und den Plan freigeben. **ELE-181 (Drag&Drop) + ELE-182 (Mobile-Detail) sind jetzt unblocked.**
+
 ## v0.4.3 — 2026-05-17 (ELE-202: Pilot Wave-1 Demo-Seed)
 
 - **ELE-202 done:** Migration `0009_pilot_wave1_seed.sql` legt realistische Pilot-Daten an, damit ELE-180 (Wochenplan-Grid) auf echten Daten arbeiten kann statt auf leerem Grid.

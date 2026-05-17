@@ -1,0 +1,48 @@
+{
+  "title": "Weekly schedule",
+  "loading": "Loading schedule…",
+  "navigator": {
+    "label": "Week navigation",
+    "previous": "Previous",
+    "next": "Next",
+    "today": "Today"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "PUBLISHED": "Published",
+    "ARCHIVED": "Archived"
+  },
+  "viewMode": {
+    "label": "View mode",
+    "team": "Team",
+    "employee": "Per employee",
+    "day": "Per day",
+    "property": "Per property"
+  },
+  "filter": {
+    "employee": "Employee",
+    "selectEmployee": "Select employee…",
+    "day": "Day",
+    "property": "Property",
+    "selectProperty": "Select property…"
+  },
+  "entry": {
+    "reassignedFrom": "covers for {{name}}"
+  },
+  "workload": {
+    "label": "Workload",
+    "section": "Workload this week"
+  },
+  "publish": {
+    "button": "Publish",
+    "confirmTitle": "Publish schedule?",
+    "confirmBody": "Once published, the schedule becomes visible to employees on their mobile view. You can still edit it afterwards.",
+    "confirm": "Publish now",
+    "cancel": "Cancel"
+  },
+  "empty": {
+    "title": "No schedule for this week",
+    "subtitle": "Generate one from the standard template — takes a few seconds.",
+    "generateButton": "Generate from template"
+  }
+}

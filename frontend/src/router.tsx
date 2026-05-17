@@ -5,6 +5,7 @@ import { HealthPage } from '@/pages/HealthPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ChangePasswordPage } from '@/pages/ChangePasswordPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { SchedulePage } from '@/pages/SchedulePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -29,9 +30,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <HealthPage /> },
-      // Platzhalter — Inhalt kommt mit Folge-Issues (ELE-180+)
-      { path: 'schedule', element: <Navigate to="/" replace /> },
+      { index: true, element: <SchedulePage /> },
+      { path: 'schedule', element: <SchedulePage /> },
+      { path: 'health', element: <HealthPage /> },
+      // Platzhalter — Inhalt kommt mit Folge-Issues
       { path: 'templates', element: <Navigate to="/" replace /> },
       { path: 'data', element: <Navigate to="/" replace /> },
       { path: 'reports', element: <Navigate to="/" replace /> },

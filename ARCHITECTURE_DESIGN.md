@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.4.3 | **Stand:** 2026-05-17
+**Version:** 0.5.0 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -392,6 +392,15 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/components/{Button,Input,FormError,UserMenu,ProtectedRoute}.tsx`                                                                | Komponenten-Basis + Auth-Guards — ELE-200                                                               |
 | `frontend/src/lib/auth-api.ts`                                                                                                                | API-Wrapper für /auth/login, /auth/forgot-password, /users/me, /users/:id/change-password — ELE-200     |
 | `frontend/tests/smoke/{login,components}.test.tsx`                                                                                            | Vitest Tests für LoginPage + Component-Basis — ELE-200                                                  |
+| `frontend/src/pages/SchedulePage.tsx`                                                                                                         | Wochenplan-Grid (Outlook-Kalender + 4 View-Modi + Workload) — ELE-180                                   |
+| `frontend/src/components/{WeekNavigator,ScheduleStatusBadge,PublishScheduleButton,WorkloadBar}.tsx`                                           | Header-Komponenten — ELE-180                                                                            |
+| `frontend/src/components/WeekGrid/*.tsx`                                                                                                      | Grid-Body (WeekGrid, ScheduleEntryCard, TimeAxis, ViewModeSwitcher, WorkloadSummary) — ELE-180          |
+| `frontend/src/api/schedule.ts`                                                                                                                | TanStack Query Hooks (Schedules/Entries/Employees/Properties/ServiceTypes + Publish/Generate) — ELE-180 |
+| `frontend/src/lib/{date,queryClient}.ts`                                                                                                      | Date-Utils + QueryClient — ELE-180                                                                      |
+| `frontend/src/types/schedule.ts`                                                                                                              | Schedule-Domain-Types                                                                                   |
+| `frontend/src/locales/{en,de}/schedule.json`                                                                                                  | i18n Schedule-Namespace — ELE-180                                                                       |
+| `frontend/tests/smoke/schedule.test.tsx`                                                                                                      | Vitest Schedule-Smokes — ELE-180                                                                        |
+| `e2e/tests/schedule-smoke.spec.ts`                                                                                                            | Playwright Schedule-E2E — ELE-180                                                                       |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

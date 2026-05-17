@@ -1,0 +1,120 @@
+// Schedule-API-Hooks via TanStack Query (ELE-180).
+// Cache-Strategie: schedules 30s staleTime, Stammdaten (employees/properties/serviceTypes) 5min.
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import type { Employee, Property, Schedule, ScheduleEntry, ServiceType } from '@/types/schedule';
+
+// ─── Query-Keys ───────────────────────────────────────────────────────────
+export const scheduleKeys = {
+  all: ['schedules'] as const,
+  list: (weekStart?: string) => ['schedules', { weekStart }] as const,
+  entries: (scheduleId: string) => ['schedule-entries', scheduleId] as const,
+};
+
+export const stammKeys = {
+  employees: ['employees'] as const,
+  properties: ['properties'] as const,
+  serviceTypes: ['service-types'] as const,
+};
+
+// ─── Queries ──────────────────────────────────────────────────────────────
+
+export function useSchedules(weekStart?: string) {
+  return useQuery({
+    queryKey: scheduleKeys.list(weekStart),
+    queryFn: async () => {
+      const query = weekStart ? `?weekStart=${weekStart}` : '';
+      const r = await api.get<{ schedules: Schedule[] }>(`/schedules${query}`);
+      return r.schedules;
+    },
+  });
+}
+
+export function useScheduleEntries(scheduleId: string | undefined) {
+  return useQuery({
+    queryKey: scheduleKeys.entries(scheduleId ?? ''),
+    queryFn: async () => {
+      const r = await api.get<{ scheduleEntries: ScheduleEntry[] }>(
+        `/schedule-entries?scheduleId=${scheduleId}`
+      );
+      return r.scheduleEntries;
+    },
+    enabled: !!scheduleId,
+  });
+}
+
+export function useEmployees() {
+  return useQuery({
+    queryKey: stammKeys.employees,
+    queryFn: async () => {
+      const r = await api.get<{ employees: Employee[] }>('/employees');
+      return r.employees;
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useProperties() {
+  return useQuery({
+    queryKey: stammKeys.properties,
+    queryFn: async () => {
+      const r = await api.get<{ properties: Property[] }>('/properties');
+      return r.properties;
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useServiceTypes() {
+  return useQuery({
+    queryKey: stammKeys.serviceTypes,
+    queryFn: async () => {
+      const r = await api.get<{ serviceTypes: ServiceType[] }>('/service-types');
+      return r.serviceTypes;
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
+// ─── Mutations ────────────────────────────────────────────────────────────
+
+export function usePublishSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (scheduleId: string) =>
+      api.post<Schedule>(`/schedules/${scheduleId}/publish`),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: scheduleKeys.all });
+    },
+  });
+}
+
+interface GenerateScheduleInput {
+  templateId: string;
+  weekStart: string;
+  weekNumber: number;
+  year: number;
+}
+
+export function useGenerateSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: GenerateScheduleInput) =>
+      api.post<{
+        schedule: Schedule;
+        entries: ScheduleEntry[];
+        warnings: unknown[];
+      }>('/schedules/generate', input),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: scheduleKeys.all });
+    },
+  });
+}
+
+// ─── Lookup-Helpers (für die Grid-Anzeige) ────────────────────────────────
+
+export function indexById<T extends { id: string }>(items: T[] | undefined): Map<string, T> {
+  if (!items) return new Map();
+  return new Map(items.map((i) => [i.id, i]));
+}
