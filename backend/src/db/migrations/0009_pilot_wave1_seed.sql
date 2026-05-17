@@ -112,10 +112,10 @@ BEGIN
   -- oder einfach { "dayOfWeek": 2 } für jeden Dienstag etc.
   -- latest_put_out + earliest_take_in legen fest WANN raus/rein
   INSERT INTO waste_schedules (tenant_id, property_id, waste_bin_type_id, collection_days, collection_time, latest_put_out, earliest_take_in, bin_count, location_description) VALUES
-    (v_tenant_id, v_prop_lorweg,      v_wbt_restmuell, '{"weekly": true, "dayOfWeek": 3}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 3, 'Müllraum hinten links im Hof'),
-    (v_tenant_id, v_prop_porzer,      v_wbt_restmuell, '{"weekly": true, "dayOfWeek": 4}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 2, 'Müllraum im Erdgeschoss'),
-    (v_tenant_id, v_prop_deutschland, v_wbt_papier,    '{"weekly": true, "dayOfWeek": 2}'::jsonb, TIME '07:00', TIME '20:00', TIME '09:00', 1, 'Müllraum vorne rechts'),
-    (v_tenant_id, v_prop_hochhaus,    v_wbt_bio,       '{"weekly": true, "dayOfWeek": 5}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 4, 'Müllraum im Tiefgeschoss');
+    (v_tenant_id, v_prop_lorweg,      v_wbt_restmuell, '{"frequency": "WEEKLY", "daysOfWeek": [3]}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 3, 'Müllraum hinten links im Hof'),
+    (v_tenant_id, v_prop_porzer,      v_wbt_restmuell, '{"frequency": "WEEKLY", "daysOfWeek": [4]}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 2, 'Müllraum im Erdgeschoss'),
+    (v_tenant_id, v_prop_deutschland, v_wbt_papier,    '{"frequency": "WEEKLY", "daysOfWeek": [2]}'::jsonb, TIME '07:00', TIME '20:00', TIME '09:00', 1, 'Müllraum vorne rechts'),
+    (v_tenant_id, v_prop_hochhaus,    v_wbt_bio,       '{"frequency": "WEEKLY", "daysOfWeek": [5]}'::jsonb, TIME '06:00', TIME '20:00', TIME '08:00', 4, 'Müllraum im Tiefgeschoss');
 
   -- ── 6. Schedule-Template "Standardwoche Gepard" ────────────────────────
   INSERT INTO schedule_templates (id, tenant_id, name, description, is_default, valid_from, valid_until, created_by)

@@ -199,4 +199,22 @@ describe('ELE-202: Pilot Wave-1 Demo-Seed Migration', () => {
     expect(byFreq.MONTHLY).toBeGreaterThan(0);
     expect(byFreq.QUARTERLY).toBeGreaterThan(0);
   });
+
+  it('waste_schedules collection_days hat das von frequency-engine erwartete Schema', async () => {
+    // Regression-Schutz: ELE-202-Bug — Seed nutzte fälschlicherweise
+    // { weekly: true, dayOfWeek: N } statt { frequency, daysOfWeek }.
+    // frequency-engine.getWasteCollectionsInWeek crashed mit
+    // "Cannot read properties of undefined (reading 'includes')"
+    const pool = getOwnerPool();
+    const r = await pool.query<{ collection_days: { frequency?: string; daysOfWeek?: number[] } }>(
+      `SELECT collection_days FROM waste_schedules WHERE tenant_id = $1`,
+      [TENANT_ID]
+    );
+    expect(r.rows.length).toBeGreaterThan(0);
+    for (const row of r.rows) {
+      expect(row.collection_days.frequency).toMatch(/^(WEEKLY|BIWEEKLY)$/);
+      expect(Array.isArray(row.collection_days.daysOfWeek)).toBe(true);
+      expect(row.collection_days.daysOfWeek!.length).toBeGreaterThan(0);
+    }
+  });
 });
