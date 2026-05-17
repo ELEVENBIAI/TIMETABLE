@@ -198,26 +198,29 @@ export async function hardDeleteDueUsers(
     try {
       await client.query('BEGIN');
 
-      // Historische schedule_entries: employee_id wird auf NULL gesetzt
-      // (Geschäftsdaten bleiben, Personenbezug gelöscht). Dazu employees-FK
-      // temporär aufheben — wir setzen employee_id auf NULL.
-      // ACHTUNG: schedule_entries.employee_id ist NOT NULL — wir können nicht
-      // einfach NULL setzen. Lösung: physische Anonymisierung des employee-Rows.
-      // Wir tauschen first_name/last_name/email/phone/home_* gegen Platzhalter.
+      // Historische schedule_entries: employee_id ist NOT NULL — wir können
+      // nicht einfach auf NULL setzen. Lösung: physische Anonymisierung des
+      // employee-Rows (Personenbezug weg, Geschäfts-Aufzeichnung bleibt).
+      // Vor der user-Löschung: employees.user_id → NULL, weil sonst der FK
+      // employees_user_id_fkey die user-DELETE blockiert.
       await client.query(
         `UPDATE employees
          SET first_name = $1, last_name = $2, display_name = $1,
              email = NULL, phone = NULL, home_address = NULL,
-             home_lat = NULL, home_lng = NULL
+             home_lat = NULL, home_lng = NULL,
+             user_id = NULL
          WHERE user_id = $3 AND tenant_id = $4`,
         [ANONYMIZED_FIRST_NAME, ANONYMIZED_LAST_NAME, row.id, row.tenant_id]
       );
 
-      // Employee-Qualifikationen physisch löschen
+      // Employee-Qualifikationen physisch löschen (employees-Row bleibt)
       await client.query(
         `DELETE FROM employee_qualifications
-         WHERE employee_id IN (SELECT id FROM employees WHERE user_id = $1 AND tenant_id = $2)`,
-        [row.id, row.tenant_id]
+         WHERE employee_id IN (
+           SELECT id FROM employees WHERE tenant_id = $1
+             AND first_name = $2 AND user_id IS NULL
+         )`,
+        [row.tenant_id, ANONYMIZED_FIRST_NAME]
       );
 
       // User-Row physisch löschen (audit_log bleibt — user_id wird zur ID-Ruine)

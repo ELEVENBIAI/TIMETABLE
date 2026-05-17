@@ -74,17 +74,22 @@ async function hardDeleteUser(userId, tenantId) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    // Anonymisierung: employees-Row entwertet, Skills physisch weg
+    // Anonymisierung: employees-Row entwertet + user_id NULL (sonst FK blockt)
+    // Skills physisch weg, dann user physisch löschen.
     await client.query(
       `UPDATE employees SET first_name = '[gelöscht]', last_name = '', display_name = '[gelöscht]',
-        email = NULL, phone = NULL, home_address = NULL, home_lat = NULL, home_lng = NULL
+        email = NULL, phone = NULL, home_address = NULL, home_lat = NULL, home_lng = NULL,
+        user_id = NULL
        WHERE user_id = $1 AND tenant_id = $2`,
       [userId, tenantId]
     );
     await client.query(
       `DELETE FROM employee_qualifications
-       WHERE employee_id IN (SELECT id FROM employees WHERE user_id = $1 AND tenant_id = $2)`,
-      [userId, tenantId]
+       WHERE employee_id IN (
+         SELECT id FROM employees WHERE tenant_id = $1
+           AND first_name = '[gelöscht]' AND user_id IS NULL
+       )`,
+      [tenantId]
     );
     await client.query(`DELETE FROM users WHERE id = $1 AND tenant_id = $2`, [userId, tenantId]);
     await client.query(
