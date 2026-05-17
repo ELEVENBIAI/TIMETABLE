@@ -1,5 +1,37 @@
 # Changelog — Timetable
 
+## v0.5.6 — 2026-05-17 (ELE-190: Reassignment-Scoring-Gewichte — ADR + Konstanten)
+
+- **ELE-190 done:** Vorarbeit für ELE-196 (Reassignment-Engine). ADR + Config-Konstanten ohne Engine-Logik — die Engine kommt im Folge-Issue.
+- **ADR-19 `docs/ADR-19-reassignment-scoring-weights.md`** dokumentiert:
+  - Fünf Score-Faktoren mit initialen Gewichten:
+    - **Kapazität 30** — wichtigster Faktor, Burnout-Schutz
+    - **Nähe 25** — Fahrzeit-/Sprit-Argument, Sättigung bei 20 km
+    - **Qualifikation 20** — soft-Faktor über `MIN_QUALIFICATION_LEVEL`, Hard-Filter darunter
+    - **Erfahrung 15** — Objekt-Kenntnis, Sättigung nach 6 Monaten
+    - **Fairness 10** — Anti-Burnout-Tie-Breaker
+  - Summe = 100 (`WEIGHT_TOTAL_SANITY` Constraint)
+  - **Equipment = Hard-Filter** (kein 6. Faktor) — Begründung im ADR: Equipment ist binär (hat/hat nicht), ein Score "wie sehr hat er die Düse?" macht keinen Sinn. ADMIN-Override pro Vorschlag möglich.
+  - **Qualifikation = Hybrid** — Hard-Filter unter Mindest-Level + soft-Score-Faktor darüber.
+  - Begründungstext-Template (deterministisch, kein LLM): pro Vorschlag eine Liste der Faktor-Werte für menschen-lesbare Erklärung.
+  - **Anpassungs-Workflow**: nur via Pull-Request, mit Test gegen historische `reassignment_log`-Daten, A/B-Vergleich der Acceptance-Rate, nicht häufiger als alle 90 Tage.
+  - **Feedback-Loop** über `reassignment_log.was_accepted`: KPIs Top-1-Acceptance ≥ 60 %, Top-3 ≥ 85 %, Override-Rate ≤ 10 %.
+- **`lib/config.js REASSIGNMENT_SCORING`** Sektion neu mit allen Konstanten — kein Magic-Number mehr im späteren Engine-Code:
+  - `WEIGHTS` Objekt + `WEIGHT_TOTAL_SANITY`
+  - `MIN_SCORE_TO_SUGGEST: 40` (unter dem: kein Vorschlag — lieber kein als ein schlechter)
+  - `MAX_SUGGESTIONS: 3` (Top-N für Robert)
+  - `MAX_USEFUL_KM`, `EXPERIENCE_SATURATION_MONTHS`, `FAIR_LOOKBACK_WEEKS`, `MAX_FAIR_VERTRETUNGEN`
+  - `EQUIPMENT_HARD_FILTER: true`, `MIN_QUALIFICATION_LEVEL: 'BASIC'`
+- **`backend/src/config.ts`** typed `REASSIGNMENT_SCORING`-Export mit Union-Type für `MIN_QUALIFICATION_LEVEL`.
+- **Tests Vitest**: 9 Sanity-Checks (`backend/tests/lib/reassignment-scoring-config.test.ts`):
+  - WEIGHTS-Summe = WEIGHT_TOTAL_SANITY
+  - alle 5 Keys vorhanden
+  - Range-Checks für Schwellwerte
+  - Capacity-Reihenfolge: höchstes Gewicht
+  - Fairness-Reihenfolge: niedrigstes Gewicht
+- **Out of Scope (kommt mit ELE-196)**: Engine-Logik, A/B-Test-Framework, REASSIGNMENT_LOG-Schema-Änderungen, Begründungstext-i18n.
+- **Hinweis zur Nummerierung**: Issue-Text sagt "ADR-17" — outdated (ADR-17 = Error-Tracking, ADR-18 = JWT-Rotation). Wir nutzen **ADR-19**.
+
 ## v0.5.5 — 2026-05-17 (ELE-188: JWT-Secret-Rotation — Pre-Pilot)
 
 - **ELE-188 done:** Letzter der drei Pre-Pilot-Pflicht-Blocks (nach ELE-187 DSGVO und ELE-189 Tracking). Architecture-Review-Tech-Debt-Punkt A erledigt.

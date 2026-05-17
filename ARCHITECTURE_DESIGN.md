@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.5 | **Stand:** 2026-05-17
+**Version:** 0.5.6 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -28,26 +28,27 @@ Quelle: `developer_input/` (Tool-Beschreibung, Datenmodell, Feature-Spec, Linear
 
 ## ADRs (Architecture Decision Records)
 
-| Nr     | Datum      | Titel                                                      | Status |
-| ------ | ---------- | ---------------------------------------------------------- | ------ |
-| ADR-01 | 2026-05-16 | Monolith mit Fastify + React statt Microservices           | Active |
-| ADR-02 | 2026-05-16 | PostgreSQL RLS für Multi-Tenancy                           | Active |
-| ADR-03 | 2026-05-16 | Zod als einheitliche Validierungsschicht                   | Active |
-| ADR-04 | 2026-05-16 | Regelbasiertes Scoring statt LLM für Vertretungsvorschlag  | Active |
-| ADR-05 | 2026-05-16 | date-fns + ISO-Kalenderwochen für Frequenz-Engine          | Active |
-| ADR-06 | 2026-05-16 | PWA statt native App (Offline + Mobile via Service Worker) | Active |
-| ADR-07 | 2026-05-16 | Soft-Delete + Audit-Felder auf allen Tabellen              | Active |
-| ADR-08 | 2026-05-16 | Zwei DB-Rollen (owner / app) für RLS-Erzwingung            | Active |
-| ADR-09 | 2026-05-16 | USERS-Tabelle + 6 Rollen als CHECK-Constraint              | Active |
-| ADR-10 | 2026-05-16 | Vitest + Playwright + Testcontainers — Coverage 70% min    | Active |
-| ADR-11 | 2026-05-16 | OpenRouteService primär für Geocoding + Routing (DSGVO)    | Active |
-| ADR-12 | 2026-05-16 | Backup-Strategie + Feature-Flags + Graceful Degradation    | Active |
-| ADR-13 | 2026-05-16 | Migration-Tooling Drizzle Kit                              | Active |
-| ADR-14 | 2026-05-16 | Performance-Budgets (Backend / Frontend / DB)              | Active |
-| ADR-15 | 2026-05-16 | Logging-Schema (Pino strukturiert + AUDIT_LOG)             | Active |
-| ADR-16 | 2026-05-16 | i18n-Strategie (i18next, BCP 47, User-Locale in JWT)       | Active |
-| ADR-17 | 2026-05-17 | Error-Tracking (GlitchTip self-hosted, Sentry SaaS Backup) | Active |
-| ADR-18 | 2026-05-17 | JWT-Secret-Rotation (Multi-Secret primary + previous)      | Active |
+| Nr     | Datum      | Titel                                                        | Status |
+| ------ | ---------- | ------------------------------------------------------------ | ------ |
+| ADR-01 | 2026-05-16 | Monolith mit Fastify + React statt Microservices             | Active |
+| ADR-02 | 2026-05-16 | PostgreSQL RLS für Multi-Tenancy                             | Active |
+| ADR-03 | 2026-05-16 | Zod als einheitliche Validierungsschicht                     | Active |
+| ADR-04 | 2026-05-16 | Regelbasiertes Scoring statt LLM für Vertretungsvorschlag    | Active |
+| ADR-05 | 2026-05-16 | date-fns + ISO-Kalenderwochen für Frequenz-Engine            | Active |
+| ADR-06 | 2026-05-16 | PWA statt native App (Offline + Mobile via Service Worker)   | Active |
+| ADR-07 | 2026-05-16 | Soft-Delete + Audit-Felder auf allen Tabellen                | Active |
+| ADR-08 | 2026-05-16 | Zwei DB-Rollen (owner / app) für RLS-Erzwingung              | Active |
+| ADR-09 | 2026-05-16 | USERS-Tabelle + 6 Rollen als CHECK-Constraint                | Active |
+| ADR-10 | 2026-05-16 | Vitest + Playwright + Testcontainers — Coverage 70% min      | Active |
+| ADR-11 | 2026-05-16 | OpenRouteService primär für Geocoding + Routing (DSGVO)      | Active |
+| ADR-12 | 2026-05-16 | Backup-Strategie + Feature-Flags + Graceful Degradation      | Active |
+| ADR-13 | 2026-05-16 | Migration-Tooling Drizzle Kit                                | Active |
+| ADR-14 | 2026-05-16 | Performance-Budgets (Backend / Frontend / DB)                | Active |
+| ADR-15 | 2026-05-16 | Logging-Schema (Pino strukturiert + AUDIT_LOG)               | Active |
+| ADR-16 | 2026-05-16 | i18n-Strategie (i18next, BCP 47, User-Locale in JWT)         | Active |
+| ADR-17 | 2026-05-17 | Error-Tracking (GlitchTip self-hosted, Sentry SaaS Backup)   | Active |
+| ADR-18 | 2026-05-17 | JWT-Secret-Rotation (Multi-Secret primary + previous)        | Active |
+| ADR-19 | 2026-05-17 | Reassignment-Scoring-Gewichte (30/25/20/15/10 + Hard-Filter) | Active |
 
 ### ADR-01: Monolith mit Fastify + React
 
@@ -438,6 +439,9 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `docs/ADR-18-jwt-secret-rotation.md`                                                                                                          | ADR: Multi-Secret (JWT_SECRET + JWT_SECRET_PREVIOUS) + Rotation-Playbook — ELE-188                      |
 | `scripts/rotate-jwt-secret.mjs`                                                                                                               | Rotation-Skript (--dry-run / --apply, .env-Backup) — ELE-188                                            |
 | `backend/tests/auth/jwt-rotation.test.ts`                                                                                                     | 6 Vitest-Tests: primary+previous Verify, Sign nutzt nur primary — ELE-188                               |
+| `specs/ELE-190.md`                                                                                                                            | Reassignment-Scoring-Gewichte Spec                                                                      |
+| `docs/ADR-19-reassignment-scoring-weights.md`                                                                                                 | ADR: Gewichte 30/25/20/15/10 + Equipment-Hard-Filter + Anpassungs-Workflow — ELE-190                    |
+| `backend/tests/lib/reassignment-scoring-config.test.ts`                                                                                       | 9 Vitest-Tests: Summen-Sanity, Range-Checks, Faktor-Reihenfolge — ELE-190                               |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

@@ -48,6 +48,24 @@ interface LibConfig {
     GPS_DATA_DAYS: number;
     AUDIT_LOG_DAYS: number;
   };
+  REASSIGNMENT_SCORING: {
+    WEIGHTS: {
+      capacity: number;
+      proximity: number;
+      qualification: number;
+      experience: number;
+      fairness: number;
+    };
+    WEIGHT_TOTAL_SANITY: number;
+    MIN_SCORE_TO_SUGGEST: number;
+    MAX_SUGGESTIONS: number;
+    MAX_USEFUL_KM: number;
+    EXPERIENCE_SATURATION_MONTHS: number;
+    FAIR_LOOKBACK_WEEKS: number;
+    MAX_FAIR_VERTRETUNGEN: number;
+    EQUIPMENT_HARD_FILTER: boolean;
+    MIN_QUALIFICATION_LEVEL: 'BASIC' | 'INTERMEDIATE' | 'EXPERT' | 'MASTER';
+  };
 }
 
 const libConfig = require(path.join(PROJECT_ROOT, 'lib', 'config.js')) as LibConfig;
@@ -57,6 +75,7 @@ export const FEATURES = libConfig.FEATURES;
 export const SECURITY = libConfig.SECURITY;
 export const PERFORMANCE = libConfig.PERFORMANCE;
 export const DSGVO_RETENTION = libConfig.DSGVO_RETENTION;
+export const REASSIGNMENT_SCORING = libConfig.REASSIGNMENT_SCORING;
 export const PROJECT = libConfig.CONFIG;
 
 // Runtime-Config aus .env
