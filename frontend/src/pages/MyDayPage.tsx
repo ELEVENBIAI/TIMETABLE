@@ -3,9 +3,18 @@
 // via employees.user_id = actor.userId. Read-only.
 
 import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarOff, Loader2, MapPin, Navigation } from 'lucide-react';
-import { format } from 'date-fns';
+import {
+  CalendarOff,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  MapPin,
+  Navigation,
+} from 'lucide-react';
+import { addDays, format, startOfISOWeek } from 'date-fns';
 import { de, enUS } from 'date-fns/locale';
 import {
   indexById,
@@ -15,7 +24,7 @@ import {
   useScheduleEntries,
   useServiceTypes,
 } from '@/api/schedule';
-import { formatDurationLabel, formatTime, getCurrentWeekStart, toISODate } from '@/lib/date';
+import { formatDurationLabel, formatTime, parseISODate, toISODate } from '@/lib/date';
 import { formatAddress, googleMapsSearchUrl } from '@/lib/maps';
 import { isLocale } from '@/lib/i18n';
 import type { Property, ScheduleEntry, ServiceType } from '@/types/schedule';
@@ -27,12 +36,37 @@ export function MyDayPage() {
   const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
   const dfnsLocale = LOCALES[locale];
 
-  // Heute bestimmen + zugehörigen Wochenstart (Montag der aktuellen ISO-Woche)
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const today = useMemo(() => new Date(), []);
   const todayISO = useMemo(() => toISODate(today), [today]);
-  const weekStartISO = useMemo(() => toISODate(getCurrentWeekStart()), []);
 
-  // Wochenpläne der aktuellen Woche. Backend liefert für EMPLOYEE alle Schedules
+  // Aktuelles Anzeige-Datum aus URL ?date=YYYY-MM-DD, default = heute.
+  const viewDate = useMemo(() => {
+    const d = searchParams.get('date');
+    if (d) {
+      try {
+        return parseISODate(d);
+      } catch {
+        return today;
+      }
+    }
+    return today;
+  }, [searchParams, today]);
+  const viewDateISO = toISODate(viewDate);
+  const isToday = viewDateISO === todayISO;
+  const weekStartISO = toISODate(startOfISOWeek(viewDate));
+
+  function setDate(next: Date) {
+    const iso = toISODate(next);
+    if (iso === todayISO) {
+      setSearchParams({});
+    } else {
+      setSearchParams({ date: iso });
+    }
+  }
+
+  // Wochenpläne der gewählten Woche. Backend liefert für EMPLOYEE alle Schedules
   // der eigenen Tenant — wir nehmen den ersten (es gibt pro Woche max. 1).
   const schedulesQuery = useSchedules(weekStartISO);
   const schedule = schedulesQuery.data?.[0];
@@ -45,14 +79,13 @@ export function MyDayPage() {
   const propertyMap = useMemo(() => indexById(propertiesQuery.data), [propertiesQuery.data]);
   const serviceTypeMap = useMemo(() => indexById(serviceTypesQuery.data), [serviceTypesQuery.data]);
 
-  // Falls der eigene Mitarbeiter nicht aktiv ist, zeigen wir trotzdem den Plan.
-  // Display-Name oben kommt aus dem ersten Eintrag (alle gehören dem gleichen MA).
+  // Einträge des Anzeigetags, sortiert nach Startzeit.
   const todaysEntries = useMemo(() => {
     if (!entriesQuery.data) return [];
     return entriesQuery.data
-      .filter((e) => e.entry_date === todayISO)
+      .filter((e) => e.entry_date === viewDateISO)
       .sort((a, b) => (a.start_time ?? '').localeCompare(b.start_time ?? ''));
-  }, [entriesQuery.data, todayISO]);
+  }, [entriesQuery.data, viewDateISO]);
 
   const employeeMap = useMemo(() => indexById(employeesQuery.data), [employeesQuery.data]);
   const myEmployee = todaysEntries[0] ? employeeMap.get(todaysEntries[0].employee_id) : undefined;
@@ -64,15 +97,69 @@ export function MyDayPage() {
     serviceTypesQuery.isLoading;
 
   return (
-    <section className="flex flex-col gap-4 px-4 py-4">
-      <header className="flex flex-col gap-1">
-        <div className="text-label uppercase tracking-wide text-text-muted">
-          {format(today, 'EEEE', { locale: dfnsLocale })}
+    <section className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 py-4">
+      <header className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <div className="text-label uppercase tracking-wide text-text-muted">
+            {format(viewDate, 'EEEE', { locale: dfnsLocale })}
+          </div>
+          <h1 className="text-display font-semibold tabular-nums">
+            {format(viewDate, 'd. MMMM', { locale: dfnsLocale })}
+          </h1>
         </div>
-        <h1 className="text-display font-semibold tabular-nums">
-          {format(today, 'd. MMMM', { locale: dfnsLocale })}
-        </h1>
-        {myEmployee ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setDate(addDays(viewDate, -1))}
+            aria-label={t('nav.previous')}
+            className="rounded-md border border-border bg-surface p-2 text-text-secondary transition-colors hover:border-brand-primary hover:text-text-primary"
+            data-testid="myday-prev"
+          >
+            <ChevronLeft size={16} aria-hidden="true" />
+          </button>
+          <label
+            className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-label text-text-secondary transition-colors hover:border-brand-primary hover:text-text-primary"
+            data-testid="myday-datepicker"
+          >
+            <CalendarDays size={14} aria-hidden="true" />
+            <span className="sr-only">{t('nav.pickDate')}</span>
+            <input
+              type="date"
+              value={viewDateISO}
+              max="2099-12-31"
+              onChange={(e) => {
+                if (!e.target.value) return;
+                try {
+                  setDate(parseISODate(e.target.value));
+                } catch {
+                  /* ignore */
+                }
+              }}
+              className="bg-transparent text-label text-text-primary outline-none [color-scheme:light]"
+              aria-label={t('nav.pickDate')}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => setDate(addDays(viewDate, 1))}
+            aria-label={t('nav.next')}
+            className="rounded-md border border-border bg-surface p-2 text-text-secondary transition-colors hover:border-brand-primary hover:text-text-primary"
+            data-testid="myday-next"
+          >
+            <ChevronRight size={16} aria-hidden="true" />
+          </button>
+          {!isToday ? (
+            <button
+              type="button"
+              onClick={() => setDate(today)}
+              className="ml-auto rounded-md border border-border bg-surface px-3 py-1.5 text-label text-text-secondary transition-colors hover:border-brand-primary hover:text-text-primary"
+              data-testid="myday-today"
+            >
+              {t('nav.today')}
+            </button>
+          ) : null}
+        </div>
+        {myEmployee && isToday ? (
           <div className="text-body text-text-secondary">
             {t('header.greeting', {
               name: myEmployee.first_name,

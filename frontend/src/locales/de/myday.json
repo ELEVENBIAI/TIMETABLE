@@ -3,6 +3,12 @@
   "header": {
     "greeting": "Guten Morgen, {{name}}!"
   },
+  "nav": {
+    "previous": "Vortag",
+    "next": "Folgetag",
+    "today": "Zurück zu heute",
+    "pickDate": "Datum wählen"
+  },
   "draftHint": "Der Plan ist noch Entwurf — dein Planer kann ihn noch ändern.",
   "actions": {
     "navigate": "Navigieren"

@@ -3,6 +3,12 @@
   "header": {
     "greeting": "Good morning, {{name}}!"
   },
+  "nav": {
+    "previous": "Previous day",
+    "next": "Next day",
+    "today": "Back to today",
+    "pickDate": "Pick a date"
+  },
   "draftHint": "The schedule is still a draft — your planner may still change it.",
   "actions": {
     "navigate": "Navigate"
