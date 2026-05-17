@@ -44,5 +44,23 @@
     "title": "Diese Woche hat noch keinen Plan",
     "subtitle": "Aus der Standard-Vorlage generieren — dauert nur Sekunden.",
     "generateButton": "Plan aus Vorlage generieren"
+  },
+  "dnd": {
+    "locked": "Plan ist veröffentlicht — Drag & Drop deaktiviert",
+    "lockedHint": "Veröffentlichte Pläne sind schreibgeschützt.",
+    "announce": {
+      "pickup": "Aufgabe aufgenommen. Pfeiltasten zum Zielwechsel, Leertaste zum Ablegen, Escape zum Abbrechen.",
+      "over": "Verschiebe zu {{employee}} am {{day}}.",
+      "drop": "Verschoben zu {{employee}} am {{day}}.",
+      "cancel": "Verschieben abgebrochen."
+    },
+    "conflict": {
+      "title": "Zeit-Konflikt",
+      "body": "{{employee}} hat zu dieser Zeit am {{day}} bereits eine andere Aufgabe. Die Karte wurde an ihren Ausgangsort zurückgesetzt.",
+      "dismiss": "Schließen"
+    },
+    "error": {
+      "generic": "Die Aufgabe konnte nicht verschoben werden. Bitte erneut versuchen."
+    }
   }
 }

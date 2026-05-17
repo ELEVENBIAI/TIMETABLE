@@ -1,5 +1,29 @@
 # Changelog — Timetable
 
+## v0.5.1 — 2026-05-17 (ELE-181: Drag-&-Drop-Umplanung)
+
+- **ELE-181 done:** Robert kann Aufgaben per Drag & Drop von einem Mitarbeiter auf einen anderen verschieben. Spart ~45 min Telefonarbeit bei jedem Krankheitsfall.
+- **`@dnd-kit/core` + `@dnd-kit/modifiers`** (industry-standard, accessibility-first, keyboard-fähig) als DnD-Engine.
+- **`DndContext`** umschließt das WeekGrid in `SchedulePage`. Sensoren: `PointerSensor` (5px Activation-Distance) + `KeyboardSensor`. `restrictToWindowEdges` Modifier verhindert dass die Drag-Preview aus dem Viewport heraus rutscht.
+- **`ScheduleEntryCard` ist draggable** über `useDraggable({ id: entry.id, data: { entry } })`. Drag-Source bekommt opacity 40% während des Drags, Cursor wird zu `grab` / `grabbing`. Bei `disabled`: `not-allowed` + Lock-Icon.
+- **Day×Employee-Buckets sind droppable** über neue Wrapper-Komponente `DroppableBucket` (in `WeekGrid.tsx`). Bucket-ID-Schema: `${day}-${employeeId}`. Hover-Highlight: `brand-primary/10` Tint + Ring-Inset.
+- **`DragOverlay`** rendert die gezogene Card im `presentational`-Mode (kein useDraggable, sondern reine Visuals mit Shadow + leichtem Tilt + Brand-Ring), die mit dem Cursor mitläuft.
+- **`useMoveScheduleEntry()` Mutation** in `api/schedule.ts`:
+  - `onMutate` → optimistischer Cache-Update (employee_id, entry_date, day_of_week, start_time werden sofort gesetzt)
+  - `onError` → automatischer Rollback aus Snapshot
+  - `onSettled` → `invalidateQueries({ queryKey: scheduleKeys.entries(scheduleId) })`
+- **Time-Conflict-Handling**: Backend wirft 409 TIME_CONFLICT → `ScheduleConflictAlert` Banner über dem Grid mit "{{employee}} hat zu dieser Zeit am {{day}} bereits eine Aufgabe — Karte wurde zurückgesetzt". Auto-Dismiss nach 5s, manueller Close-Button. Inline-Alert statt Modal — less intrusive (Spec-Vorgabe).
+- **PUBLISHED-Schedule = read-only**: `dndDisabled` wird an WeekGrid weitergereicht. Cards bekommen Lock-Icon + `cursor-not-allowed`, Buckets registrieren sich nicht als Droppable. Zusätzlich erscheint ein Info-Banner "Veröffentlichte Pläne sind schreibgeschützt".
+- **Accessibility (A11y)**:
+  - `KeyboardSensor` aktiv → Pfeiltasten zum Verschieben, Space zum Aufnehmen/Ablegen, Escape zum Abbrechen
+  - `announcements: Announcements` für ARIA-Live-Region: "Aufgabe aufgenommen …", "Verschiebe zu Anna am Montag", "Verschoben zu Anna am Montag", "Abgebrochen"
+- **i18n** `schedule.json` erweitert um `dnd.*`-Sektion (en + de) mit Locked-State, Conflict-Body, Drag-Announce.
+- **Tests**:
+  - **Vitest Component:** `ScheduleEntryCard.dnd.test.tsx` (3 Tests: draggable wenn DRAFT, disabled mit Lock, presentational visual) + `useMoveScheduleEntry.test.tsx` (2 Tests: Optimistic-Update + Rollback bei Conflict).
+  - **Playwright E2E:** `schedule-dnd.spec.ts` (3 Tests: data-draggable=true, Buckets sind data-droppable=true, Drag-Move persistiert nach Reload bzw. Conflict-Alert).
+- **Build-Größe:** 139 KB gzip (Budget ADR-14 = 250 KB → OK).
+- Backlog: ELE-182 (Mobile-Touch-Drag) folgt mit der Mobile-Detail-Ansicht. Saison-/Qualifikations-Checks kommen mit ELE-196 (Reassignment-Engine) — wir vertrauen für jetzt dem Backend-Time-Conflict-Check.
+
 ## v0.5.0 — 2026-05-17 (ELE-180: Wochenplan-Grid — Roberts Hauptansicht)
 
 - **ELE-180 done:** Wochenplan-Grid live. Robert kann seine Idealwoche im Browser sehen — das eigentliche Kern-Feature von Wave 1.

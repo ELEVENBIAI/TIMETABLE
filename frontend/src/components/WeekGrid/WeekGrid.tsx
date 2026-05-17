@@ -13,10 +13,11 @@
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDroppable } from '@dnd-kit/core';
 import { addDays, format } from 'date-fns';
 import { de, enUS } from 'date-fns/locale';
 import { indexById } from '@/api/schedule';
-import { minutesFromGridStart } from '@/lib/date';
+import { minutesFromGridStart, toISODate } from '@/lib/date';
 import { isLocale } from '@/lib/i18n';
 import { ScheduleEntryCard } from './ScheduleEntryCard';
 import { HourGridBackground, TimeAxis } from './TimeAxis';
@@ -33,11 +34,52 @@ interface Props {
   context: GridContext;
   mode: ViewMode;
   filter: FilterState;
+  /** Wenn true: DnD-Targets werden nicht aktiviert (PUBLISHED-Schedule). */
+  dndDisabled?: boolean;
+}
+
+interface BucketProps {
+  day: number;
+  employeeId: string;
+  entryDate: string;
+  multiColumn: boolean;
+  disabled: boolean;
+  children: React.ReactNode;
+}
+
+function DroppableBucket({
+  day,
+  employeeId,
+  entryDate,
+  multiColumn,
+  disabled,
+  children,
+}: BucketProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `${day}-${employeeId}`,
+    data: { day, employeeId, entryDate },
+    disabled,
+  });
+  return (
+    <div
+      ref={setNodeRef}
+      className={[
+        'relative flex-1 transition-colors',
+        multiColumn ? 'border-r border-border/30 last:border-r-0' : '',
+        isOver ? 'bg-brand-primary/10 ring-1 ring-brand-primary/30 ring-inset' : '',
+      ].join(' ')}
+      data-day={day}
+      data-employee={employeeId}
+      data-droppable={!disabled}
+    >
+      {children}
+    </div>
+  );
 }
 
 const LOCALES = { en: enUS, de };
 
-export function WeekGrid({ context, mode, filter }: Props) {
+export function WeekGrid({ context, mode, filter, dndDisabled = false }: Props) {
   const { i18n } = useTranslation('schedule');
   const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
   const loc = LOCALES[locale];
@@ -154,11 +196,13 @@ export function WeekGrid({ context, mode, filter }: Props) {
                 {employeeColumns.map((emp) => {
                   const entries = entriesByBucket.get(bucketKey(day, emp.id)) ?? [];
                   return (
-                    <div
+                    <DroppableBucket
                       key={emp.id}
-                      className={`relative flex-1 ${employeesPerDay > 1 ? 'border-r border-border/30 last:border-r-0' : ''}`}
-                      data-day={day}
-                      data-employee={emp.id}
+                      day={day}
+                      employeeId={emp.id}
+                      entryDate={toISODate(dayDate)}
+                      multiColumn={employeesPerDay > 1}
+                      disabled={dndDisabled}
                     >
                       {entries.map((entry) => (
                         <ScheduleEntryCard
@@ -173,9 +217,10 @@ export function WeekGrid({ context, mode, filter }: Props) {
                           }
                           pxPerMinute={PX_PER_MINUTE}
                           topPx={minutesFromGridStart(entry.start_time)}
+                          disabled={dndDisabled}
                         />
                       ))}
-                    </div>
+                    </DroppableBucket>
                   );
                 })}
               </div>

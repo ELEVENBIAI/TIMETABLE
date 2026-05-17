@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.0 | **Stand:** 2026-05-17
+**Version:** 0.5.1 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -401,6 +401,10 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/locales/{en,de}/schedule.json`                                                                                                  | i18n Schedule-Namespace — ELE-180                                                                       |
 | `frontend/tests/smoke/schedule.test.tsx`                                                                                                      | Vitest Schedule-Smokes — ELE-180                                                                        |
 | `e2e/tests/schedule-smoke.spec.ts`                                                                                                            | Playwright Schedule-E2E — ELE-180                                                                       |
+| `specs/ELE-181.md`                                                                                                                            | Drag-&-Drop-Umplanung Spec                                                                              |
+| `frontend/src/components/ScheduleConflictAlert.tsx`                                                                                           | Inline-Banner für 409 TIME_CONFLICT bei DnD-Move — ELE-181                                              |
+| `frontend/tests/components/{ScheduleEntryCard.dnd,useMoveScheduleEntry}.test.tsx`                                                             | Vitest DnD-Behavior + Optimistic-Update Tests — ELE-181                                                 |
+| `e2e/tests/schedule-dnd.spec.ts`                                                                                                              | Playwright DnD-E2E — ELE-181                                                                            |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

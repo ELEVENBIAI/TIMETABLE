@@ -44,5 +44,23 @@
     "title": "No schedule for this week",
     "subtitle": "Generate one from the standard template — takes a few seconds.",
     "generateButton": "Generate from template"
+  },
+  "dnd": {
+    "locked": "Schedule is published — drag & drop disabled",
+    "lockedHint": "Published schedules are read-only.",
+    "announce": {
+      "pickup": "Picked up task. Use arrow keys to choose a target, space to drop, escape to cancel.",
+      "over": "Moving to {{employee}} on {{day}}.",
+      "drop": "Moved to {{employee}} on {{day}}.",
+      "cancel": "Move cancelled."
+    },
+    "conflict": {
+      "title": "Time conflict",
+      "body": "{{employee}} already has another task at that time on {{day}}. The card was returned to its original slot.",
+      "dismiss": "Dismiss"
+    },
+    "error": {
+      "generic": "Could not move the task. Please try again."
+    }
   }
 }

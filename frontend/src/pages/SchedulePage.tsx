@@ -1,33 +1,71 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Loader2 } from 'lucide-react';
-import { addDays } from 'date-fns';
+import { Sparkles, Loader2, Lock } from 'lucide-react';
+import { addDays, format } from 'date-fns';
+import { de, enUS } from 'date-fns/locale';
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type Announcements,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Button } from '@/components/Button';
 import { FormError } from '@/components/FormError';
 import { ScheduleStatusBadge } from '@/components/ScheduleStatusBadge';
 import { PublishScheduleButton } from '@/components/PublishScheduleButton';
 import { WeekNavigator } from '@/components/WeekNavigator';
 import { WeekGrid } from '@/components/WeekGrid/WeekGrid';
+import { ScheduleEntryCard } from '@/components/WeekGrid/ScheduleEntryCard';
 import { ViewModeSwitcher } from '@/components/WeekGrid/ViewModeSwitcher';
 import { WorkloadSummary } from '@/components/WeekGrid/WorkloadSummary';
+import { ScheduleConflictAlert, type ConflictInfo } from '@/components/ScheduleConflictAlert';
 import type { FilterState, ViewMode } from '@/components/WeekGrid/WeekGrid.types';
 import {
+  indexById,
   useEmployees,
   useGenerateSchedule,
+  useMoveScheduleEntry,
   useProperties,
   useSchedules,
   useScheduleEntries,
   useServiceTypes,
 } from '@/api/schedule';
 import { getCurrentWeekStart, getWeekMeta, parseISODate, toISODate } from '@/lib/date';
+import { isLocale } from '@/lib/i18n';
+import { ApiRequestError } from '@/types/api';
+import type { Employee, ScheduleEntry } from '@/types/schedule';
+
+const LOCALES = { en: enUS, de };
+
+interface DragData {
+  entry: ScheduleEntry;
+}
+
+interface DropData {
+  day: number;
+  employeeId: string;
+  entryDate: string;
+}
 
 export function SchedulePage() {
-  const { t } = useTranslation('schedule');
+  const { t, i18n } = useTranslation('schedule');
+  const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
+  const dfnsLocale = LOCALES[locale];
   const [searchParams, setSearchParams] = useSearchParams();
   const [mode, setMode] = useState<ViewMode>('team');
   const [filter, setFilter] = useState<FilterState>({});
   const [generateError, setGenerateError] = useState<unknown>(null);
+  const [activeEntry, setActiveEntry] = useState<ScheduleEntry | null>(null);
+  const [conflict, setConflict] = useState<ConflictInfo | null>(null);
+  const [moveError, setMoveError] = useState<unknown>(null);
 
   // Wochenstart aus URL ?week=YYYY-MM-DD oder aktuelle KW
   const weekStartDate = useMemo(() => {
@@ -49,16 +87,23 @@ export function SchedulePage() {
     setSearchParams({ week: toISODate(next) });
   }
 
-  // ─── Data fetching ────────────────────────────────────────────────────
   const schedulesQuery = useSchedules(weekStartISO);
   const schedule = schedulesQuery.data?.[0];
+  const isPublished = schedule?.status === 'PUBLISHED';
+  const isArchived = schedule?.status === 'ARCHIVED';
+  const dndDisabled = !schedule || isPublished || isArchived;
 
   const entriesQuery = useScheduleEntries(schedule?.id);
   const employeesQuery = useEmployees();
   const propertiesQuery = useProperties();
   const serviceTypesQuery = useServiceTypes();
 
+  const employeeMap = useMemo(() => indexById(employeesQuery.data), [employeesQuery.data]);
+  const propertyMap = useMemo(() => indexById(propertiesQuery.data), [propertiesQuery.data]);
+  const serviceTypeMap = useMemo(() => indexById(serviceTypesQuery.data), [serviceTypesQuery.data]);
+
   const generate = useGenerateSchedule();
+  const move = useMoveScheduleEntry();
 
   const isLoading =
     schedulesQuery.isLoading ||
@@ -68,8 +113,6 @@ export function SchedulePage() {
 
   async function handleGenerate() {
     setGenerateError(null);
-    // MVP: erstes Default-Template aus DB nehmen. Im Pilot ist das immer
-    // "Standardwoche Gepard" mit fix UUID. Später eigene Template-Wahl-UI.
     const PILOT_TEMPLATE_ID = '20202020-3000-1111-1111-111111111111';
     try {
       await generate.mutateAsync({
@@ -82,6 +125,102 @@ export function SchedulePage() {
       setGenerateError(err);
     }
   }
+
+  // ─── DnD-Sensoren (Pointer + Keyboard für A11y) ────────────────────────
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
+
+  const employeeLabel = useCallback((emp: Employee | undefined): string => {
+    if (!emp) return '?';
+    return `${emp.first_name} ${emp.last_name}`.trim();
+  }, []);
+
+  const dayLabelForDate = useCallback(
+    (iso: string): string => {
+      try {
+        return format(parseISODate(iso), 'EEEE d. MMMM', { locale: dfnsLocale });
+      } catch {
+        return iso;
+      }
+    },
+    [dfnsLocale]
+  );
+
+  // ─── Drag-Handlers ────────────────────────────────────────────────────
+  function handleDragStart(ev: DragStartEvent) {
+    const data = ev.active.data.current as DragData | undefined;
+    if (data?.entry) {
+      setActiveEntry(data.entry);
+      setMoveError(null);
+    }
+  }
+
+  async function handleDragEnd(ev: DragEndEvent) {
+    const dragData = ev.active.data.current as DragData | undefined;
+    const dropData = ev.over?.data.current as DropData | undefined;
+    setActiveEntry(null);
+
+    if (!dragData?.entry || !dropData || !schedule) return;
+    const entry = dragData.entry;
+
+    // No-op falls auf gleiche Position fallen gelassen
+    if (entry.employee_id === dropData.employeeId && entry.entry_date === dropData.entryDate) {
+      return;
+    }
+
+    try {
+      await move.mutateAsync({
+        id: entry.id,
+        scheduleId: schedule.id,
+        employeeId: dropData.employeeId,
+        entryDate: dropData.entryDate,
+        dayOfWeek: dropData.day,
+      });
+    } catch (err) {
+      if (err instanceof ApiRequestError && err.status === 409) {
+        setConflict({
+          employeeLabel: employeeLabel(employeeMap.get(dropData.employeeId)),
+          dayLabel: dayLabelForDate(dropData.entryDate),
+        });
+      } else {
+        setMoveError(err);
+      }
+    }
+  }
+
+  function handleDragCancel() {
+    setActiveEntry(null);
+  }
+
+  // ─── ARIA-Live Announcements (Keyboard-A11y) ──────────────────────────
+  const announcements: Announcements = useMemo(() => {
+    function describeOver(overId: string | number | undefined) {
+      if (typeof overId !== 'string') return null;
+      const [dayStr, empId] = overId.split('-', 2);
+      if (!empId) return null;
+      const day = Number(dayStr);
+      const emp = employeeMap.get(empId);
+      const date = addDays(weekStartDate, day - 1);
+      return {
+        employee: employeeLabel(emp),
+        day: format(date, 'EEEE', { locale: dfnsLocale }),
+      };
+    }
+    return {
+      onDragStart: () => t('dnd.announce.pickup'),
+      onDragOver: ({ over }) => {
+        const info = describeOver(over?.id);
+        return info ? t('dnd.announce.over', info) : undefined;
+      },
+      onDragEnd: ({ over }) => {
+        const info = describeOver(over?.id);
+        return info ? t('dnd.announce.drop', info) : t('dnd.announce.cancel');
+      },
+      onDragCancel: () => t('dnd.announce.cancel'),
+    };
+  }, [t, employeeMap, employeeLabel, weekStartDate, dfnsLocale]);
 
   return (
     <section className="mx-auto flex max-w-[1800px] flex-col gap-4 px-4 py-4 md:px-6 md:py-6">
@@ -149,7 +288,20 @@ export function SchedulePage() {
             {schedule && <PublishScheduleButton schedule={schedule} />}
           </div>
         </div>
+        {isPublished && (
+          <div
+            role="status"
+            className="flex items-center gap-2 rounded-md border border-border bg-surface-sunken px-3 py-2 text-label text-text-secondary"
+            data-testid="schedule-locked-banner"
+          >
+            <Lock size={14} className="text-text-muted" aria-hidden="true" />
+            {t('dnd.lockedHint')}
+          </div>
+        )}
       </header>
+
+      <ScheduleConflictAlert conflict={conflict} onDismiss={() => setConflict(null)} />
+      {moveError ? <FormError error={moveError} fallbackKey="schedule:dnd.error.generic" /> : null}
 
       {isLoading ? (
         <div className="flex items-center gap-2 p-8 text-text-secondary">
@@ -163,7 +315,15 @@ export function SchedulePage() {
           error={generateError}
         />
       ) : (
-        <>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToWindowEdges]}
+          accessibility={{ announcements }}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
           <WeekGrid
             context={{
               entries: entriesQuery.data ?? [],
@@ -174,12 +334,28 @@ export function SchedulePage() {
             }}
             mode={mode}
             filter={filter}
+            dndDisabled={dndDisabled}
           />
+          <DragOverlay dropAnimation={null}>
+            {activeEntry ? (
+              <ScheduleEntryCard
+                entry={activeEntry}
+                property={propertyMap.get(activeEntry.property_id)}
+                serviceType={serviceTypeMap.get(activeEntry.service_type_id)}
+                originalEmployee={
+                  activeEntry.original_employee_id
+                    ? employeeMap.get(activeEntry.original_employee_id)
+                    : undefined
+                }
+                presentational
+              />
+            ) : null}
+          </DragOverlay>
           <WorkloadSummary
             entries={entriesQuery.data ?? []}
             employees={employeesQuery.data ?? []}
           />
-        </>
+        </DndContext>
       )}
     </section>
   );

@@ -112,6 +112,53 @@ export function useGenerateSchedule() {
   });
 }
 
+export interface MoveScheduleEntryInput {
+  id: string;
+  scheduleId: string;
+  employeeId?: string;
+  entryDate?: string;
+  dayOfWeek?: number;
+  startTime?: string;
+}
+
+export function useMoveScheduleEntry() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, scheduleId: _ignore, ...body }: MoveScheduleEntryInput) =>
+      api.patch<ScheduleEntry>(`/schedule-entries/${id}/move`, body),
+    onMutate: async (input) => {
+      const key = scheduleKeys.entries(input.scheduleId);
+      await qc.cancelQueries({ queryKey: key });
+      const previous = qc.getQueryData<ScheduleEntry[]>(key);
+      if (previous) {
+        qc.setQueryData<ScheduleEntry[]>(
+          key,
+          previous.map((e) =>
+            e.id === input.id
+              ? {
+                  ...e,
+                  employee_id: input.employeeId ?? e.employee_id,
+                  entry_date: input.entryDate ?? e.entry_date,
+                  day_of_week: input.dayOfWeek ?? e.day_of_week,
+                  start_time: input.startTime !== undefined ? input.startTime : e.start_time,
+                }
+              : e
+          )
+        );
+      }
+      return { previous, key };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) {
+        qc.setQueryData(ctx.key, ctx.previous);
+      }
+    },
+    onSettled: (_data, _err, input) => {
+      void qc.invalidateQueries({ queryKey: scheduleKeys.entries(input.scheduleId) });
+    },
+  });
+}
+
 // ─── Lookup-Helpers (für die Grid-Anzeige) ────────────────────────────────
 
 export function indexById<T extends { id: string }>(items: T[] | undefined): Map<string, T> {
