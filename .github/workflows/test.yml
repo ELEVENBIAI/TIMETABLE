@@ -104,18 +104,57 @@ jobs:
           PGPASSWORD=owner_test_pw psql -h localhost -U hmservice_owner -d timetable -f backend/src/db/migrations/0009_pilot_wave1_seed.sql
       - name: Set test-known passwords on pilot users (CI only)
         run: node backend/scripts/seed-test-credentials.mjs
-      - name: Start backend in background
-        run: |
-          npm --workspace=backend exec tsx src/server.ts > backend.log 2>&1 &
-          echo "BACKEND_PID=$!" >> "$GITHUB_ENV"
-          # Wait for backend health
-          for i in {1..30}; do
-            curl -sf http://localhost:3000/api/health && break || sleep 1
-          done
       - name: Install Playwright browsers
         run: npm --workspace=e2e exec -- playwright install --with-deps chromium webkit
-      - name: Run E2E tests
-        run: npm --workspace=e2e run test
+      - name: Start backend + run E2E tests
+        # GitHub-Actions killt Background-Prozesse zwischen `run:`-Steps.
+        # Daher Backend + Health-Poll + Playwright in einer einzigen Shell.
+        run: |
+          set -e
+          LOG_FILE="$PWD/backend.log"
+          # Backend im Hintergrund. Subshell wegen cwd-Wechsel, Log in repo root.
+          (cd backend && npx tsx src/server.ts) > "$LOG_FILE" 2>&1 &
+          BACKEND_PID=$!
+          echo "Backend PID: $BACKEND_PID"
+
+          # Health-Poll mit hartem Fail nach 60s
+          echo "Warte auf Backend (max 60s)..."
+          BACKEND_UP=false
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3000/api/health > /dev/null 2>&1; then
+              echo "Backend up nach ${i}s"
+              BACKEND_UP=true
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$BACKEND_UP" != "true" ]; then
+            echo "FEHLER: Backend kam nach 60s nicht hoch"
+            echo "--- backend.log ---"
+            cat "$LOG_FILE" || true
+            exit 1
+          fi
+
+          # Sanity: einmal Login probieren, damit wir sehen ob Auth funktioniert
+          echo "Test-Login-Probe..."
+          curl -sS -X POST http://localhost:3000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@pilot.local","password":"ChangeMe123!"}' \
+            | head -c 200
+          echo ""
+
+          # Playwright (set +e damit Cleanup garantiert)
+          set +e
+          npm --workspace=e2e run test
+          E2E_EXIT=$?
+          set -e
+
+          kill $BACKEND_PID 2>/dev/null || true
+          echo "--- Backend log (letzte 50 Zeilen) ---"
+          tail -50 "$LOG_FILE" || true
+
+          exit $E2E_EXIT
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
