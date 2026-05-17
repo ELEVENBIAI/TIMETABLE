@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.6 | **Stand:** 2026-05-17
+**Version:** 0.6.0 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -442,6 +442,13 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `specs/ELE-190.md`                                                                                                                            | Reassignment-Scoring-Gewichte Spec                                                                      |
 | `docs/ADR-19-reassignment-scoring-weights.md`                                                                                                 | ADR: Gewichte 30/25/20/15/10 + Equipment-Hard-Filter + Anpassungs-Workflow — ELE-190                    |
 | `backend/tests/lib/reassignment-scoring-config.test.ts`                                                                                       | 9 Vitest-Tests: Summen-Sanity, Range-Checks, Faktor-Reihenfolge — ELE-190                               |
+| `specs/ELE-196.md`                                                                                                                            | Reassignment-Engine Spec                                                                                |
+| `backend/src/services/scheduling/reassignment-pure.ts`                                                                                        | Pure-Scoring (5 Faktoren + Contingency-Bonus + Hard-Filter + Split-Helper) — ELE-196                    |
+| `backend/src/services/scheduling/reassignment-engine.ts`                                                                                      | DB-Loader (Entry-Context + Kandidaten + Promise.all) → ruft Pure-Scoring — ELE-196                      |
+| `backend/src/routes/reassignment.ts`                                                                                                          | `GET /api/schedule-entries/:id/reassignment-suggestions` (ADMIN/PLANNER/FOREMAN) — ELE-196              |
+| `backend/src/locales/{en,de}/reassignment.json`                                                                                               | i18n-Vertrags-Keys für Frontend-Picker (reasons + blockers) — ELE-196                                   |
+| `backend/tests/services/reassignment-pure.test.ts`                                                                                            | 43 Pure-Unit-Tests (alle Scorer + Hard-Filter + Composite + Split) — ELE-196                            |
+| `backend/tests/routes/reassignment.test.ts`                                                                                                   | 8 Route-Integration-Tests (Auth, 404, Hard-Filter, Contingency-Boost, Proximity) — ELE-196              |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

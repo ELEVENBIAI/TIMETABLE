@@ -1,0 +1,18 @@
+{
+  "reasons": {
+    "capacityHigh": "Has ~{{hoursFree}}h free this week",
+    "proximityNear": "Lives only {{km}} km away",
+    "qualificationsCount": "Holds {{count}} qualifications",
+    "experienceVisits": "Visited this property {{visits}}× in the last 6 months",
+    "fairnessLow": "Has only {{count}} substitutions recently",
+    "contingencyMatch": "Pre-defined backup (priority {{priority}})"
+  },
+  "blockers": {
+    "inactive": "Inactive or deleted",
+    "selfReassignment": "Cannot replace themselves",
+    "hasAbsence": "Has {{absenceType}} absence on this day",
+    "timeConflict": "Has another assignment starting {{startTime}}",
+    "lowScore": "Score too low ({{score}}/100)",
+    "outsideTopN": "Outside top suggestions"
+  }
+}

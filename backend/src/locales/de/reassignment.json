@@ -1,0 +1,18 @@
+{
+  "reasons": {
+    "capacityHigh": "Hat noch ~{{hoursFree}}h frei diese Woche",
+    "proximityNear": "Wohnt nur {{km}} km entfernt",
+    "qualificationsCount": "Hat {{count}} Qualifikationen",
+    "experienceVisits": "War in den letzten 6 Monaten {{visits}}× am Objekt",
+    "fairnessLow": "Hat zuletzt nur {{count}} Vertretungen übernommen",
+    "contingencyMatch": "Vordefinierte Vertretung (Priorität {{priority}})"
+  },
+  "blockers": {
+    "inactive": "Inaktiv oder gelöscht",
+    "selfReassignment": "Kann sich nicht selbst vertreten",
+    "hasAbsence": "Hat {{absenceType}}-Abwesenheit an diesem Tag",
+    "timeConflict": "Hat anderen Termin um {{startTime}}",
+    "lowScore": "Score zu niedrig ({{score}}/100)",
+    "outsideTopN": "Außerhalb der Top-Vorschläge"
+  }
+}

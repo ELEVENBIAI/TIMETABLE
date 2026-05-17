@@ -1,5 +1,43 @@
 # Changelog — Timetable
 
+## v0.6.0 — 2026-05-17 (ELE-196: Reassignment-Engine — Wave-3-Hauptfeature)
+
+- **ELE-196 done:** Robert bekommt bei Krankmeldung **automatisch sortierte Vertretungsvorschläge** mit Score + Begründung. Minor-Bump (0.5.6 → 0.6.0) markiert das erste Wave-3-Feature.
+- **Pure Scoring-Function** `backend/src/services/scheduling/reassignment-pure.ts` (ADR-04 konform — no DB, no LLM, deterministisch):
+  - `haversineKm()` für Geo-Distanz
+  - 5 Faktor-Scorer: `scoreCapacity`, `scoreProximity`, `scoreQualification`, `scoreExperience`, `scoreFairness`
+  - `applyContingencyBonus()` mit Priority-basiertem +1..+10 Bonus, Cap auf 100
+  - `hardFilterBlockerKeys()` → Liste i18n-Keys für inactive/selfReassignment/hasAbsence/timeConflict
+  - `scoreCandidate()` Composite: lineare Kombination mit Gewichten aus `REASSIGNMENT_SCORING` (ADR-19), Bonus drauf, Hard-Filter setzt Score=0
+  - `splitSuggestions()` sortiert → Top-N (unblocked, ≥ MIN_SCORE_TO_SUGGEST=40) + blocked-Liste mit klaren Blocker-Keys (`lowScore`, `outsideTopN`)
+- **Engine-Service** `backend/src/services/scheduling/reassignment-engine.ts`:
+  - `loadEntryContext()` — Entry + Property + ISO-Wochengrenzen
+  - `loadCandidatePool()` — alle Mitarbeiter im Tenant
+  - `buildCandidateInput()` — pro Kandidat parallel (Promise.all über 7 Queries): Auslastung, Qualifikationen, Visits am Property, Absences, Time-Conflicts, Contingency-Rules, Reassignment-Count
+  - `getReassignmentSuggestions()` → orchestriert + ruft Pure-Scoring
+- **API-Endpoint** `GET /api/schedule-entries/:id/reassignment-suggestions`:
+  - Auth: ADMIN / PLANNER / FOREMAN
+  - 404 mit `EntryNotFoundError` bei Cross-Tenant- oder Nicht-Existenz
+  - Response: `{ entryId, suggestions: Suggestion[], blocked: Suggestion[] }`
+  - OpenAPI-Tag `reassignment`
+  - In `app.ts` registriert
+- **i18n-Vertrags-Keys** (`backend/src/locales/{en,de}/reassignment.json`):
+  - `reasons.*`: capacityHigh, proximityNear, qualificationsCount, experienceVisits, fairnessLow, contingencyMatch
+  - `blockers.*`: inactive, selfReassignment, hasAbsence, timeConflict, lowScore, outsideTopN
+  - Backend nutzt die Keys nicht via `t()` — sie sind Vertrags-Strings fürs Frontend (Picker = separates Folge-Issue)
+- **Tests**:
+  - **43 Pure-Tests** (`reassignment-pure.test.ts`) — alle Scorer mit min/mid/max + null-Fallbacks + Composite + Hard-Filter + Split
+  - **8 Route-Integration-Tests** (`reassignment.test.ts`) — Sortierung, Hard-Filter (Absence + Self), Contingency-Boost verifizierbar, Nähe-Score, RBAC 401/403/200, 404, PLANNER + FOREMAN Zugriff
+  - **Coverage**: Pure 100%, Engine 90%+ (DB-Pfade via Integration-Test)
+  - **Performance**: lokal ~9ms im Pilot-Setup (Constraint: p95 < 500ms — locker im Limit)
+- **Backend-Tests gesamt: 435/435 grün** (war 360 vor ELE-196 → +75)
+- **Hinweis Mapping**: Issue spricht von 5 Faktoren inkl. "Verfügbarkeit" (Hard-Filter) — wir folgen ADR-19 mit 5 Soft-Faktoren (Verfügbarkeit ist als Hard-Filter ausgelagert, kein eigenes Gewicht).
+- **Qualifikations-Vereinfachung**: Da `qualification_types` kein Level-Feld hat, scoren wir Anzahl gültiger Qualifikationen mit Sättigung bei 3 (statt BASIC/EXPERT-Hybrid wie in ADR-19 vorgeschlagen). Equipment-Hard-Filter entfällt mangels Schema. Dokumentiert in `specs/ELE-196.md`.
+- **Out of Scope (eigene Folge-Issues)**:
+  - Frontend-Picker-Modal (Wave-3-Frontend-Story)
+  - `reassignment_log`-INSERT beim "Vorschlag akzeptiert" (kommt mit Picker)
+  - A/B-Test-Framework, Tenant-Override, ML-Tuning
+
 ## v0.5.6 — 2026-05-17 (ELE-190: Reassignment-Scoring-Gewichte — ADR + Konstanten)
 
 - **ELE-190 done:** Vorarbeit für ELE-196 (Reassignment-Engine). ADR + Config-Konstanten ohne Engine-Logik — die Engine kommt im Folge-Issue.
