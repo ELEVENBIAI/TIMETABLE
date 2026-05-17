@@ -1,11 +1,34 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import path from 'node:path';
+
+// Conditional Sentry-Source-Maps-Upload (ELE-189 / ADR-17).
+// Aktiv nur wenn alle drei Env-Vars gesetzt sind. Dev/CI ohne Vars läuft normal durch.
+const sentryEnabled = !!(
+  process.env.SENTRY_AUTH_TOKEN &&
+  process.env.SENTRY_ORG &&
+  process.env.SENTRY_PROJECT
+);
 
 export default defineConfig({
   plugins: [
     react(),
+    ...(sentryEnabled
+      ? [
+          sentryVitePlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN!,
+            org: process.env.SENTRY_ORG!,
+            project: process.env.SENTRY_PROJECT!,
+            url: process.env.SENTRY_URL,
+            telemetry: false,
+            sourcemaps: {
+              filesToDeleteAfterUpload: ['./dist/**/*.map'],
+            },
+          }),
+        ]
+      : []),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],

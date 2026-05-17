@@ -14,6 +14,7 @@ import { HttpError } from './lib/errors.js';
 import { initI18n, t } from './lib/i18n.js';
 import { setInitialLocale } from './lib/locale.js';
 import { sanitizeForLog } from './lib/log-sanitize.js';
+import { captureServerError, initTracking } from './lib/tracking.js';
 import { absenceRoutes } from './routes/absences.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
@@ -42,6 +43,9 @@ import { wasteScheduleRoutes } from './routes/waste-schedules.js';
 export async function buildApp() {
   // i18next synchron initialisieren (idempotent)
   initI18n();
+
+  // Error-Tracking initialisieren (no-op wenn SENTRY_DSN nicht gesetzt — ELE-189)
+  initTracking();
 
   const fastify = Fastify({
     logger: {
@@ -163,6 +167,14 @@ export async function buildApp() {
     }
     // Unbekannter Server-Error → 500, kein Stack-Leak
     request.log.error({ err }, 'Unhandled error');
+    // Tracking (ELE-189): nur 5xx an Sentry/GlitchTip, kein 4xx-Noise
+    captureServerError(err, {
+      requestId: request.id,
+      tenantId: request.user?.tenantId,
+      userId: request.user?.userId,
+      route: `${request.method} ${request.routeOptions?.url ?? request.url}`,
+      statusCode: 500,
+    });
     return reply.code(500).send({
       error: {
         code: 'INTERNAL_ERROR',

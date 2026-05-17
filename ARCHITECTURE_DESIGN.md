@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.3 | **Stand:** 2026-05-17
+**Version:** 0.5.4 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -424,6 +424,14 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `e2e/tests/dsgvo.spec.ts`                                                                                                                     | Playwright DSGVO-E2E (Self-Service-Export + Audit-Trail) — ELE-187                                      |
 | `docs/dsgvo/datenschutzerklaerung.md`                                                                                                         | Datenschutzerklärung-Vorlage (DE, Pilot-parametrisierbar) — ELE-187                                     |
 | `docs/dsgvo/avv/{openrouteservice,hosting}.md`                                                                                                | AVV-Templates (Art. 28 DSGVO) — ELE-187                                                                 |
+| `specs/ELE-189.md`                                                                                                                            | Error-Tracking Spec                                                                                     |
+| `docs/ADR-17-error-tracking.md`                                                                                                               | ADR: GlitchTip self-hosted vs Sentry SaaS, Sentry-SDK-Wire-Up — ELE-189                                 |
+| `docs/ERROR_TRACKING.md`                                                                                                                      | Setup-Doku: lokales GlitchTip, DSN-Konfiguration, Alert-Setup — ELE-189                                 |
+| `backend/src/lib/tracking.ts`                                                                                                                 | Backend Sentry-Init + captureServerError + PII-Scrubbing — ELE-189                                      |
+| `frontend/src/lib/tracking.ts`                                                                                                                | Frontend Sentry-Init + setUserContext + captureException — ELE-189                                      |
+| `frontend/src/components/AppErrorBoundary.tsx`                                                                                                | React-Error-Boundary mit Fallback-UI (DE+EN) — ELE-189                                                  |
+| `backend/tests/lib/tracking.test.ts`                                                                                                          | Tracking-Service No-Op-Tests (3 Tests) — ELE-189                                                        |
+| `frontend/tests/components/AppErrorBoundary.test.tsx`                                                                                         | ErrorBoundary-Tests (3 Tests) — ELE-189                                                                 |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

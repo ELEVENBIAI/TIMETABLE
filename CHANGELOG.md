@@ -1,5 +1,27 @@
 # Changelog — Timetable
 
+## v0.5.4 — 2026-05-17 (ELE-189: Error-Tracking — GlitchTip/Sentry-Wire-Up)
+
+- **ELE-189 done:** Pre-Pilot-Pflicht-Block weiter — Sichtbarkeit auf 500-Errors ohne dass Robert oder Daniel anruft. Architecture-Review-Punkt B (Tech-Debt) erledigt.
+- **ADR-17 `docs/ADR-17-error-tracking.md`** — Entscheidung: **GlitchTip self-hosted** als Primär (Sentry-Protocol-kompatibel, DSGVO-konform, AVV-frei, Free), **Sentry SaaS** als dokumentierte Backup-Option. Migration zwischen den beiden = nur DSN-Wechsel, kein Code-Change.
+- **Backend Sentry-Integration** (`@sentry/node` ^8):
+  - `backend/src/lib/tracking.ts` — `initTracking()` (no-op ohne `SENTRY_DSN`), `captureServerError()`, `shutdownTracking()`
+  - `backend/src/app.ts setErrorHandler` ruft `captureServerError()` für **5xx only** (4xx ist Client-Fehler, kein Bug)
+  - PII-Scrubbing im `beforeSend`-Hook: Authorization-Header, Cookies, JSON-Bodies werden vor dem Senden entfernt
+  - Tags: requestId, tenantId, route, statusCode + User-ID (keine PII)
+- **Frontend Sentry-Integration** (`@sentry/react` ^10):
+  - `frontend/src/lib/tracking.ts` — `initTracking()` (no-op ohne `VITE_SENTRY_DSN`), `setUserContext()`, `clearUserContext()`, `captureException()`
+  - `frontend/src/components/AppErrorBoundary.tsx` — React-ErrorBoundary mit bilingualer Fallback-UI (DE primär, EN sekundär in `<em>`), "Seite neu laden"-Button, Detail-Expander für Stack
+  - `frontend/src/main.tsx` — `initTracking()` als Schritt 0 vor allem anderen, App in `<AppErrorBoundary>` gewrappt, User-Context wird gesetzt sobald JWT-Payload decodiert ist (User-ID + Tenant + Rolle, keine E-Mail/IP)
+- **Source-Maps-Upload via `@sentry/vite-plugin`** (Frontend DevDep):
+  - `frontend/vite.config.ts` — Plugin aktiviert sich nur wenn `SENTRY_AUTH_TOKEN` + `SENTRY_ORG` + `SENTRY_PROJECT` als ENV gesetzt sind. Dev und CI ohne Vars laufen normal durch (kein Upload-Versuch).
+  - Source-Maps werden nach Upload aus `dist/` gelöscht (`filesToDeleteAfterUpload`) — User können sie nicht ziehen
+- **`.env.example` ergänzt** um `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_URL`, `VITE_SENTRY_DSN`, `VITE_APP_VERSION`. Alle leer = no-op (Dev-Default).
+- **Setup-Doku `docs/ERROR_TRACKING.md`**: Schritt-für-Schritt-Anleitung für lokales GlitchTip via Docker, DSN-Konfiguration, **5xx-Spike-Alert** als GlitchTip-UI-Konfiguration (Webhook→Telegram + Email), PII-Scrubbing-Übersicht, Wechsel-Pfad zu Sentry SaaS.
+- **Pino-Transport vs Direct-Capture**: Issue verlangte "Pino-Transport für Errors → Tracking-Service". Wir nutzen stattdessen direkten `captureException`-Hook im `setErrorHandler` weil der vollen Request-Kontext hat (requestId, tenantId, route, userId) und keine zusätzliche Worker-Thread-Komplexität braucht. Funktional äquivalent.
+- **Tests**: 6 neue Tests (3 Backend Tracking-No-Op + 3 Frontend ErrorBoundary). 354/354 Backend grün, 57/57 Frontend grün.
+- **Bundle-Größe**: 144.36 KB gzip (+4 KB durch `@sentry/react`, Budget ADR-14 250 KB → komfortabel).
+
 ## v0.5.3 — 2026-05-17 (ELE-187: DSGVO-Workflows — Auskunft / Löschung / Audit-Auswertung)
 
 - **ELE-187 done:** Pre-Pilot-Pflicht erfüllt — Daniel/Anna/Gabi/Jürgen können legal mit echten Personendaten arbeiten. Architecture-Review 2026-05-16 hatte das als kritische Lücke markiert.

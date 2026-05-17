@@ -1,6 +1,6 @@
 # Timetable — AI System Reference
 
-**Version:** 0.5.3 | **Stand:** 2026-05-17
+**Version:** 0.5.4 | **Stand:** 2026-05-17
 **Repository:** https://github.com/ELEVENBIAI/TIMETABLE
 
 ## Identität
@@ -69,6 +69,12 @@ Siehe `SYSTEM_ARCHITECTURE.md` und `ARCHITECTURE_DESIGN.md`.
 ## Config-Werte
 
 Alle Config-Werte kommen aus `lib/config.js`. VERSION ist dort SSoT.
+
+## Observability
+
+Error-Tracking via Sentry-SDK (GlitchTip self-hosted oder Sentry SaaS — siehe
+`docs/ADR-17-error-tracking.md`). Setup + Bedienung: `docs/ERROR_TRACKING.md`.
+Ohne `SENTRY_DSN` in `.env` ist Tracking deaktiviert (Dev-Default).
 
 ## Learning-Loop (L1)
 
