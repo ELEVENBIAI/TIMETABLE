@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.4 | **Stand:** 2026-05-17
+**Version:** 0.5.5 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -46,6 +46,8 @@ Quelle: `developer_input/` (Tool-Beschreibung, Datenmodell, Feature-Spec, Linear
 | ADR-14 | 2026-05-16 | Performance-Budgets (Backend / Frontend / DB)              | Active |
 | ADR-15 | 2026-05-16 | Logging-Schema (Pino strukturiert + AUDIT_LOG)             | Active |
 | ADR-16 | 2026-05-16 | i18n-Strategie (i18next, BCP 47, User-Locale in JWT)       | Active |
+| ADR-17 | 2026-05-17 | Error-Tracking (GlitchTip self-hosted, Sentry SaaS Backup) | Active |
+| ADR-18 | 2026-05-17 | JWT-Secret-Rotation (Multi-Secret primary + previous)      | Active |
 
 ### ADR-01: Monolith mit Fastify + React
 
@@ -432,6 +434,10 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/components/AppErrorBoundary.tsx`                                                                                                | React-Error-Boundary mit Fallback-UI (DE+EN) — ELE-189                                                  |
 | `backend/tests/lib/tracking.test.ts`                                                                                                          | Tracking-Service No-Op-Tests (3 Tests) — ELE-189                                                        |
 | `frontend/tests/components/AppErrorBoundary.test.tsx`                                                                                         | ErrorBoundary-Tests (3 Tests) — ELE-189                                                                 |
+| `specs/ELE-188.md`                                                                                                                            | JWT-Secret-Rotation Spec                                                                                |
+| `docs/ADR-18-jwt-secret-rotation.md`                                                                                                          | ADR: Multi-Secret (JWT_SECRET + JWT_SECRET_PREVIOUS) + Rotation-Playbook — ELE-188                      |
+| `scripts/rotate-jwt-secret.mjs`                                                                                                               | Rotation-Skript (--dry-run / --apply, .env-Backup) — ELE-188                                            |
+| `backend/tests/auth/jwt-rotation.test.ts`                                                                                                     | 6 Vitest-Tests: primary+previous Verify, Sign nutzt nur primary — ELE-188                               |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

@@ -1,5 +1,38 @@
 # Changelog — Timetable
 
+## v0.5.5 — 2026-05-17 (ELE-188: JWT-Secret-Rotation — Pre-Pilot)
+
+- **ELE-188 done:** Letzter der drei Pre-Pilot-Pflicht-Blocks (nach ELE-187 DSGVO und ELE-189 Tracking). Architecture-Review-Tech-Debt-Punkt A erledigt.
+- **ADR-18 `docs/ADR-18-jwt-secret-rotation.md`** — Multi-Secret-Strategie:
+  - `JWT_SECRET` = primary (sign + verify)
+  - `JWT_SECRET_PREVIOUS` = optional, nur verify (~7d Übergangszeit)
+  - Erlaubt nahtlose Rotation **ohne Total-Logout** — alte Tokens verifizieren weiter über previous, neue Tokens werden mit neuem primary signiert.
+- **`backend/src/auth/jwt.ts verifyJwt`** versucht primary zuerst, fällt bei Signatur-Fehler zurück auf `JWT_SECRET_PREVIOUS`. Bei beidseitigem Fail wird der **primary**-Fehler weitergeworfen.
+- **`backend/src/config.ts validateEnv()`** prüft jetzt zusätzlich: `JWT_SECRET_PREVIOUS` (wenn gesetzt) hat Min-Länge 64; Identitäts-Check `JWT_SECRET !== JWT_SECRET_PREVIOUS` (sonst sinnlose "Rotation").
+- **`scripts/rotate-jwt-secret.mjs`** (--dry-run / --apply):
+  - Liest aktuelle `.env`
+  - Backup nach `.env.<ISO-Timestamp>.bak` (in `.gitignore` ergänzt)
+  - Verschiebt aktuelles `JWT_SECRET` → `JWT_SECRET_PREVIOUS`
+  - Generiert neues `JWT_SECRET` (`crypto.randomBytes(48).toString('base64')` = 64 Zeichen)
+  - Schreibt zurück, gibt Cleanup-Termin (+7d) in stdout aus
+- **`.env.example`** ergänzt um `JWT_SECRET_PREVIOUS=` mit Kommentar.
+- **`.gitignore`** ergänzt um `.env.*.bak` für Backup-Sicherheit.
+- **`GOVERNANCE.md`**: neue Sektion "JWT-Secret-Rotation" mit drei Operator-Playbooks:
+  - **Szenario A**: Geplante Rotation (alle 90 Tage) — Routine
+  - **Szenario B**: Notfall-Rotation bei Verdacht — sofort + SQL-Force-Logout (`UPDATE users SET must_change_password = TRUE`)
+  - **Szenario C**: Cleanup nach 7 Tagen — `JWT_SECRET_PREVIOUS` entfernen + Backend neustarten
+- **Tests Vitest**: 6 neue Tests (`backend/tests/auth/jwt-rotation.test.ts`):
+  - Sign + verify mit primary
+  - Sign mit ALTEM, dann Rotation → verify über previous klappt
+  - Neuer Token verifiziert über primary
+  - Drittes Secret (weder primary noch previous) → fail
+  - Ohne `JWT_SECRET_PREVIOUS`: alte Tokens werden abgelehnt
+  - `signJwt` nutzt **niemals** previous
+- **Smoke-Test**: `node scripts/rotate-jwt-secret.mjs --dry-run` läuft ohne Side-Effects (verifiziert).
+- **Tests-Status**: 360/360 backend Vitest grün, 57/57 frontend.
+- **Out of Scope**: Cron für auto-Rotation (manuell reicht für Pilot), HSM/Vault (Welle 6+), Forced-Logout-Endpoint (SQL-Variante reicht als Notbremse), JWKS-`kid`-Header (Overkill für Single-Tenant).
+- **Pre-Pilot-Status nach ELE-188**: 3 von 4 Pre-Pilot-Gates erledigt (ELE-187 ✅, ELE-188 ✅, ELE-189 ✅). Verbleibt **ELE-191** (Hosting-Decision).
+
 ## v0.5.4 — 2026-05-17 (ELE-189: Error-Tracking — GlitchTip/Sentry-Wire-Up)
 
 - **ELE-189 done:** Pre-Pilot-Pflicht-Block weiter — Sichtbarkeit auf 500-Errors ohne dass Robert oder Daniel anruft. Architecture-Review-Punkt B (Tech-Debt) erledigt.

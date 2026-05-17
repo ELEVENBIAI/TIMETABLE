@@ -67,6 +67,8 @@ export const env = {
   DATABASE_URL_OWNER: process.env.DATABASE_URL_OWNER,
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_SECRET: process.env.JWT_SECRET,
+  /** Vorheriges JWT-Secret während Rotation (ELE-188 / ADR-18). Optional. Nur Verify. */
+  JWT_SECRET_PREVIOUS: process.env.JWT_SECRET_PREVIOUS,
   CORS_ORIGINS: (process.env.CORS_ORIGINS ?? 'http://localhost:5173')
     .split(',')
     .map((s) => s.trim()),
@@ -86,6 +88,17 @@ export function validateEnv(): void {
   if (env.JWT_SECRET && env.JWT_SECRET.length < SECURITY.JWT_SECRET_MIN_LENGTH) {
     throw new Error(
       `[config] FEHLER: JWT_SECRET zu kurz (${env.JWT_SECRET.length} < ${SECURITY.JWT_SECRET_MIN_LENGTH} Zeichen). Bitte 'openssl rand -base64 48' in .env als JWT_SECRET eintragen.`
+    );
+  }
+  // JWT_SECRET_PREVIOUS ist optional, muss aber min. dieselbe Länge haben wenn gesetzt (ELE-188)
+  if (env.JWT_SECRET_PREVIOUS && env.JWT_SECRET_PREVIOUS.length < SECURITY.JWT_SECRET_MIN_LENGTH) {
+    throw new Error(
+      `[config] FEHLER: JWT_SECRET_PREVIOUS zu kurz (${env.JWT_SECRET_PREVIOUS.length} < ${SECURITY.JWT_SECRET_MIN_LENGTH} Zeichen). Entweder entfernen oder mit gültigem Secret befüllen.`
+    );
+  }
+  if (env.JWT_SECRET_PREVIOUS && env.JWT_SECRET && env.JWT_SECRET_PREVIOUS === env.JWT_SECRET) {
+    throw new Error(
+      `[config] FEHLER: JWT_SECRET_PREVIOUS ist identisch mit JWT_SECRET — Rotation unsinnig. Bitte 'node scripts/rotate-jwt-secret.mjs --apply' ausführen.`
     );
   }
 }

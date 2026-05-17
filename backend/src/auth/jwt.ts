@@ -28,7 +28,7 @@ export interface JwtPayloadWithMeta extends JwtPayload {
   exp: number;
 }
 
-function getSecret(): string {
+function getPrimarySecret(): string {
   // process.env zur Laufzeit lesen — damit Tests es überschreiben können
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -37,18 +37,25 @@ function getSecret(): string {
   return secret;
 }
 
+/**
+ * Vorheriges Secret aus Rotation (ELE-188 / ADR-18). Optional —
+ * wird nur zum Verifizieren benutzt, nie zum Signieren.
+ */
+function getPreviousSecret(): string | null {
+  const secret = process.env.JWT_SECRET_PREVIOUS;
+  return secret && secret.length > 0 ? secret : null;
+}
+
 export function signJwt(payload: JwtPayload): string {
-  return jsonwebtoken.sign(payload, getSecret(), {
+  return jsonwebtoken.sign(payload, getPrimarySecret(), {
     expiresIn: SECURITY.JWT_EXPIRES_IN,
   } as jsonwebtoken.SignOptions);
 }
 
-export function verifyJwt(token: string): JwtPayloadWithMeta {
-  const decoded = jsonwebtoken.verify(token, getSecret());
+function decodePayload(decoded: jsonwebtoken.JwtPayload | string): JwtPayloadWithMeta {
   if (typeof decoded === 'string') {
     throw new Error('JWT-Payload ist String statt Object');
   }
-  // Pflicht-Felder prüfen
   const { userId, tenantId, role, isSuperAdmin, locale, iat, exp } = decoded as Record<
     string,
     unknown
@@ -63,7 +70,30 @@ export function verifyJwt(token: string): JwtPayloadWithMeta {
   ) {
     throw new Error('JWT-Payload unvollständig');
   }
-  // locale: rückwärtskompatibel — fehlt es im Token (Pre-ADR-16), fällt auf DEFAULT_LOCALE
   const resolvedLocale: Locale = isLocale(locale) ? locale : DEFAULT_LOCALE;
   return { userId, tenantId, role, isSuperAdmin, locale: resolvedLocale, iat, exp };
+}
+
+/**
+ * Verifiziert einen JWT. Probiert primary zuerst, fällt bei Signatur-Fehler
+ * zurück auf JWT_SECRET_PREVIOUS (ELE-188 / ADR-18) — erlaubt nahtlose Rotation.
+ *
+ * Bei beidseitigem Fail wird der **Primary-Fehler** weitergeworfen — die
+ * Fehlermeldung bezieht sich also immer auf das aktuelle Secret.
+ */
+export function verifyJwt(token: string): JwtPayloadWithMeta {
+  const primary = getPrimarySecret();
+  const previous = getPreviousSecret();
+
+  try {
+    return decodePayload(jsonwebtoken.verify(token, primary));
+  } catch (errPrimary) {
+    if (!previous) throw errPrimary;
+    try {
+      return decodePayload(jsonwebtoken.verify(token, previous));
+    } catch {
+      // Beide Secrets fehlgeschlagen — Primary-Fehler weiterwerfen
+      throw errPrimary;
+    }
+  }
 }
