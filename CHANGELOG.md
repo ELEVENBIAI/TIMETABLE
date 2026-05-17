@@ -1,5 +1,26 @@
 # Changelog — Timetable
 
+## v0.4.0 — 2026-05-17 (ELE-199: Frontend-Bootstrap)
+
+- **ELE-199 done:** Frontend-Workspace produktiv lauffähig. `frontend/src/` von 0 auf vollständiges Gerüst.
+- **Vite 5 + React 18 + TypeScript-strict** mit Path-Alias `@/`
+- **Tailwind 3.4** mit Token-Mapping aus DESIGN.md (Farben, Typografie, Spacing, Rounded als semantische CSS-Variablen)
+- **CSS-Variables-Theme-System**: `:root[data-tenant="..."]` mit drei Theme-Files (`gepard.css` aktiv, `immobilienbutler.css` + `paul.css` scaffolded). Tenant-Resolution-Chain: JWT-Claim → localStorage-Debug → Default Gepard.
+- **React Router v6** mit Adaptive-Layout (Desktop-Sidebar 240px / Mobile-Bottom-Tabs), Login-Placeholder, NotFound-Page, eine Smoke-Route `/` (HealthPage).
+- **react-i18next** mit 6 Namespaces (common, errors, auth, users, validation, health) × 2 Sprachen (en, de). Locale aus JWT > Browser > 'en'. Locale-Switcher-Komponente.
+- **API-Client** (fetch-Wrapper) mit JWT-Authorization-Header, Accept-Language-Header, Error-Normalisierung (ApiRequestError mit code + messageKey aus Backend), 401 → localStorage-Cleanup.
+- **AuthProvider + useAuth-Hook** + JWT-Decode (Payload-only, kein Verify — Backend ist Trust-Boundary), localStorage-Persist mit Cross-Tab-Sync via storage-Event.
+- **PWA** via vite-plugin-pwa: Manifest mit theme-color, App-Shell-Cache (Workbox), Runtime-Cache für `/api/*` (NetworkFirst, 5s Timeout). Placeholder-Icons (192/512 PNG, Gepard-Ocker) bis echte Brand-Assets vorliegen.
+- **HealthPage** als Backend-Smoke: calls `GET /api/health`, zeigt Status (connected/degraded/unreachable) + Retry-Button + Last-Checked-Zeitstempel mit Locale-Formatierung.
+- **Self-hosted Inter + JetBrains Mono** via `@fontsource/*` (DSGVO — kein Google-Fonts-CDN).
+- **Tests**: 17 Vitest-Smokes grün (Layout-Rendering, Theme-Switch, JWT-Decode-Edge-Cases, API-Client-Header-Injection + Error-Normalisierung + 401-Handling + POST-Body) + 3 Playwright-E2E-Smokes grün (App-Boot, Locale-Switch, Login-Route).
+- **Build**: 285 KB JS gzip 91 KB (unter Performance-Budget aus ADR-14 von <250 KB gzip).
+- **Datei-Struktur**: `frontend/src/{components,hooks,layouts,lib,locales,pages,styles,types}` + `frontend/public/icons` + `frontend/tests/smoke` + `e2e/tests/frontend-smoke.spec.ts`.
+
+**Wave-1-Frontend-Vorarbeit abgeschlossen.** ELE-180 (Wochenplan-Grid), ELE-181 (Drag&Drop), ELE-182 (Mobile-PWA-Detail) und ELE-195 (i18n-Frontend-Full) sind jetzt unblocked.
+
+VERSION 0.3.3 → **0.4.0** (Minor-Bump — erste Frontend-Lieferung).
+
 ## v0.3.3 — 2026-05-16 (ELE-197: ARCHITECTURE_DESIGN.md §4-§6 nachgezogen)
 
 - **ELE-197 done (Doku):** Drei fehlende Sektionen in `ARCHITECTURE_DESIGN.md` ergänzt

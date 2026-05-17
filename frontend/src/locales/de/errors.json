@@ -1,0 +1,10 @@
+{
+  "unknown": "Etwas ist schiefgelaufen.",
+  "network": "Server nicht erreichbar.",
+  "unauthorized": "Bitte anmelden, um fortzufahren.",
+  "forbidden": "Du hast keine Berechtigung für diese Aktion.",
+  "notFound": "Nicht gefunden.",
+  "validation": "Einige Eingaben sind ungültig.",
+  "rateLimited": "Zu viele Anfragen. Bitte später erneut versuchen.",
+  "serverDown": "Der Server ist derzeit nicht erreichbar."
+}

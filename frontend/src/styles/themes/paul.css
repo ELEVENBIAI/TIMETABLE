@@ -1,0 +1,7 @@
+/* Paul-Theme — Hypothesenwerte (scaffold, im MVP-Pilot nicht ausgerollt). */
+
+[data-tenant='paul'] {
+  --color-brand-primary: #5e8d6e; /* Salbei-Grün (Hypothese) */
+  --color-brand-primary-hover: #476f55;
+  --color-brand-on-primary: #ffffff;
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Systemstatus",
+  "checking": "Backend wird geprüft …",
+  "connected": "Backend verbunden (v{{version}})",
+  "degraded": "Backend erreichbar, eingeschränkt",
+  "unreachable": "Backend nicht erreichbar",
+  "lastChecked": "Zuletzt geprüft: {{time}}",
+  "retry": "Erneut prüfen"
+}

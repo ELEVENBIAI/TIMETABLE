@@ -1,0 +1,8 @@
+{
+  "required": "Pflichtfeld.",
+  "email": "Bitte eine gültige E-Mail-Adresse eingeben.",
+  "minLength": "Mindestens {{min}} Zeichen.",
+  "maxLength": "Maximal {{max}} Zeichen.",
+  "min": "Mindestens {{min}}.",
+  "max": "Maximal {{max}}."
+}

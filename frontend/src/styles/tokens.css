@@ -1,0 +1,26 @@
+/* Tenant-agnostische Tokens — gelten für alle drei Marken.
+   Brand-Akzent wird per Tenant-Theme-File überschrieben (themes/{gepard,immobilienbutler,paul}.css). */
+
+:root {
+  /* Neutrale */
+  --color-ink: #0f1419;
+  --color-surface: #ffffff;
+  --color-surface-raised: #fafaf8;
+  --color-surface-sunken: #f4f3f0;
+  --color-border: #e6e3dc;
+  --color-text-primary: #0f1419;
+  --color-text-secondary: #5b5d61;
+  --color-text-muted: #8d8f93;
+
+  /* Status — funktional, tenant-unabhängig */
+  --color-status-planned: #5b5d61;
+  --color-status-progress: #0369a1;
+  --color-status-completed: #15803d;
+  --color-status-needs-reassign: #b45309;
+  --color-status-conflict: #b91c1c;
+
+  /* Fallback Brand-Akzent — wird vom Tenant-Theme überschrieben */
+  --color-brand-primary: #1f2937;
+  --color-brand-primary-hover: #111827;
+  --color-brand-on-primary: #ffffff;
+}

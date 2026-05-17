@@ -1,0 +1,7 @@
+/* Immobilienbutler-Theme — Hypothesenwerte (scaffold, im MVP-Pilot nicht ausgerollt). */
+
+[data-tenant='immobilienbutler'] {
+  --color-brand-primary: #1e293b; /* Anthrazit-Blau (Hypothese) */
+  --color-brand-primary-hover: #0f172a;
+  --color-brand-on-primary: #ffffff;
+}

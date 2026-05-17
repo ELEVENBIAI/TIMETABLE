@@ -1,0 +1,8 @@
+/* Gepard-Theme — Hypothesenwerte bis echte Brand-Guidelines vorliegen.
+   Aktivierung: <html data-tenant="gepard"> */
+
+[data-tenant='gepard'] {
+  --color-brand-primary: #7c5e3b; /* Ocker (Hypothese) */
+  --color-brand-primary-hover: #5d4528;
+  --color-brand-on-primary: #ffffff;
+}

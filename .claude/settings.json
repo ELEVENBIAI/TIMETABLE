@@ -135,7 +135,9 @@
       "Read(//c/Users/RenéGoebels-ELEVENBI/.claude/skills/impeccable/agents/**)",
       "Read(//c/Users/RenéGoebels-ELEVENBI/.agents/skills/impeccable/agents/**)",
       "Read(//c/Users/RenéGoebels-ELEVENBI/.claude/skills/impeccable/reference/**)",
-      "Read(//c/Users/RenéGoebels-ELEVENBI/.agents/skills/impeccable/reference/**)"
+      "Read(//c/Users/RenéGoebels-ELEVENBI/.agents/skills/impeccable/reference/**)",
+      "Bash(node scripts/linear.mjs create-issue \"9b49011f-e099-4acf-809e-bc0bb5e2efa6\" \"71afd024-6331-436d-bcb1-b226a0991acf\" \"Frontend-Bootstrap \\(Vite + Tailwind + Theme + i18n + Router + PWA + API-Client + Tests\\)\" \"d66693f5-2e17-41b8-bf20-4c00cc903feb,1d2e1441-283e-4165-a6ec-cac677b0f258,4ec33857-79ed-48b4-8af7-3ba36ef73cb6\" \"C:/Users/RenéGoebels-ELEVENBI/AppData/Local/Temp/ele-199-desc.md\")",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\RenéGoebels-ELEVENBI\\OneDrive - -\\Dokumente\\Obsidian\\TIMETABLE\\TIMETABLE\\Components",

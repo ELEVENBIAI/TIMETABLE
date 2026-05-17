@@ -1,0 +1,10 @@
+{
+  "unknown": "Something went wrong.",
+  "network": "Cannot reach the server.",
+  "unauthorized": "Please sign in to continue.",
+  "forbidden": "You do not have permission for this action.",
+  "notFound": "Not found.",
+  "validation": "Some inputs are invalid.",
+  "rateLimited": "Too many requests. Try again later.",
+  "serverDown": "The server is currently unavailable."
+}

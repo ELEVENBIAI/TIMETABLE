@@ -1,0 +1,27 @@
+{
+  "appName": "Timetable",
+  "loading": "Wird geladen …",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "close": "Schließen",
+  "back": "Zurück",
+  "next": "Weiter",
+  "today": "Heute",
+  "thisWeek": "Diese Woche",
+  "languageSwitcher": "Sprache",
+  "nav": {
+    "home": "Start",
+    "schedule": "Wochenplan",
+    "templates": "Vorlagen",
+    "data": "Stammdaten",
+    "reports": "Auswertungen",
+    "profile": "Profil"
+  },
+  "tabs": {
+    "today": "Heute",
+    "week": "Woche",
+    "profile": "Profil"
+  }
+}

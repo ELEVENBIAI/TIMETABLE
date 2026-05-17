@@ -1,0 +1,10 @@
+{
+  "role": {
+    "SUPER_ADMIN": "Super admin",
+    "ADMIN": "Admin",
+    "PLANNER": "Planner",
+    "FOREMAN": "Team lead",
+    "EMPLOYEE": "Employee",
+    "PROPERTY_MANAGER": "Property manager"
+  }
+}

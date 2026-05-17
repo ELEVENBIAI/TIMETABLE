@@ -1,0 +1,43 @@
+/* Inter + JetBrains Mono via @fontsource (self-hosted, DSGVO-konform) */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+/* Design-Tokens (semantische CSS-Variablen) */
+@import './tokens.css';
+
+/* Tenant-Themes (überschreiben Brand-Akzent) */
+@import './themes/gepard.css';
+@import './themes/immobilienbutler.css';
+@import './themes/paul.css';
+
+/* Tailwind-Schichten */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base-Resets ohne Tailwind-Preflight-Konflikte */
+@layer base {
+  html,
+  body {
+    height: 100%;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Numerische Tabellen */
+  .numeric {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+  }
+}
