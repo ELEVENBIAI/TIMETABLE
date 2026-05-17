@@ -24,5 +24,12 @@
     "PERSONAL": "Personal",
     "TRAINING": "Training",
     "OTHER": "Other"
+  },
+  "success": {
+    "title": "Absence recorded",
+    "withEntries_one": "{{count}} task marked for reassignment.",
+    "withEntries_other": "{{count}} tasks marked for reassignment.",
+    "withoutEntries": "No planned tasks were affected in the selected range.",
+    "confirm": "OK"
   }
 }

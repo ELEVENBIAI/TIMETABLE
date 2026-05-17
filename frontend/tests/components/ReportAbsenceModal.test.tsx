@@ -41,6 +41,7 @@ const EMPLOYEES: Employee[] = [
 function renderModal(props: {
   isOpen?: boolean;
   defaultEmployeeId?: string;
+  defaultStartDate?: string;
   onClose?: () => void;
 }) {
   const client = new QueryClient({
@@ -52,6 +53,7 @@ function renderModal(props: {
         isOpen={props.isOpen ?? true}
         onClose={props.onClose ?? (() => {})}
         defaultEmployeeId={props.defaultEmployeeId}
+        defaultStartDate={props.defaultStartDate}
         employees={EMPLOYEES}
         scheduleId="sched-1"
       />
@@ -86,20 +88,19 @@ describe('ReportAbsenceModal (ELE-204)', () => {
     expect(submit).toBeDisabled();
   });
 
-  it('Submit triggert POST /absences mit korrekten Feldern', async () => {
-    const postSpy = vi.spyOn(api, 'post').mockResolvedValue({ id: 'abs-1' } as never);
+  it('Submit triggert POST /absences und zeigt Success-Panel mit Anzahl', async () => {
+    const postSpy = vi
+      .spyOn(api, 'post')
+      .mockResolvedValue({ id: 'abs-1', affectedScheduleEntries: 3 } as never);
     const onClose = vi.fn();
     renderModal({ defaultEmployeeId: 'emp-daniel', onClose });
 
-    // Type ändern auf VACATION
     fireEvent.change(screen.getByTestId('report-absence-type'), {
       target: { value: 'VACATION' },
     });
-    // Notes
     fireEvent.change(screen.getByTestId('report-absence-notes'), {
       target: { value: 'Sommerurlaub' },
     });
-
     fireEvent.click(screen.getByTestId('report-absence-submit'));
 
     await waitFor(() => {
@@ -112,7 +113,30 @@ describe('ReportAbsenceModal (ELE-204)', () => {
         })
       );
     });
-    await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+    const success = await screen.findByTestId('report-absence-success');
+    expect(success).toHaveTextContent(/3 tasks marked/i);
+    expect(onClose).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('report-absence-success-confirm'));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('Success-Panel zeigt "no planned tasks"-Hinweis bei 0 affected', async () => {
+    vi.spyOn(api, 'post').mockResolvedValue({
+      id: 'abs-2',
+      affectedScheduleEntries: 0,
+    } as never);
+    renderModal({ defaultEmployeeId: 'emp-daniel' });
+    fireEvent.click(screen.getByTestId('report-absence-submit'));
+    const success = await screen.findByTestId('report-absence-success');
+    expect(success).toHaveTextContent(/no planned tasks/i);
+  });
+
+  it('defaultStartDate setzt initiales Von- und Bis-Datum', () => {
+    renderModal({ defaultEmployeeId: 'emp-daniel', defaultStartDate: '2026-06-15' });
+    expect(screen.getByTestId('report-absence-start')).toHaveValue('2026-06-15');
+    expect(screen.getByTestId('report-absence-end')).toHaveValue('2026-06-15');
   });
 
   it('ESC schließt Modal', () => {

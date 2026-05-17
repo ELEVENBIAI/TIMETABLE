@@ -1,5 +1,20 @@
 # Changelog — Timetable
 
+## v0.6.3 — 2026-05-17 (Polish: Tooltip + Affected-Count + Smart-Date-Defaults)
+
+- Drei UX-Polituren nach ELE-204, kein neues Issue (Folge-Feedback aus Bedienung):
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — Native HTML-Tooltip (`title`-Attribut) auf jeder Card. Multi-line: Property + Adresse, Service-Vollname + Dauer, Startzeit, Vertretungs-Hinweis, Notes. Löst das Problem schmaler Karten im Outlook-Layout — Hover statt Drag-And-Drop.
+- **`backend/src/routes/absences.ts`** — POST `/api/absences` lieferte bereits `affectedScheduleEntries: number`, ist jetzt im Frontend-Typ als `ReportAbsenceResult extends AbsenceRecord` strukturiert sichtbar.
+- **`frontend/src/components/ReportAbsenceModal.tsx`** — Erfolgs-Panel nach Submit:
+  - Bei `affectedScheduleEntries > 0`: "X Aufgaben wurden zur Vertretung markiert."
+  - Bei `0`: "Es gab keine geplanten Aufgaben im gewählten Zeitraum." (löst das "ich sehe keine Auswirkung"-Rätsel).
+  - User bestätigt mit OK-Button → Modal schließt. Vorher: automatisches Schließen ohne Feedback.
+- **`frontend/src/components/ReportAbsenceModal.tsx`** — neue Prop `defaultStartDate?: string` für smarte Defaults.
+- **`frontend/src/pages/SchedulePage.tsx`** — berechnet `absenceDefaultStart`: heute, falls heute in der angezeigten Woche liegt — sonst Montag der angezeigten Woche. Robert sieht damit beim ersten Test sofort eine Auswirkung, statt versehentlich Krankheits-Daten ausserhalb des gerenderten Plans zu erfassen.
+- **i18n** — neue Keys `success.title / withEntries / withoutEntries / confirm` in `absences.json` (en + de) mit pluralisiertem `withEntries_one`/`withEntries_other`.
+- **Tests Vitest**: 2 neue + 1 angepasster Test in `ReportAbsenceModal.test.tsx`. **71/71 frontend grün**, backend absences-Suite (9/9) unverändert grün.
+- **VERSION 0.6.2 → 0.6.3** (Patch — UX-Polish, kein API-Bruch).
+
 ## v0.6.2 — 2026-05-17 (ELE-204: Abwesenheit melden — Frontend-Modal)
 
 - **ELE-204 done:** Robert kann Krankmeldungen / Abwesenheiten direkt im UI erfassen — kein SQL-Hack mehr nötig, um eine REASSIGNMENT_NEEDED-Aufgabe zu erzeugen. Schließt den Workflow-Kreis: Krankmeldung melden → Cards werden rot → Picker (ELE-203) wählt Vertretung.

@@ -99,6 +99,13 @@ export function SchedulePage() {
   const weekStartISO = toISODate(weekStartDate);
   const meta = getWeekMeta(weekStartDate);
 
+  // Smart-Default für Krankmelden-Modal: heute wenn in angezeigter Woche, sonst Montag der Woche
+  const absenceDefaultStart = useMemo(() => {
+    const todayISO = toISODate(new Date());
+    const weekEndISO = toISODate(addDays(weekStartDate, 6));
+    return todayISO >= weekStartISO && todayISO <= weekEndISO ? todayISO : weekStartISO;
+  }, [weekStartDate, weekStartISO]);
+
   function setWeek(next: Date) {
     setSearchParams({ week: toISODate(next) });
   }
@@ -415,6 +422,7 @@ export function SchedulePage() {
         isOpen={absenceModalState !== null}
         onClose={() => setAbsenceModalState(null)}
         defaultEmployeeId={absenceModalState?.defaultEmployeeId}
+        defaultStartDate={absenceDefaultStart}
         employees={employeesQuery.data ?? []}
         scheduleId={schedule?.id ?? null}
       />

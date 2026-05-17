@@ -1,6 +1,6 @@
 # Timetable — Development Process
 
-**Version:** 0.6.2 | **Stand:** 2026-05-17
+**Version:** 0.6.3 | **Stand:** 2026-05-17
 
 Vollständige Entwicklungs-Regeln und Governance-Prozesse: siehe `GOVERNANCE.md`.
 

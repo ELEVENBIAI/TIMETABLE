@@ -57,9 +57,29 @@ export function ScheduleEntryCard({
 
   const stripeColor = serviceType?.color_code ?? 'var(--color-status-planned)';
   const propertyName = property?.name ?? `Property ${entry.property_id.slice(0, 6)}`;
+  const serviceFullName = serviceType?.name ?? serviceType?.short_name ?? '—';
   const serviceName = serviceType?.short_name ?? '—';
   const startLabel = formatTime(entry.start_time);
   const durationLabel = formatDurationLabel(entry.duration_min, locale);
+
+  // Native HTML-Tooltip — Hover zeigt vollständige Card-Info (Cards sind im
+  // Outlook-Layout schmal, nur per Hover voll lesbar).
+  const tooltipParts: string[] = [];
+  if (property) {
+    const addr = [property.street, property.house_number, property.zip_code, property.city]
+      .filter(Boolean)
+      .join(' ');
+    tooltipParts.push(`${property.name}${addr ? ` — ${addr}` : ''}`);
+  }
+  tooltipParts.push(`${serviceFullName} (${durationLabel})`);
+  if (entry.start_time) tooltipParts.push(`${startLabel} Uhr`);
+  if (entry.is_from_reassignment && originalEmployee) {
+    tooltipParts.push(
+      `Vertretung für ${originalEmployee.first_name} ${originalEmployee.last_name}`
+    );
+  }
+  if (entry.notes) tooltipParts.push(entry.notes);
+  const tooltip = tooltipParts.join('\n');
 
   const stylePos: React.CSSProperties = pxPerMinute
     ? {
@@ -98,6 +118,7 @@ export function ScheduleEntryCard({
       data-day={entry.day_of_week}
       data-status={entry.status}
       data-draggable={!disabled && !presentational}
+      title={presentational ? undefined : tooltip}
     >
       <span
         aria-hidden="true"

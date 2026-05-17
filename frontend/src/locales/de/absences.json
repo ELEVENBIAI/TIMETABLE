@@ -24,5 +24,12 @@
     "PERSONAL": "Persönlich",
     "TRAINING": "Schulung",
     "OTHER": "Sonstiges"
+  },
+  "success": {
+    "title": "Abwesenheit erfasst",
+    "withEntries_one": "{{count}} Aufgabe wurde zur Vertretung markiert.",
+    "withEntries_other": "{{count}} Aufgaben wurden zur Vertretung markiert.",
+    "withoutEntries": "Es gab keine geplanten Aufgaben im gewählten Zeitraum.",
+    "confirm": "OK"
   }
 }

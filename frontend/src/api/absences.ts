@@ -27,10 +27,14 @@ export interface AbsenceRecord {
   created_at: string;
 }
 
+export interface ReportAbsenceResult extends AbsenceRecord {
+  affectedScheduleEntries: number;
+}
+
 export function useReportAbsence(scheduleId: string | null | undefined) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: CreateAbsenceInput) => api.post<AbsenceRecord>('/absences', input),
+    mutationFn: (input: CreateAbsenceInput) => api.post<ReportAbsenceResult>('/absences', input),
     onSuccess: () => {
       // Schedule-Entries-Query invalidieren — Cards für betroffene Tage werden REASSIGNMENT_NEEDED
       if (scheduleId) {
