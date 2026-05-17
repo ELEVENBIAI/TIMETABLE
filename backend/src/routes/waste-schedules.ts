@@ -9,7 +9,7 @@ import { ZodError } from 'zod';
 import { requireAuth } from '../auth/middleware.js';
 import { requireRole } from '../auth/authorize.js';
 import { getOwnerPool } from '../db/pools.js';
-import { HttpError, NotFoundError, ValidationError } from '../lib/errors.js';
+import { NotFoundError, ValidationError } from '../lib/errors.js';
 import {
   collectionDaysSchema,
   createWasteScheduleSchema,

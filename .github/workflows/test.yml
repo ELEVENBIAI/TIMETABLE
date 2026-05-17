@@ -61,6 +61,27 @@ jobs:
   e2e-tests:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: hmservice_owner
+          POSTGRES_PASSWORD: owner_test_pw
+          POSTGRES_DB: timetable
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hmservice_owner"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL_OWNER: postgres://hmservice_owner:owner_test_pw@localhost:5432/timetable
+      DATABASE_URL: postgres://hmservice_app:app_test_pw@localhost:5432/timetable
+      JWT_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      NODE_ENV: test
+      PORT: 3000
+      LOG_LEVEL: warn
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -68,6 +89,29 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
+      - name: Initialize database (extensions, roles, functions)
+        run: |
+          PGPASSWORD=owner_test_pw psql -h localhost -U hmservice_owner -d timetable -f backend/src/db/init/01-extensions.sql
+          # 02-roles.sql nutzt current_setting('app.app_password') — wir patchen den Wert für CI.
+          # Gleiches Muster wie backend/tests/helpers/db.ts.
+          sed "s|current_setting('app.app_password', true)|'app_test_pw'|g" backend/src/db/init/02-roles.sql \
+            | PGPASSWORD=owner_test_pw psql -h localhost -U hmservice_owner -d timetable
+          PGPASSWORD=owner_test_pw psql -h localhost -U hmservice_owner -d timetable -f backend/src/db/init/03-functions.sql
+      - name: Apply migrations
+        run: npm --workspace=backend exec tsx src/db/migrate.ts
+      - name: Apply pilot seed (ELE-202)
+        run: |
+          PGPASSWORD=owner_test_pw psql -h localhost -U hmservice_owner -d timetable -f backend/src/db/migrations/0009_pilot_wave1_seed.sql
+      - name: Set test-known passwords on pilot users (CI only)
+        run: node backend/scripts/seed-test-credentials.mjs
+      - name: Start backend in background
+        run: |
+          npm --workspace=backend exec tsx src/server.ts > backend.log 2>&1 &
+          echo "BACKEND_PID=$!" >> "$GITHUB_ENV"
+          # Wait for backend health
+          for i in {1..30}; do
+            curl -sf http://localhost:3000/api/health && break || sleep 1
+          done
       - name: Install Playwright browsers
         run: npm --workspace=e2e exec -- playwright install --with-deps chromium webkit
       - name: Run E2E tests
@@ -78,4 +122,11 @@ jobs:
         with:
           name: playwright-report
           path: e2e/playwright-report/
+          retention-days: 7
+      - name: Upload backend log
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-log
+          path: backend.log
           retention-days: 7

@@ -1,7 +1,7 @@
 // Fastify-App-Setup — alle Plugins + Routes registriert
 // Wird von server.ts und Tests benutzt (fastify.inject für API-Smoke).
 
-import Fastify, { type FastifyInstance } from 'fastify';
+import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
