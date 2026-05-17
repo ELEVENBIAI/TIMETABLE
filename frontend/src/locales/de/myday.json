@@ -1,0 +1,15 @@
+{
+  "loading": "Heutige Aufgaben werden geladen…",
+  "header": {
+    "greeting": "Guten Morgen, {{name}}!"
+  },
+  "draftHint": "Der Plan ist noch Entwurf — dein Planer kann ihn noch ändern.",
+  "actions": {
+    "navigate": "Navigieren"
+  },
+  "empty": {
+    "title": "Heute keine Aufgaben",
+    "subtitle": "Genieß den freien Tag.",
+    "draftHint": "Der Wochenplan ist noch nicht freigegeben."
+  }
+}

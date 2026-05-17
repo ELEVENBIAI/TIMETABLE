@@ -5,7 +5,7 @@ import { getCurrentTenant } from '@/lib/theme';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 const TABS = [
-  { to: '/', icon: Clock, key: 'tabs.today' },
+  { to: '/today', icon: Clock, key: 'tabs.today' },
   { to: '/schedule', icon: CalendarDays, key: 'tabs.week' },
   { to: '/profile', icon: User, key: 'tabs.profile' },
 ] as const;
@@ -40,7 +40,6 @@ export function MobileLayout() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
             className={({ isActive }) =>
               [
                 'flex flex-1 flex-col items-center justify-center gap-1 py-3 text-label transition-colors',

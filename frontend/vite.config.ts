@@ -28,6 +28,24 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
+          // Mobile-Tagesansicht (ELE-182): Schedules + Entries + Stammdaten
+          // werden agressiver gecacht damit Daniel offline seinen Plan sieht.
+          // StaleWhileRevalidate liefert sofort den Cache und holt im Hintergrund frisch.
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith('/api/schedules') ||
+              url.pathname.startsWith('/api/schedule-entries') ||
+              url.pathname.startsWith('/api/properties') ||
+              url.pathname.startsWith('/api/service-types') ||
+              url.pathname.startsWith('/api/employees'),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'myday-data',
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Default für andere /api/*-Calls: NetworkFirst mit kurzem Timeout
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
             handler: 'NetworkFirst',

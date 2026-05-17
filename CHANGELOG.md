@@ -1,5 +1,22 @@
 # Changelog — Timetable
 
+## v0.5.2 — 2026-05-17 (ELE-182: Mobile-Tagesansicht (PWA))
+
+- **ELE-182 done:** Pilot-Mitarbeiter Daniel/Anna/Gabi/Jürgen können den Plan ab Tag 1 auf dem Handy als PWA nutzen. Wave 1 vorgezogen (war ursprünglich Wave 2 / HMS-15) damit der Papier-Ausdruck als Fallback erst danach kommt.
+- **`/today` Route** mit neuer `MyDayPage`: Chronologische Liste der heutigen Aufgaben (sortiert nach Startzeit), pro Card: Uhrzeit (tabular-nums, groß), Service-Type-Color-Stripe + Short-Name + Background-Tint, Property-Name + Adresse mit MapPin-Icon, Dauer, Navigieren-Button.
+- **`HomeRedirect`** (neue Komponente, `components/HomeRedirect.tsx`): Root-Route `/` ist jetzt role-aware. EMPLOYEE → Redirect `/today`, ADMIN/PLANNER/FOREMAN → SchedulePage (wie bisher). Implementiert sauber als Komponente damit Tests es ohne Spezial-Setup mounten können.
+- **MobileLayout Bottom-Tab "Heute"** zeigt nicht mehr auf `/` sondern direkt auf `/today` (verhindert unnötigen Redirect-Hop für EMPLOYEE).
+- **Navigations-Helper `lib/maps.ts`**: `formatAddress(property)` + `googleMapsSearchUrl(property)` baut den Google-Maps-Deep-Link `https://www.google.com/maps/search/?api=1&query=<encoded>` zusammen. Browser+OS routen iOS-User automatisch zu Apple Maps wenn installiert.
+- **Service-Worker Offline-Cache verbessert (Workbox)**: Neue Runtime-Caching-Strategie `StaleWhileRevalidate` für `/api/schedules`, `/api/schedule-entries`, `/api/properties`, `/api/service-types`, `/api/employees` mit 7-Tage-Cache (`myday-data`). Daniel sieht offline den letzten geladenen Plan sofort, im Hintergrund wird neu gefetcht.
+- **Backend nicht angefasst**: Das EMPLOYEE-Scoping (`employees.user_id = actor.userId`) auf `GET /api/schedule-entries` existiert seit ELE-179. Daniel bekommt automatisch nur seine eigenen Einträge — Pilot-Seed verlinkt `daniel@pilot.local` mit `bbbbbbbb-1111-1111-1111-111111111111`.
+- **Web-Push-Subscription-Placeholder** (`lib/push.ts`): `getPushPermission()`, `requestPushPermission()`, `subscribeToPush()`. Aktuell wird die Subscription **noch nicht** an einen Server geschickt — das kommt in Wave 3 zusammen mit Reassignment-Benachrichtigungen.
+- **i18n** neuer Namespace `myday` (en+de): Loading, Header-Greeting "Guten Morgen, Daniel!", Draft-Hint, Actions, Empty-State (mit unterschiedlichem Text für DRAFT-Wochenplan vs gar kein Plan).
+- **Tests**:
+  - **Vitest Component:** `MyDayPage.test.tsx` (4 Tests: sortierte Einträge, Property+Service+Maps-Link, Empty-State, Begrüßung) + `maps.test.ts` (3 Tests: formatAddress, UTF-8-Encoding, fehlende Hausnummer).
+  - **Playwright Mobile E2E:** `myday-mobile.spec.ts` (4 Tests: PWA-Manifest verfügbar, EMPLOYEE → /today, ADMIN bleibt auf SchedulePage, Maps-Link öffnet im neuen Tab).
+- **Build-Größe:** 140.53 KB gzip (Budget ADR-14 = 250 KB → komfortabel).
+- **Wave-1-Status nach ELE-182:** Robert hat den Wochenplan-Editor mit DnD-Umplanung (ELE-180+ELE-181), Mitarbeiter haben die mobile Tagesansicht (ELE-182). Pilot ist mit ELE-202 Seed lauffähig. Folge-Issue ELE-193 (Push-Server, Wave 3) bleibt im Backlog.
+
 ## v0.5.1 — 2026-05-17 (ELE-181: Drag-&-Drop-Umplanung)
 
 - **ELE-181 done:** Robert kann Aufgaben per Drag & Drop von einem Mitarbeiter auf einen anderen verschieben. Spart ~45 min Telefonarbeit bei jedem Krankheitsfall.

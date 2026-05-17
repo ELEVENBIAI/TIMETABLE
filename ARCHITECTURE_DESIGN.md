@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.5.1 | **Stand:** 2026-05-17
+**Version:** 0.5.2 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -405,6 +405,13 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/components/ScheduleConflictAlert.tsx`                                                                                           | Inline-Banner für 409 TIME_CONFLICT bei DnD-Move — ELE-181                                              |
 | `frontend/tests/components/{ScheduleEntryCard.dnd,useMoveScheduleEntry}.test.tsx`                                                             | Vitest DnD-Behavior + Optimistic-Update Tests — ELE-181                                                 |
 | `e2e/tests/schedule-dnd.spec.ts`                                                                                                              | Playwright DnD-E2E — ELE-181                                                                            |
+| `specs/ELE-182.md`                                                                                                                            | Mobile-Tagesansicht (PWA) Spec                                                                          |
+| `frontend/src/pages/MyDayPage.tsx`                                                                                                            | Mobile-Tagesansicht (EMPLOYEE-Tagesplan + Navigieren-Link) — ELE-182                                    |
+| `frontend/src/components/HomeRedirect.tsx`                                                                                                    | Role-aware Default-Landing (EMPLOYEE→/today, sonst SchedulePage) — ELE-182                              |
+| `frontend/src/lib/{maps,push}.ts`                                                                                                             | Google-Maps-URL-Helper + Web-Push-Subscription-Placeholder — ELE-182                                    |
+| `frontend/src/locales/{en,de}/myday.json`                                                                                                     | i18n Myday-Namespace — ELE-182                                                                          |
+| `frontend/tests/components/{MyDayPage,maps}.test.{tsx,ts}`                                                                                    | Vitest MyDay-Page + Maps-URL-Tests — ELE-182                                                            |
+| `e2e/tests/myday-mobile.spec.ts`                                                                                                              | Playwright Mobile-MyDay-E2E — ELE-182                                                                   |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

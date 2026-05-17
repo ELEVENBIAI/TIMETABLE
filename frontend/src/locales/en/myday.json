@@ -1,0 +1,15 @@
+{
+  "loading": "Loading today's tasks…",
+  "header": {
+    "greeting": "Good morning, {{name}}!"
+  },
+  "draftHint": "The schedule is still a draft — your planner may still change it.",
+  "actions": {
+    "navigate": "Navigate"
+  },
+  "empty": {
+    "title": "No tasks for today",
+    "subtitle": "Enjoy your day off.",
+    "draftHint": "Your planner has not published the week yet."
+  }
+}

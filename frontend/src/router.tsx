@@ -6,6 +6,8 @@ import { LoginPage } from '@/pages/LoginPage';
 import { ChangePasswordPage } from '@/pages/ChangePasswordPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { SchedulePage } from '@/pages/SchedulePage';
+import { MyDayPage } from '@/pages/MyDayPage';
+import { HomeRedirect } from '@/components/HomeRedirect';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -30,7 +32,8 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <SchedulePage /> },
+      { index: true, element: <HomeRedirect /> },
+      { path: 'today', element: <MyDayPage /> },
       { path: 'schedule', element: <SchedulePage /> },
       { path: 'health', element: <HealthPage /> },
       // Platzhalter — Inhalt kommt mit Folge-Issues
