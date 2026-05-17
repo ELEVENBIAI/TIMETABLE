@@ -1,0 +1,43 @@
+{
+  "modal": {
+    "title": "Find substitute",
+    "subtitle": "{{property}} · {{date}} · {{time}}",
+    "close": "Close",
+    "loading": "Loading suggestions…",
+    "empty": "No suitable substitutes found.",
+    "blockedHeader": "Not available ({{count}})",
+    "expand": "Show",
+    "collapse": "Hide",
+    "scoreLabel": "Score",
+    "factorsLabel": "Factors",
+    "confirm": "Assign {{name}}",
+    "success": "Assigned to {{name}}",
+    "factor": {
+      "capacity": "Capacity",
+      "proximity": "Distance",
+      "qualification": "Qualification",
+      "experience": "Experience",
+      "fairness": "Fairness",
+      "contingencyBonus": "Backup bonus"
+    }
+  },
+  "trigger": {
+    "button": "Find substitute"
+  },
+  "reasons": {
+    "capacityHigh": "Has ~{{hoursFree}}h free this week",
+    "proximityNear": "Lives only {{km}} km away",
+    "qualificationsCount": "Holds {{count}} qualifications",
+    "experienceVisits": "Visited this property {{visits}}× in the last 6 months",
+    "fairnessLow": "Has only {{count}} substitutions recently",
+    "contingencyMatch": "Pre-defined backup (priority {{priority}})"
+  },
+  "blockers": {
+    "inactive": "Inactive or deleted",
+    "selfReassignment": "Cannot replace themselves",
+    "hasAbsence": "Has {{absenceType}} absence on this day",
+    "timeConflict": "Has another assignment starting {{startTime}}",
+    "lowScore": "Score too low ({{score}}/100)",
+    "outsideTopN": "Outside top suggestions"
+  }
+}

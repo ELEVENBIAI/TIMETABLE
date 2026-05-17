@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDraggable } from '@dnd-kit/core';
-import { Lock } from 'lucide-react';
+import { Lock, UserPlus } from 'lucide-react';
 import { formatTime, formatDurationLabel } from '@/lib/date';
 import type { Employee, Property, ScheduleEntry, ServiceType } from '@/types/schedule';
 import { isLocale } from '@/lib/i18n';
@@ -18,6 +18,8 @@ interface Props {
   disabled?: boolean;
   /** Wenn true: rein visuelle Darstellung ohne useDraggable (z.B. DragOverlay) */
   presentational?: boolean;
+  /** Callback bei "Vertretung finden"-Klick (ELE-203). Wenn gesetzt + status=REASSIGNMENT_NEEDED → Button sichtbar. */
+  onReassignClick?: (entryId: string) => void;
 }
 
 // Status → Card-Modifier-Class
@@ -39,9 +41,13 @@ export function ScheduleEntryCard({
   topPx,
   disabled = false,
   presentational = false,
+  onReassignClick,
 }: Props) {
   const { i18n, t } = useTranslation('schedule');
+  const { t: tR } = useTranslation('reassignment');
   const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
+  const showReassign =
+    !presentational && entry.status === 'REASSIGNMENT_NEEDED' && !!onReassignClick;
 
   const draggable = useDraggable({
     id: entry.id,
@@ -123,6 +129,24 @@ export function ScheduleEntryCard({
           })}
         </div>
       )}
+      {showReassign ? (
+        <button
+          type="button"
+          onPointerDown={(e) => {
+            // Verhindert DnD-Start beim Klick auf den Button
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onReassignClick?.(entry.id);
+          }}
+          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-status-needs-reassign/15 px-2 py-0.5 text-label font-medium text-status-needs-reassign hover:bg-status-needs-reassign/25"
+          data-testid="reassign-trigger"
+        >
+          <UserPlus size={12} aria-hidden="true" />
+          {tR('trigger.button')}
+        </button>
+      ) : null}
     </article>
   );
 }

@@ -1,0 +1,43 @@
+{
+  "modal": {
+    "title": "Vertretung finden",
+    "subtitle": "{{property}} · {{date}} · {{time}}",
+    "close": "Schließen",
+    "loading": "Vorschläge werden geladen…",
+    "empty": "Keine passende Vertretung gefunden.",
+    "blockedHeader": "Nicht verfügbar ({{count}})",
+    "expand": "Anzeigen",
+    "collapse": "Verbergen",
+    "scoreLabel": "Score",
+    "factorsLabel": "Faktoren",
+    "confirm": "{{name}} zuweisen",
+    "success": "{{name}} zugewiesen",
+    "factor": {
+      "capacity": "Kapazität",
+      "proximity": "Nähe",
+      "qualification": "Qualifikation",
+      "experience": "Erfahrung",
+      "fairness": "Fairness",
+      "contingencyBonus": "Backup-Bonus"
+    }
+  },
+  "trigger": {
+    "button": "Vertretung finden"
+  },
+  "reasons": {
+    "capacityHigh": "Hat noch ~{{hoursFree}}h frei diese Woche",
+    "proximityNear": "Wohnt nur {{km}} km entfernt",
+    "qualificationsCount": "Hat {{count}} Qualifikationen",
+    "experienceVisits": "War in den letzten 6 Monaten {{visits}}× am Objekt",
+    "fairnessLow": "Hat zuletzt nur {{count}} Vertretungen übernommen",
+    "contingencyMatch": "Vordefinierte Vertretung (Priorität {{priority}})"
+  },
+  "blockers": {
+    "inactive": "Inaktiv oder gelöscht",
+    "selfReassignment": "Kann sich nicht selbst vertreten",
+    "hasAbsence": "Hat {{absenceType}}-Abwesenheit an diesem Tag",
+    "timeConflict": "Hat anderen Termin um {{startTime}}",
+    "lowScore": "Score zu niedrig ({{score}}/100)",
+    "outsideTopN": "Außerhalb der Top-Vorschläge"
+  }
+}

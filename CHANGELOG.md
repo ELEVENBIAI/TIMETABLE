@@ -1,5 +1,26 @@
 # Changelog — Timetable
 
+## v0.6.1 — 2026-05-17 (ELE-203: Reassignment-Picker — Frontend-Modal)
+
+- **ELE-203 done:** Reassignment-Engine (ELE-196) ist jetzt im Browser sichtbar. Robert klickt auf "Vertretung finden" bei einer roten Aufgabe → Modal zeigt Top-3 Kandidaten mit Score + Begründung → ein Klick = Aufgabe ist umverteilt.
+- **`frontend/src/api/reassignment.ts`** — TanStack-Query-Hook `useReassignmentSuggestions(entryId, enabled)` mit 30s staleTime, deaktiviert wenn Modal zu.
+- **`frontend/src/components/ReassignmentPickerModal.tsx`**:
+  - Header mit Property + Datum + Uhrzeit
+  - Top-N Suggestion-Cards: Score-Badge (farbig nach Range), Faktor-Breakdown (Kap/Näh/Qual/Erf/Fair + Bonus), lokalisierte Reason-Liste, Klick triggert Move
+  - Ausklappbare Blocked-Liste mit Begründung pro geblocktem Kandidaten
+  - A11y: `role="dialog"`, ESC schließt, Backdrop-Klick schließt
+  - Reason/Blocker-Strings via `resolveBackendKey()`-Helper (Backend-Keys `namespace.foo.bar` → i18next `namespace:foo.bar`)
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — neuer Prop `onReassignClick`. Bei `status='REASSIGNMENT_NEEDED'` + Prop gesetzt: kleiner Button mit UserPlus-Icon erscheint unter der Card. `onPointerDown` stoppt Drag-Initiation.
+- **`frontend/src/components/WeekGrid/WeekGrid.tsx`** — reicht `onReassignClick` an alle Cards weiter.
+- **`frontend/src/pages/SchedulePage.tsx`** — hält `reassignEntryId`-State, Role-Gate via `useAuth` (nur ADMIN/PLANNER/FOREMAN), rendert Modal als Portal-ähnliche Overlay. Move geht über bestehenden `useMoveScheduleEntry`-Hook (ELE-181), der `is_from_reassignment=TRUE` automatisch setzt.
+- **i18n-Namespace `reassignment`** im Frontend registriert (en + de) — Strings für Modal-Text + Reasons + Blockers + Factor-Labels.
+- **Tests**:
+  - Vitest: 5 neue Tests (`ReassignmentPickerModal.test.tsx`) — Suggestions+Reasons rendern, Blocked-Toggle expandiert, Klick triggert Move-Mutation, ESC + Backdrop schließen. 62/62 frontend grün.
+  - Playwright E2E: `reassignment-picker.spec.ts` — 2 Tests (Trigger-Sichtbarkeit, Modal-Open-Flow mit Status-Manipulation per PUT).
+- **Bundle-Größe**: 147 KB gzip (+3 KB durch Modal-Code, Budget ADR-14 250 KB).
+- **VERSION-Bump**: 0.6.0 → 0.6.1 (Patch — Frontend-Anhang zu ELE-196-Hauptfeature).
+- **Engine-Sichtbarkeit:** Wave-3-Engine ist jetzt komplett — Backend (ELE-196) + Frontend (ELE-203). Robert kann den kompletten Krankheits-Workflow in 2 Klicks abwickeln: "Vertretung finden" → Kandidat-Karte klicken. Fertig.
+
 ## v0.6.0 — 2026-05-17 (ELE-196: Reassignment-Engine — Wave-3-Hauptfeature)
 
 - **ELE-196 done:** Robert bekommt bei Krankmeldung **automatisch sortierte Vertretungsvorschläge** mit Score + Begründung. Minor-Bump (0.5.6 → 0.6.0) markiert das erste Wave-3-Feature.

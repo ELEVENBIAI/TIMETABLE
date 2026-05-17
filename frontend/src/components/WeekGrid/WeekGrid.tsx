@@ -36,6 +36,8 @@ interface Props {
   filter: FilterState;
   /** Wenn true: DnD-Targets werden nicht aktiviert (PUBLISHED-Schedule). */
   dndDisabled?: boolean;
+  /** Callback bei "Vertretung finden"-Klick auf einer Card (ELE-203). */
+  onReassignClick?: (entryId: string) => void;
 }
 
 interface BucketProps {
@@ -79,7 +81,7 @@ function DroppableBucket({
 
 const LOCALES = { en: enUS, de };
 
-export function WeekGrid({ context, mode, filter, dndDisabled = false }: Props) {
+export function WeekGrid({ context, mode, filter, dndDisabled = false, onReassignClick }: Props) {
   const { i18n } = useTranslation('schedule');
   const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
   const loc = LOCALES[locale];
@@ -218,6 +220,7 @@ export function WeekGrid({ context, mode, filter, dndDisabled = false }: Props) 
                           pxPerMinute={PX_PER_MINUTE}
                           topPx={minutesFromGridStart(entry.start_time)}
                           disabled={dndDisabled}
+                          onReassignClick={onReassignClick}
                         />
                       ))}
                     </DroppableBucket>

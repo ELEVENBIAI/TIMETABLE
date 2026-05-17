@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.6.0 | **Stand:** 2026-05-17
+**Version:** 0.6.1 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -449,6 +449,12 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `backend/src/locales/{en,de}/reassignment.json`                                                                                               | i18n-Vertrags-Keys für Frontend-Picker (reasons + blockers) — ELE-196                                   |
 | `backend/tests/services/reassignment-pure.test.ts`                                                                                            | 43 Pure-Unit-Tests (alle Scorer + Hard-Filter + Composite + Split) — ELE-196                            |
 | `backend/tests/routes/reassignment.test.ts`                                                                                                   | 8 Route-Integration-Tests (Auth, 404, Hard-Filter, Contingency-Boost, Proximity) — ELE-196              |
+| `specs/ELE-203.md`                                                                                                                            | Reassignment-Picker Frontend-Modal Spec                                                                 |
+| `frontend/src/api/reassignment.ts`                                                                                                            | TanStack-Query-Hook + Suggestion/Response-Types — ELE-203                                               |
+| `frontend/src/components/ReassignmentPickerModal.tsx`                                                                                         | Modal mit Score-Cards + Blocker-List + Move-Mutation — ELE-203                                          |
+| `frontend/src/locales/{en,de}/reassignment.json`                                                                                              | i18n-Namespace `reassignment` für Modal-Strings + Reasons/Blockers — ELE-203                            |
+| `frontend/tests/components/ReassignmentPickerModal.test.tsx`                                                                                  | 5 Vitest-Tests (Render, Blocked-Toggle, Move, ESC, Backdrop) — ELE-203                                  |
+| `e2e/tests/reassignment-picker.spec.ts`                                                                                                       | Playwright E2E: Trigger-Sichtbarkeit + Modal-Open — ELE-203                                             |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

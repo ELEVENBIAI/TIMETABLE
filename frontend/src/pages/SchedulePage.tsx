@@ -27,6 +27,8 @@ import { ScheduleEntryCard } from '@/components/WeekGrid/ScheduleEntryCard';
 import { ViewModeSwitcher } from '@/components/WeekGrid/ViewModeSwitcher';
 import { WorkloadSummary } from '@/components/WeekGrid/WorkloadSummary';
 import { ScheduleConflictAlert, type ConflictInfo } from '@/components/ScheduleConflictAlert';
+import { ReassignmentPickerModal } from '@/components/ReassignmentPickerModal';
+import { useAuth } from '@/lib/auth';
 import type { FilterState, ViewMode } from '@/components/WeekGrid/WeekGrid.types';
 import {
   indexById,
@@ -66,6 +68,14 @@ export function SchedulePage() {
   const [activeEntry, setActiveEntry] = useState<ScheduleEntry | null>(null);
   const [conflict, setConflict] = useState<ConflictInfo | null>(null);
   const [moveError, setMoveError] = useState<unknown>(null);
+  const [reassignEntryId, setReassignEntryId] = useState<string | null>(null);
+
+  const { payload } = useAuth();
+  const canReassign =
+    payload?.role === 'ADMIN' ||
+    payload?.role === 'PLANNER' ||
+    payload?.role === 'FOREMAN' ||
+    payload?.isSuperAdmin === true;
 
   // Wochenstart aus URL ?week=YYYY-MM-DD oder aktuelle KW
   const weekStartDate = useMemo(() => {
@@ -335,6 +345,7 @@ export function SchedulePage() {
             mode={mode}
             filter={filter}
             dndDisabled={dndDisabled}
+            onReassignClick={canReassign ? setReassignEntryId : undefined}
           />
           <DragOverlay dropAnimation={null}>
             {activeEntry ? (
@@ -357,6 +368,25 @@ export function SchedulePage() {
           />
         </DndContext>
       )}
+
+      {/* Reassignment-Picker Modal (ELE-203) */}
+      {reassignEntryId && schedule
+        ? (() => {
+            const entry = (entriesQuery.data ?? []).find((e) => e.id === reassignEntryId);
+            if (!entry) return null;
+            const prop = propertyMap.get(entry.property_id);
+            return (
+              <ReassignmentPickerModal
+                entryId={entry.id}
+                scheduleId={schedule.id}
+                propertyName={prop?.name ?? '—'}
+                entryDate={entry.entry_date}
+                startTime={entry.start_time}
+                onClose={() => setReassignEntryId(null)}
+              />
+            );
+          })()
+        : null}
     </section>
   );
 }
