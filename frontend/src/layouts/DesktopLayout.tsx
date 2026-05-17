@@ -1,9 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, ClipboardList, Database, FileBarChart, Home, User } from 'lucide-react';
+import { Calendar, ClipboardList, Database, FileBarChart, Home } from 'lucide-react';
 import { getCurrentTenant } from '@/lib/theme';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { useAuth } from '@/lib/auth';
+import { UserMenu } from '@/components/UserMenu';
 
 const NAV_ITEMS = [
   { to: '/', icon: Home, key: 'nav.home' },
@@ -15,7 +15,6 @@ const NAV_ITEMS = [
 
 export function DesktopLayout() {
   const { t } = useTranslation('common');
-  const auth = useAuth();
   const tenant = getCurrentTenant();
 
   return (
@@ -54,15 +53,11 @@ export function DesktopLayout() {
           ))}
         </nav>
 
-        <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-3">
-          <NavLink
-            to="/profile"
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-label text-text-secondary hover:bg-surface hover:text-text-primary"
-          >
-            <User size={16} aria-hidden="true" />
-            <span>{auth.payload?.userId ? t('nav.profile') : t('nav.profile')}</span>
-          </NavLink>
-          <LocaleSwitcher />
+        <div className="flex flex-col gap-3 border-t border-border px-3 py-3">
+          <UserMenu variant="sidebar" />
+          <div className="flex items-center justify-end">
+            <LocaleSwitcher />
+          </div>
         </div>
       </aside>
 

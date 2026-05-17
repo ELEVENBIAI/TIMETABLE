@@ -1,5 +1,37 @@
 # Changelog — Timetable
 
+## v0.4.2 — 2026-05-17 (ELE-200: Frontend Login + Auth-Flow)
+
+- **ELE-200 done (Frontend):** Vollständiger Login-Flow im Browser, baut auf ELE-201 Backend-Endpoints auf.
+- **`/impeccable shape`-Design-Brief** für die Login-Page durchgeführt: Linear-Style kompakt (360px max-width), Wortmarke + Tenant-Hint typografisch, Card-Container mit `surface-raised` + 1px Border (kein Drop-Shadow), Brand-Akzent (Gepard-Ocker) **nur** auf Submit-Button.
+- **4 neue Pages**:
+  - `LoginPage` (`/login`) — Form mit Email + Passwort, Show/Hide-Toggle (Eye/EyeOff Icon), Loading-State, Error-Display via `FormError` mit messageKey-Resolution, must_change_password-Redirect, `?from=`-Original-Path-Resolution
+  - `ChangePasswordPage` (`/change-password`) — current + new + confirm Password, lokale Mismatch-Check, `clearMustChangePassword()`-Trigger nach Erfolg
+  - `ForgotPasswordPage` (`/forgot-password`) — Anti-Enumeration (immer Success-Message, kein Hint ob Email existiert)
+  - LoginPlaceholder.tsx entfernt (war Stub aus ELE-199)
+- **4 neue Komponenten**:
+  - `Button` (4 Varianten: primary/secondary/ghost/destructive, 3 Größen, Loading-State, Touch-Target ≥44px Mobile)
+  - `Input` (Label, Error, Hint, optional RightSlot, aria-describedby-Verkettung)
+  - `FormError` (übersetzt `ApiRequestError.messageKey` via i18n-Resolver, fällt auf String-Message zurück)
+  - `UserMenu` (Logout-Button + User-Info, Variants sidebar/mobile)
+  - `ProtectedRoute` (Auth-Wrapper: Redirect zu `/login?from=…`, forced `/change-password` bei mustChangePassword)
+- **Auth-API-Wrapper** `src/lib/auth-api.ts`: `login`, `forgotPassword`, `changePassword`, `me`
+- **Auth-Context erweitert** (`src/lib/auth.tsx`):
+  - `mustChangePassword` separat in localStorage persistiert (nicht im JWT-Payload — verhindert Verlust bei Page-Reload)
+  - `login(token, { mustChangePassword })` mit Login-Response-Flag
+  - `clearMustChangePassword()` nach erfolgreichem Wechsel
+  - Cross-Tab-Sync auf beiden Storage-Keys
+- **Router echt geschützt**: alle App-Routes hinter `ProtectedRoute`, `/login` + `/forgot-password` öffentlich, `/change-password` halb-öffentlich (auth-required, aber forced-Flow erlaubt)
+- **Layouts integriert**: DesktopLayout-Sidebar-Footer und MobileLayout-Profile-Tab nutzen `UserMenu`
+- **i18n auth-Keys** in en + de erweitert (login, changePassword, forgotPassword Sub-Trees, loginFailed, accountLocked)
+- **Tests**:
+  - Vitest: 13 neue Tests (5 LoginPage + 9 Component-Smokes für Button/Input/FormError) — **Total 31/31 Frontend-Tests grün** in 2.1s
+  - Playwright: 5 E2E-Smoke-Tests grün (redirect-to-login, login-form-renders, locale-switch, forgot-page-reachable, anti-enumeration) in 5.3s
+- **Build**: 322 KB JS gzip 102 KB (weiter unter ADR-14-Budget von 250 KB gzip)
+- VERSION 0.4.1 → **0.4.2**
+
+**Damit kann Robert sich tatsächlich einloggen** mit `robert@pilot.local` + `ChangeMe123!` (Seed-Passwörter aus `seed-dev-passwords.mjs`), wird zur Change-Password-Page geleitet, kann das Passwort ändern und landet danach auf der HealthPage. **ELE-202 (Demo-Seed) + ELE-180 (Wochenplan-Grid) sind jetzt unblocked.**
+
 ## v0.4.1 — 2026-05-17 (ELE-201: Backend Auth-Endpoints Ergänzung)
 
 - **ELE-201 done:** Zwei fehlende Backend-Endpoints für den ELE-200 Frontend-Login-Flow ergänzt.
