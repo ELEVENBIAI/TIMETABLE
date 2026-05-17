@@ -1,5 +1,26 @@
 # Changelog — Timetable
 
+## v0.4.3 — 2026-05-17 (ELE-202: Pilot Wave-1 Demo-Seed)
+
+- **ELE-202 done:** Migration `0009_pilot_wave1_seed.sql` legt realistische Pilot-Daten an, damit ELE-180 (Wochenplan-Grid) auf echten Daten arbeiten kann statt auf leerem Grid.
+- **Was geseedet wird** (alles im Pilot-Tenant `11111111-1111-1111-1111-111111111111`):
+  - **1 Property-Manager** "Hausverwaltung Schmidt & Partner" (Köln)
+  - **4 Contracts** (1 pro Property): STANDARD/PREMIUM, monatliche Werte 290-640 €
+  - **Properties UPDATE**: alle 4 Pilot-Properties bekommen `property_manager_id` + `contract_id`
+  - **10 Property-Services** mit Frequenz-Mix: WEEKLY (Treppenhaus pro Property), BIWEEKLY (Hof, Garten), MONTHLY (Fenster, Keller), QUARTERLY (Dachrinne)
+  - **4 Waste-Schedules** (Mülltonnen-Abfuhrpläne): Restmüll/Papier/Bio pro Property mit `collection_days` JSONB
+  - **1 Schedule-Template** "Standardwoche Gepard" (Default-Template)
+  - **16 Template-Entries** Mo-Fr verteilt, Workload-balanced gegen `weekly_hours` (Daniel 40h: 5 Tage, Anna 20h: 3 Tage, Gabi 15h: 2 Tage, Jürgen 30h: 4 Tage)
+  - **1 DRAFT-Schedule** für KW 21/2026 (Woche ab Mo 2026-05-18), `generation_method='FROM_TEMPLATE'`
+  - **16 Schedule-Entries** mit konkreten Daten Mo 2026-05-18 bis Fr 2026-05-22, alle `PLANNED`
+- **Idempotenz**: Migration-Marker via Property-Manager mit fix-UUID (`20202020-1111-...`). Existiert er, RAISE NOTICE + Skip. Zweite Anwendung → keine Count-Änderung (verifiziert durch Test).
+- **UUID-Konvention**: alle ELE-202-Records bekommen Präfix `20202020-XXXX-...` als Audit-Trail (Issue-Nummer).
+- **Tests**: 6 neue Vitest-Tests in `seed-pilot-wave1.test.ts` (Counts, Property-Verknüpfung, DRAFT-Schedule-Metadata, Schedule-Entries-Mo-Fr-Verteilung, Idempotenz, Frequenz-Mix). **Total 330/330 Tests grün**.
+- **Down-Migration** vorhanden: DELETE in FK-Reihenfolge + Properties zurück auf NULL.
+- VERSION 0.4.2 → **0.4.3**
+
+**Damit hat ELE-180 echte Daten zum Anzeigen** — sobald das Frontend-Grid existiert. Aktuell schon abrufbar via Backend-API (Swagger `/api/schedules`, `/api/property-services`, `/api/template-entries`).
+
 ## v0.4.2 — 2026-05-17 (ELE-200: Frontend Login + Auth-Flow)
 
 - **ELE-200 done (Frontend):** Vollständiger Login-Flow im Browser, baut auf ELE-201 Backend-Endpoints auf.
