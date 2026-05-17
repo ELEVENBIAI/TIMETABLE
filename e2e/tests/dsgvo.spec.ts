@@ -7,7 +7,9 @@ import { test, expect, type Page } from '@playwright/test';
 const ADMIN_EMAIL = 'admin@pilot.local';
 const ADMIN_PASSWORD = 'ChangeMe123!';
 const EMP_EMAIL = 'daniel@pilot.local';
-const EMP_PASSWORD = 'ChangeMe123!?';
+// CI seeded alle Pilot-User mit ChangeMe123! (seed-test-credentials.mjs).
+// Operator hat lokal teilweise Passwörter gewechselt — für Tests immer Default.
+const EMP_PASSWORD = 'ChangeMe123!';
 
 async function authenticate(page: Page, email: string, password: string) {
   await page.goto('/login');
