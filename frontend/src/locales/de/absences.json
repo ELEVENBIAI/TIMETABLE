@@ -1,0 +1,28 @@
+{
+  "modal": {
+    "title": "Abwesenheit melden",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "submit": "Abwesenheit speichern"
+  },
+  "trigger": {
+    "global": "Abwesenheit melden",
+    "context": "Krankmelden"
+  },
+  "field": {
+    "employee": "Mitarbeiter",
+    "employeePlaceholder": "Mitarbeiter wählen …",
+    "type": "Art",
+    "startDate": "Von",
+    "endDate": "Bis",
+    "notes": "Notiz",
+    "optional": "optional"
+  },
+  "type": {
+    "SICK": "Krankheit",
+    "VACATION": "Urlaub",
+    "PERSONAL": "Persönlich",
+    "TRAINING": "Schulung",
+    "OTHER": "Sonstiges"
+  }
+}

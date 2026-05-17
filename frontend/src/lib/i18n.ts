@@ -15,6 +15,7 @@ import enSchedule from '@/locales/en/schedule.json';
 import enMyday from '@/locales/en/myday.json';
 import enDsgvo from '@/locales/en/dsgvo.json';
 import enReassignment from '@/locales/en/reassignment.json';
+import enAbsences from '@/locales/en/absences.json';
 
 import deCommon from '@/locales/de/common.json';
 import deErrors from '@/locales/de/errors.json';
@@ -26,6 +27,7 @@ import deSchedule from '@/locales/de/schedule.json';
 import deMyday from '@/locales/de/myday.json';
 import deDsgvo from '@/locales/de/dsgvo.json';
 import deReassignment from '@/locales/de/reassignment.json';
+import deAbsences from '@/locales/de/absences.json';
 
 export const SUPPORTED_LOCALES = ['en', 'de'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -48,6 +50,7 @@ const resources = {
     myday: enMyday,
     dsgvo: enDsgvo,
     reassignment: enReassignment,
+    absences: enAbsences,
   },
   de: {
     common: deCommon,
@@ -60,6 +63,7 @@ const resources = {
     myday: deMyday,
     dsgvo: deDsgvo,
     reassignment: deReassignment,
+    absences: deAbsences,
   },
 } as const;
 
@@ -85,6 +89,7 @@ export async function initI18n(initialLocale?: string | null): Promise<typeof i1
         'myday',
         'dsgvo',
         'reassignment',
+        'absences',
       ],
       defaultNS: 'common',
       interpolation: { escapeValue: false },

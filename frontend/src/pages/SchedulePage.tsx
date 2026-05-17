@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Loader2, Lock } from 'lucide-react';
+import { Sparkles, Loader2, Lock, UserMinus } from 'lucide-react';
 import { addDays, format } from 'date-fns';
 import { de, enUS } from 'date-fns/locale';
 import {
@@ -28,6 +28,7 @@ import { ViewModeSwitcher } from '@/components/WeekGrid/ViewModeSwitcher';
 import { WorkloadSummary } from '@/components/WeekGrid/WorkloadSummary';
 import { ScheduleConflictAlert, type ConflictInfo } from '@/components/ScheduleConflictAlert';
 import { ReassignmentPickerModal } from '@/components/ReassignmentPickerModal';
+import { ReportAbsenceModal } from '@/components/ReportAbsenceModal';
 import { useAuth } from '@/lib/auth';
 import type { FilterState, ViewMode } from '@/components/WeekGrid/WeekGrid.types';
 import {
@@ -59,6 +60,7 @@ interface DropData {
 
 export function SchedulePage() {
   const { t, i18n } = useTranslation('schedule');
+  const { t: tA } = useTranslation('absences');
   const locale = isLocale(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'en';
   const dfnsLocale = LOCALES[locale];
   const [searchParams, setSearchParams] = useSearchParams();
@@ -69,6 +71,10 @@ export function SchedulePage() {
   const [conflict, setConflict] = useState<ConflictInfo | null>(null);
   const [moveError, setMoveError] = useState<unknown>(null);
   const [reassignEntryId, setReassignEntryId] = useState<string | null>(null);
+  // Absence-Modal (ELE-204): null = zu. Wenn defaultEmployeeId gesetzt → preselected.
+  const [absenceModalState, setAbsenceModalState] = useState<null | { defaultEmployeeId?: string }>(
+    null
+  );
 
   const { payload } = useAuth();
   const canReassign =
@@ -295,6 +301,17 @@ export function SchedulePage() {
             </select>
           )}
           <div className="ml-auto flex items-center gap-2">
+            {canReassign ? (
+              <button
+                type="button"
+                onClick={() => setAbsenceModalState({})}
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-label hover:border-status-conflict hover:text-status-conflict"
+                data-testid="report-absence-global"
+              >
+                <UserMinus size={14} aria-hidden="true" />
+                {tA('trigger.global')}
+              </button>
+            ) : null}
             {schedule && <PublishScheduleButton schedule={schedule} />}
           </div>
         </div>
@@ -365,6 +382,11 @@ export function SchedulePage() {
           <WorkloadSummary
             entries={entriesQuery.data ?? []}
             employees={employeesQuery.data ?? []}
+            onReportAbsence={
+              canReassign
+                ? (employeeId) => setAbsenceModalState({ defaultEmployeeId: employeeId })
+                : undefined
+            }
           />
         </DndContext>
       )}
@@ -387,6 +409,15 @@ export function SchedulePage() {
             );
           })()
         : null}
+
+      {/* Report-Absence Modal (ELE-204) */}
+      <ReportAbsenceModal
+        isOpen={absenceModalState !== null}
+        onClose={() => setAbsenceModalState(null)}
+        defaultEmployeeId={absenceModalState?.defaultEmployeeId}
+        employees={employeesQuery.data ?? []}
+        scheduleId={schedule?.id ?? null}
+      />
     </section>
   );
 }

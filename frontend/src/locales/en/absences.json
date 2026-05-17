@@ -1,0 +1,28 @@
+{
+  "modal": {
+    "title": "Report absence",
+    "close": "Close",
+    "cancel": "Cancel",
+    "submit": "Save absence"
+  },
+  "trigger": {
+    "global": "Report absence",
+    "context": "Report sick"
+  },
+  "field": {
+    "employee": "Employee",
+    "employeePlaceholder": "Select employee…",
+    "type": "Type",
+    "startDate": "From",
+    "endDate": "Until",
+    "notes": "Notes",
+    "optional": "optional"
+  },
+  "type": {
+    "SICK": "Sick leave",
+    "VACATION": "Vacation",
+    "PERSONAL": "Personal",
+    "TRAINING": "Training",
+    "OTHER": "Other"
+  }
+}

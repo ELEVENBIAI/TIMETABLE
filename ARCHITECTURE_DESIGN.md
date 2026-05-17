@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.6.1 | **Stand:** 2026-05-17
+**Version:** 0.6.2 | **Stand:** 2026-05-17
 
 ## Übersicht
 
@@ -455,6 +455,11 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/locales/{en,de}/reassignment.json`                                                                                              | i18n-Namespace `reassignment` für Modal-Strings + Reasons/Blockers — ELE-203                            |
 | `frontend/tests/components/ReassignmentPickerModal.test.tsx`                                                                                  | 5 Vitest-Tests (Render, Blocked-Toggle, Move, ESC, Backdrop) — ELE-203                                  |
 | `e2e/tests/reassignment-picker.spec.ts`                                                                                                       | Playwright E2E: Trigger-Sichtbarkeit + Modal-Open — ELE-203                                             |
+| `specs/ELE-204.md`                                                                                                                            | Abwesenheit-melden Frontend-Modal Spec                                                                  |
+| `frontend/src/api/absences.ts`                                                                                                                | TanStack-Mutation `useReportAbsence` + Types — ELE-204                                                  |
+| `frontend/src/components/ReportAbsenceModal.tsx`                                                                                              | Modal-Form (Employee, Type, Von/Bis, Notes) + Submit-Flow — ELE-204                                     |
+| `frontend/src/locales/{en,de}/absences.json`                                                                                                  | i18n-Namespace `absences` (Modal + Trigger + Field-Labels + Types) — ELE-204                            |
+| `frontend/tests/components/ReportAbsenceModal.test.tsx`                                                                                       | 7 Vitest-Tests (Render, Defaults, Submit-API, ESC, Backdrop, Validierung) — ELE-204                     |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |
 | `scripts/linear-mvp-mapping.json`                                                                                                             | Mapping TT-XX → ELE-XXX (Audit-Trail)                                                                   |

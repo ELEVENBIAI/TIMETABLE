@@ -1,5 +1,27 @@
 # Changelog — Timetable
 
+## v0.6.2 — 2026-05-17 (ELE-204: Abwesenheit melden — Frontend-Modal)
+
+- **ELE-204 done:** Robert kann Krankmeldungen / Abwesenheiten direkt im UI erfassen — kein SQL-Hack mehr nötig, um eine REASSIGNMENT_NEEDED-Aufgabe zu erzeugen. Schließt den Workflow-Kreis: Krankmeldung melden → Cards werden rot → Picker (ELE-203) wählt Vertretung.
+- **`frontend/src/api/absences.ts`** — `useReportAbsence(scheduleId)` Mutation, invalidiert `scheduleKeys.entries()` bei Success, ABSENCE_TYPES-Konstante (SICK/VACATION/PERSONAL/TRAINING/OTHER) gespiegelt zum Backend-Schema.
+- **`frontend/src/components/ReportAbsenceModal.tsx`** — Form-Modal mit:
+  - Employee-Select (oder Read-only-Anzeige wenn `defaultEmployeeId` gesetzt)
+  - AbsenceType-Select (5 Typen)
+  - Von/Bis-Datums-Inputs (Default heute, `min={startDate}` auf endDate)
+  - Optional Notes-Textarea (max 2000 chars)
+  - Submit-Validation client-side: `employeeId` gesetzt + `startDate <= endDate`
+  - A11y: role=dialog, ESC + Backdrop schließen, autoFocus
+- **Variante C: zwei Trigger** für maximale UX-Flexibilität:
+  - **Global**: Button im SchedulePage-Header neben Publish — "Abwesenheit melden", Mitarbeiter im Modal wählbar
+  - **Kontextuell**: UserMinus-Icon-Button pro Mitarbeiter-Zeile in `WorkloadSummary` — Mitarbeiter preselected
+- Beide Trigger nur für ADMIN/PLANNER/FOREMAN (Role-Gate via `useAuth` in `SchedulePage`).
+- Submit → Backend POST `/api/absences` → backend markiert betroffene `schedule_entries` automatisch als `REASSIGNMENT_NEEDED` (ELE-186) → TanStack-Query invalidiert → Schedule-Grid rendert Cards mit rotem Status + "Vertretung finden"-Button (ELE-203).
+- **i18n** neuer Namespace `absences` (en + de) im Frontend registriert.
+- **Tests Vitest**: 7 neue Tests (`ReportAbsenceModal.test.tsx`) — Render-Defaults, Pre-Select, Submit-API-Call, ESC + Backdrop, Validierung. **69/69 frontend grün**.
+- **Bundle-Größe**: 148.58 KB gzip (+1.6 KB durch Modal-Code, Budget ADR-14 250 KB).
+- **VERSION 0.6.1 → 0.6.2** (Patch — UI-Anhang zu ELE-186-Backend).
+- **Wave-3-End-to-End vollständig**: Krankmeldung → Schedule-Markierung → Vertretungs-Picker → Move + Audit-Trail. Robert kann den kompletten Workflow in der UI ausführen.
+
 ## v0.6.1 — 2026-05-17 (ELE-203: Reassignment-Picker — Frontend-Modal)
 
 - **ELE-203 done:** Reassignment-Engine (ELE-196) ist jetzt im Browser sichtbar. Robert klickt auf "Vertretung finden" bei einer roten Aufgabe → Modal zeigt Top-3 Kandidaten mit Score + Begründung → ein Klick = Aufgabe ist umverteilt.
