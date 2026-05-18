@@ -1,5 +1,21 @@
 # Changelog — Timetable
 
+## v0.6.4 — 2026-05-18 (Polish: REASSIGN-Sichtbarkeit + Banner + UTF-8-Repair)
+
+- Drei Folge-Polish-Punkte aus Operator-Test mit ELE-204 (kein eigenes Issue):
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — REASSIGNMENT_NEEDED visuell prominent:
+  - Background `bg-status-needs-reassign/20` + Inset-Ring `ring-2 ring-status-needs-reassign` (vorher 10%/1px/40% — nicht wahrnehmbar)
+  - Property-Name in `text-status-needs-reassign` statt schwarz
+  - Klickbares UserPlus-Icon im Header (auch bei 30-min-Karten sichtbar, wo der untere "Vertretung finden"-Button keinen Platz hat)
+- **`backend/src/routes/schedules.ts`** — neuer Endpoint `GET /api/schedules/open-reassignments` liefert pro Woche die Anzahl offener REASSIGNMENT_NEEDED-Entries (ADMIN/PLANNER/FOREMAN, sonst leere Liste).
+- **`frontend/src/api/schedule.ts`** — neuer Hook `useOpenReassignments()` + Cache-Invalidate bei `useReportAbsence` + `useMoveScheduleEntry` (Banner stays fresh).
+- **`frontend/src/components/OpenReassignmentsBanner.tsx`** — neuer Banner über dem Wochenplan: zeigt offene Vertretungen quer durch alle Wochen außer der gerade angezeigten, Pillen mit Datum + Count, Click springt zur Woche. Versteckt sich automatisch wenn nichts offen.
+- **`frontend/src/pages/SchedulePage.tsx`** — Banner zwischen WeekNavigator und Toolbar eingebaut (nur für `canReassign`-Rollen).
+- **i18n** — neuer Namespace-Block `openReassignments` (en + de, pluralisiert).
+- **Datenreparatur (Dev-DB)**: 4 Zeilen in `waste_schedules.location_description` + 24 in `schedule_entries.notes` hatten `M??llraum` statt `Müllraum` (Seed-Run mit CP1252-Konvertierung). Via `UPDATE … REPLACE(…, 'M??llraum', U&'M\00FCllraum')` korrigiert.
+- **Tests Vitest**: 3 neue Frontend-Tests (`OpenReassignmentsBanner.test.tsx`) — render-when-empty / current-week-filter / click. **74/74 frontend grün**, **backend schedules.test.ts 9/9 grün** (2 neue Backend-Tests für den Endpoint).
+- **VERSION 0.6.3 → 0.6.4** (Patch — UX-Sichtbarkeit + Datenfix).
+
 ## v0.6.3 — 2026-05-17 (Polish: Tooltip + Affected-Count + Smart-Date-Defaults)
 
 - Drei UX-Polituren nach ELE-204, kein neues Issue (Folge-Feedback aus Bedienung):

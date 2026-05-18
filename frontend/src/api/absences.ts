@@ -40,6 +40,8 @@ export function useReportAbsence(scheduleId: string | null | undefined) {
       if (scheduleId) {
         void qc.invalidateQueries({ queryKey: scheduleKeys.entries(scheduleId) });
       }
+      // Open-Reassignments-Übersicht (Banner) invalidieren — kann andere Wochen betreffen
+      void qc.invalidateQueries({ queryKey: scheduleKeys.openReassignments });
     },
   });
 }

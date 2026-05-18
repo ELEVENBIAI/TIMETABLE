@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.6.3 | **Stand:** 2026-05-17
+**Version:** 0.6.4 | **Stand:** 2026-05-18
 
 ## Übersicht
 
@@ -459,6 +459,8 @@ Keine zyklischen Imports, klare Layering-Richtung Top→Down. ADR-01 (Monolith m
 | `frontend/src/api/absences.ts`                                                                                                                | TanStack-Mutation `useReportAbsence` + Types — ELE-204                                                  |
 | `frontend/src/components/ReportAbsenceModal.tsx`                                                                                              | Modal-Form (Employee, Type, Von/Bis, Notes) + Submit-Flow — ELE-204                                     |
 | `frontend/src/locales/{en,de}/absences.json`                                                                                                  | i18n-Namespace `absences` (Modal + Trigger + Field-Labels + Types) — ELE-204                            |
+| `frontend/src/components/OpenReassignmentsBanner.tsx`                                                                                         | Banner: offene REASSIGNMENT_NEEDED quer durch alle Wochen, Click-Sprung — v0.6.4 Polish                 |
+| `frontend/tests/components/OpenReassignmentsBanner.test.tsx`                                                                                  | Vitest: Banner-Filter + Click — v0.6.4                                                                  |
 | `frontend/tests/components/ReportAbsenceModal.test.tsx`                                                                                       | 7 Vitest-Tests (Render, Defaults, Submit-API, ESC, Backdrop, Validierung) — ELE-204                     |
 | `scripts/linear.mjs`                                                                                                                          | Linear-API-CLI-Helper                                                                                   |
 | `scripts/linear-bootstrap-mvp.mjs`                                                                                                            | Bulk-Setup-Script der 24 MVP-Issues                                                                     |

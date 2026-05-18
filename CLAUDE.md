@@ -1,6 +1,6 @@
 # Timetable — AI System Reference
 
-**Version:** 0.6.3 | **Stand:** 2026-05-17
+**Version:** 0.6.4 | **Stand:** 2026-05-18
 **Repository:** https://github.com/ELEVENBIAI/TIMETABLE
 
 ## Identität

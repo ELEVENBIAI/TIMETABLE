@@ -154,4 +154,67 @@ describe('Schedules CRUD', () => {
     expect(res.json().schedules).toHaveLength(1);
     expect(res.json().schedules[0].status).toBe('DRAFT');
   });
+
+  it('GET /open-reassignments: aggregiert REASSIGNMENT_NEEDED-Counts pro Woche', async () => {
+    const pool = getOwnerPool();
+    const propId = 'a1a1a1a1-1111-1111-1111-111111111111';
+    const stId = 'cccccccc-1111-1111-1111-111111111111';
+    const empId = 'eeeeeeee-1111-1111-1111-111111111111';
+    await pool.query(
+      `INSERT INTO properties (id, tenant_id, name, street, zip_code, city, property_type)
+       VALUES ($1, $2, 'P', 'S', '00000', 'C', 'APARTMENT_BUILDING')`,
+      [propId, TENANT_A]
+    );
+    await pool.query(
+      `INSERT INTO service_types (id, tenant_id, name, short_name, category, color_code, default_duration_min)
+       VALUES ($1, $2, 'X', 'X', 'CLEANING', '#888888', 30)`,
+      [stId, TENANT_A]
+    );
+    await pool.query(
+      `INSERT INTO employees (id, tenant_id, user_id, first_name, last_name, employee_type, weekly_hours)
+       VALUES ($1, $2, $3, 'D', 'K', 'FULLTIME', 40)`,
+      [empId, TENANT_A, EMP]
+    );
+    const sched = await pool.query<{ id: string }>(
+      `INSERT INTO schedules (tenant_id, week_start, week_number, year, status, created_by)
+       VALUES ($1, '2026-05-25', 22, 2026, 'DRAFT', $2),
+              ($1, '2026-05-11', 20, 2026, 'DRAFT', $2),
+              ($1, '2026-05-18', 21, 2026, 'PUBLISHED', $2)
+       RETURNING id`,
+      [TENANT_A, ADMIN]
+    );
+    const [s22, s20, s21] = sched.rows;
+    await pool.query(
+      `INSERT INTO schedule_entries
+         (tenant_id, schedule_id, employee_id, property_id, service_type_id,
+          entry_date, day_of_week, duration_min, sort_order, status, created_by)
+       VALUES
+         ($1, $2, $3, $4, $5, '2026-05-26', 2, 30, 1, 'REASSIGNMENT_NEEDED', $6),
+         ($1, $2, $3, $4, $5, '2026-05-27', 3, 30, 2, 'REASSIGNMENT_NEEDED', $6),
+         ($1, $7, $3, $4, $5, '2026-05-11', 1, 30, 1, 'REASSIGNMENT_NEEDED', $6),
+         ($1, $8, $3, $4, $5, '2026-05-18', 1, 30, 1, 'PLANNED', $6)`,
+      [TENANT_A, s22.id, empId, propId, stId, ADMIN, s20.id, s21.id]
+    );
+
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/schedules/open-reassignments',
+      headers: planner(),
+    });
+    expect(res.statusCode).toBe(200);
+    const weeks = res.json().weeks as Array<{ weekStart: string; openCount: number }>;
+    expect(weeks).toHaveLength(2);
+    expect(weeks[0]).toMatchObject({ weekStart: '2026-05-11', openCount: 1 });
+    expect(weeks[1]).toMatchObject({ weekStart: '2026-05-25', openCount: 2 });
+  });
+
+  it('GET /open-reassignments: EMPLOYEE → leere Liste', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/schedules/open-reassignments',
+      headers: loginAs({ userId: EMP, tenantId: TENANT_A, role: 'EMPLOYEE' }),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().weeks).toEqual([]);
+  });
 });

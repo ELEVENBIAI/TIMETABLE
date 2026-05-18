@@ -1,6 +1,11 @@
 {
   "title": "Weekly schedule",
   "loading": "Loading schedule…",
+  "openReassignments": {
+    "summary_one": "{{count}} open reassignment",
+    "summary_other": "{{count}} open reassignments",
+    "jumpHint": "in week"
+  },
   "navigator": {
     "label": "Week navigation",
     "previous": "Previous",

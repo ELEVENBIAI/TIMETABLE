@@ -103,6 +103,55 @@ export async function scheduleRoutes(fastify: FastifyInstance): Promise<void> {
     }
   );
 
+  // GET /api/schedules/open-reassignments — Übersicht: pro Woche wieviele REASSIGNMENT_NEEDED-Entries offen sind.
+  // Banner-Datenquelle für SchedulePage damit Robert nicht wochenweise suchen muss.
+  fastify.get('/api/schedules/open-reassignments', {
+    preHandler: requireAuth,
+    schema: {
+      description: 'Liefert pro Schedule-Woche die Anzahl offener REASSIGNMENT_NEEDED-Entries.',
+      tags: ['schedules'],
+      security: [{ bearerAuth: [] }],
+    },
+    handler: async (
+      request
+    ): Promise<{
+      weeks: Array<{ scheduleId: string; weekStart: string; openCount: number }>;
+    }> => {
+      const actor = request.user!;
+      if (
+        actor.role !== 'ADMIN' &&
+        actor.role !== 'PLANNER' &&
+        actor.role !== 'FOREMAN' &&
+        !actor.isSuperAdmin
+      ) {
+        return { weeks: [] };
+      }
+      const pool = getOwnerPool();
+      const r = await pool.query<{ schedule_id: string; week_start: string; open_count: string }>(
+        `SELECT s.id AS schedule_id, s.week_start, COUNT(se.id) AS open_count
+           FROM schedules s
+           JOIN schedule_entries se ON se.schedule_id = s.id
+          WHERE s.tenant_id = $1
+            AND s.is_deleted = FALSE
+            AND se.is_deleted = FALSE
+            AND se.status = 'REASSIGNMENT_NEEDED'
+          GROUP BY s.id, s.week_start
+          ORDER BY s.week_start ASC`,
+        [actor.tenantId]
+      );
+      return {
+        weeks: r.rows.map((row) => ({
+          scheduleId: row.schedule_id,
+          weekStart:
+            typeof row.week_start === 'string'
+              ? row.week_start
+              : new Date(row.week_start).toISOString().slice(0, 10),
+          openCount: Number(row.open_count),
+        })),
+      };
+    },
+  });
+
   fastify.get<{ Params: { id: string } }>('/api/schedules/:id', {
     preHandler: requireAuth,
     schema: {

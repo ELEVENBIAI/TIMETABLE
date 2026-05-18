@@ -1,6 +1,11 @@
 {
   "title": "Wochenplan",
   "loading": "Wochenplan wird geladen …",
+  "openReassignments": {
+    "summary_one": "{{count}} offene Vertretung",
+    "summary_other": "{{count}} offene Vertretungen",
+    "jumpHint": "in Woche"
+  },
   "navigator": {
     "label": "Wochen-Navigation",
     "previous": "Vorwoche",

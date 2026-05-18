@@ -10,7 +10,25 @@ export const scheduleKeys = {
   all: ['schedules'] as const,
   list: (weekStart?: string) => ['schedules', { weekStart }] as const,
   entries: (scheduleId: string) => ['schedule-entries', scheduleId] as const,
+  openReassignments: ['schedules', 'open-reassignments'] as const,
 };
+
+export interface OpenReassignmentWeek {
+  scheduleId: string;
+  weekStart: string;
+  openCount: number;
+}
+
+export function useOpenReassignments() {
+  return useQuery({
+    queryKey: scheduleKeys.openReassignments,
+    queryFn: async () => {
+      const r = await api.get<{ weeks: OpenReassignmentWeek[] }>('/schedules/open-reassignments');
+      return r.weeks;
+    },
+    staleTime: 30_000,
+  });
+}
 
 export const stammKeys = {
   employees: ['employees'] as const,
@@ -155,6 +173,8 @@ export function useMoveScheduleEntry() {
     },
     onSettled: (_data, _err, input) => {
       void qc.invalidateQueries({ queryKey: scheduleKeys.entries(input.scheduleId) });
+      // Banner-Übersicht: Vertretung kann offene Counts reduzieren
+      void qc.invalidateQueries({ queryKey: scheduleKeys.openReassignments });
     },
   });
 }

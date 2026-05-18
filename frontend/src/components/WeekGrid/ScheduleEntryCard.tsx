@@ -29,7 +29,7 @@ const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
   COMPLETED: 'opacity-60 line-through decoration-text-muted',
   SKIPPED: 'opacity-40',
   REASSIGNED: 'opacity-50',
-  REASSIGNMENT_NEEDED: 'bg-status-needs-reassign/10 ring-1 ring-status-needs-reassign/40',
+  REASSIGNMENT_NEEDED: 'bg-status-needs-reassign/20 ring-2 ring-inset ring-status-needs-reassign',
 };
 
 export function ScheduleEntryCard({
@@ -126,9 +126,31 @@ export function ScheduleEntryCard({
         style={{ backgroundColor: stripeColor }}
       />
       <div className="flex items-start gap-1">
-        <div className="min-w-0 flex-1 truncate text-title font-semibold text-text-primary">
+        <div
+          className={[
+            'min-w-0 flex-1 truncate text-title font-semibold',
+            entry.status === 'REASSIGNMENT_NEEDED'
+              ? 'text-status-needs-reassign'
+              : 'text-text-primary',
+          ].join(' ')}
+        >
           {propertyName}
         </div>
+        {showReassign ? (
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReassignClick?.(entry.id);
+            }}
+            className="mt-0.5 shrink-0 rounded p-0.5 text-status-needs-reassign hover:bg-status-needs-reassign/20"
+            aria-label={tR('trigger.button')}
+            data-testid="reassign-trigger-icon"
+          >
+            <UserPlus size={14} aria-hidden="true" />
+          </button>
+        ) : null}
         {disabled && (
           <Lock
             size={12}

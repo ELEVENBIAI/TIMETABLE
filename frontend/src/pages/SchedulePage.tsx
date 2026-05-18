@@ -29,6 +29,7 @@ import { WorkloadSummary } from '@/components/WeekGrid/WorkloadSummary';
 import { ScheduleConflictAlert, type ConflictInfo } from '@/components/ScheduleConflictAlert';
 import { ReassignmentPickerModal } from '@/components/ReassignmentPickerModal';
 import { ReportAbsenceModal } from '@/components/ReportAbsenceModal';
+import { OpenReassignmentsBanner } from '@/components/OpenReassignmentsBanner';
 import { useAuth } from '@/lib/auth';
 import type { FilterState, ViewMode } from '@/components/WeekGrid/WeekGrid.types';
 import {
@@ -249,6 +250,12 @@ export function SchedulePage() {
     <section className="mx-auto flex max-w-[1800px] flex-col gap-4 px-4 py-4 md:px-6 md:py-6">
       <header className="flex flex-col gap-3">
         <WeekNavigator weekStart={weekStartDate} onChange={setWeek} />
+        {canReassign ? (
+          <OpenReassignmentsBanner
+            currentWeekStart={weekStartISO}
+            onJumpToWeek={(ws) => setSearchParams({ week: ws })}
+          />
+        ) : null}
         <div className="flex flex-wrap items-center gap-3">
           {schedule && <ScheduleStatusBadge status={schedule.status} />}
           <ViewModeSwitcher value={mode} onChange={setMode} />
