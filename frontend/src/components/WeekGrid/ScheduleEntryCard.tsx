@@ -34,11 +34,13 @@ const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
 };
 // !-Präfix erzwingt override — base className enthält bg-surface-raised,
 // das alphabetisch (bg-status-* < bg-surface-*) sonst gewinnen würde.
-// Pastell-Look: Hintergrund /25, Ring /60 — gut sichtbar, aber nicht knallig.
+// Pastell-Look: -soft-Token (HEX-Pastell als eigener Token) für den Hintergrund
+// statt /opacity (das auf var()-Farben in Tailwind nicht zuverlässig greift).
+// Ring in voller Status-Farbe als dünner Outline.
 const REASSIGN_NEEDED_CLASS =
-  '!bg-status-needs-reassign/25 ring-2 ring-inset ring-status-needs-reassign/60';
-const REASSIGN_SOLVED_CLASS = '!bg-status-completed/25 ring-2 ring-inset ring-status-completed/60';
-const REASSIGN_MOVED_CLASS = '!bg-status-moved/25 ring-2 ring-inset ring-status-moved/60';
+  '!bg-status-needs-reassign-soft ring-2 ring-inset ring-status-needs-reassign';
+const REASSIGN_SOLVED_CLASS = '!bg-status-completed-soft ring-2 ring-inset ring-status-completed';
+const REASSIGN_MOVED_CLASS = '!bg-status-moved-soft ring-2 ring-inset ring-status-moved';
 
 export function ScheduleEntryCard({
   entry,
@@ -170,7 +172,7 @@ export function ScheduleEntryCard({
               e.stopPropagation();
               onReassignClick?.(entry.id);
             }}
-            className="mt-0.5 shrink-0 rounded p-0.5 text-status-needs-reassign hover:bg-status-needs-reassign/20"
+            className="mt-0.5 shrink-0 rounded p-0.5 text-status-needs-reassign hover:bg-white"
             aria-label={tR('trigger.button')}
             data-testid="reassign-trigger-icon"
           >
@@ -192,12 +194,12 @@ export function ScheduleEntryCard({
       {entry.is_from_reassignment && (
         <div
           className={[
-            'mt-0.5 inline-flex w-fit items-center rounded px-1.5 py-0.5 text-label',
+            'mt-0.5 inline-flex w-fit items-center rounded bg-white px-1.5 py-0.5 text-label',
             reassignSolved
-              ? 'bg-status-completed/15 text-status-completed'
+              ? 'text-status-completed'
               : reassignManual
-                ? 'bg-status-moved/15 text-status-moved'
-                : 'bg-status-needs-reassign/10 text-status-needs-reassign',
+                ? 'text-status-moved'
+                : 'text-status-needs-reassign',
           ].join(' ')}
         >
           {t('entry.reassignedFrom', {
@@ -218,7 +220,7 @@ export function ScheduleEntryCard({
             e.stopPropagation();
             onReassignClick?.(entry.id);
           }}
-          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-status-needs-reassign/15 px-2 py-0.5 text-label font-medium text-status-needs-reassign hover:bg-status-needs-reassign/25"
+          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-white px-2 py-0.5 text-label font-medium text-status-needs-reassign hover:bg-status-needs-reassign hover:text-white"
           data-testid="reassign-trigger"
         >
           <UserPlus size={12} aria-hidden="true" />

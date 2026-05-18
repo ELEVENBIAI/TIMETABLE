@@ -1,5 +1,18 @@
 # Changelog — Timetable
 
+## v0.6.9 — 2026-05-18 (Pastell-Tokens als HEX statt /opacity — Tailwind+CSS-Vars-Bugfix)
+
+- **Bugfix Pastell-Look**: `bg-status-XXX/25` / `ring-status-XXX/60` / `border-status-XXX/40` generieren mit `var(--color-status-XXX)`-Tokens **kein** Pastell — Tailwind kann den Alpha-Channel auf einer raw `var(...)` nicht ableiten, das CSS-Output fällt auf "no color" zurück → Card-Hintergrund weiß, Ring nur grau-ish, alle drei Varianten kaum unterscheidbar.
+- **Fix**: 3 neue Pastell-Tokens als direkte HEX-Werte:
+  - `--color-status-needs-reassign-soft: #fee2e2` (red-100)
+  - `--color-status-completed-soft: #dcfce7` (green-100)
+  - `--color-status-moved-soft: #fef3c7` (yellow-100)
+- In Tailwind als `status.needs-reassign-soft` / `status.completed-soft` / `status.moved-soft` registriert.
+- `ScheduleEntryCard` Card-Klassen + Badge + Buttons → benutzen `-soft`-Token für BG, Voll-Token für Border/Text/Outline.
+- `OpenReassignmentsBanner` analog umgestellt.
+- Resultat: klar lesbares hell-rosa / mint / vanille mit deutlicher Outline. Browser zeigt jetzt wirklich Farben statt grauer Boxen.
+- **VERSION 0.6.8 → 0.6.9** (Patch — visueller Bugfix).
+
 ## v0.6.8 — 2026-05-18 (Card-Look: Pastell-Töne statt knallig)
 
 - **Card-Farben pastellig**: vollgesättigte Hintergründe (100% bg + weiße Schrift) → Pastell-Look mit dunkler, lesbarer Schrift:

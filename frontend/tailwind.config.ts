@@ -27,9 +27,12 @@ export default {
           planned: 'var(--color-status-planned)',
           progress: 'var(--color-status-progress)',
           completed: 'var(--color-status-completed)',
+          'completed-soft': 'var(--color-status-completed-soft)',
           'needs-reassign': 'var(--color-status-needs-reassign)',
+          'needs-reassign-soft': 'var(--color-status-needs-reassign-soft)',
           conflict: 'var(--color-status-conflict)',
           moved: 'var(--color-status-moved)',
+          'moved-soft': 'var(--color-status-moved-soft)',
         },
       },
       fontFamily: {

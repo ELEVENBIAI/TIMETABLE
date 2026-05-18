@@ -20,6 +20,12 @@
   --color-status-conflict: #b91c1c;
   --color-status-moved: #ca8a04;
 
+  /* Pastell-Varianten für Card-Backgrounds (Schedule-Grid) — direkt als HEX,
+     weil /opacity-Modifier auf CSS-Variablen in Tailwind nicht zuverlässig greift. */
+  --color-status-needs-reassign-soft: #fee2e2; /* red-100 */
+  --color-status-completed-soft: #dcfce7; /* green-100 */
+  --color-status-moved-soft: #fef3c7; /* yellow-100 */
+
   /* Fallback Brand-Akzent — wird vom Tenant-Theme überschrieben */
   --color-brand-primary: #1f2937;
   --color-brand-primary-hover: #111827;
