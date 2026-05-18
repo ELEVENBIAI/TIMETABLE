@@ -29,6 +29,7 @@ export default {
           completed: 'var(--color-status-completed)',
           'needs-reassign': 'var(--color-status-needs-reassign)',
           conflict: 'var(--color-status-conflict)',
+          moved: 'var(--color-status-moved)',
         },
       },
       fontFamily: {

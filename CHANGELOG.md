@@ -1,5 +1,18 @@
 # Changelog — Timetable
 
+## v0.6.7 — 2026-05-18 (Card-Background-Bugfix + 3-Farben-Modell: rot/grün/gelb)
+
+- **Bugfix Card-Background**: `bg-status-needs-reassign` / `bg-status-completed` wurden im CSS-Output von `bg-surface-raised` (Base-Klasse) überschrieben, weil Tailwind utilities alphabetisch sortiert (`bg-status` < `bg-surface`). Resultat: Karten waren nur am Rand farbig, Hintergrund weiß, Text unlesbar.
+  - **Fix**: `!`-Präfix bei den Status-Klassen (`!bg-status-needs-reassign`) erzwingt CSS `!important`. Background greift jetzt zuverlässig.
+- **3-Farben-Modell** für Schedule-Cards (statt 2):
+  - **Rot** — `status === 'REASSIGNMENT_NEEDED'`: Vertretung fehlt, Action nötig.
+  - **Grün** — `is_from_reassignment && reassignment_reason != null && status === 'PLANNED'`: Vertretung wegen echter Krankmeldung übernommen (gelöst).
+  - **Gelb** — `is_from_reassignment && reassignment_reason == null && status === 'PLANNED'`: manuelle Verschiebung ohne Krankmeldung (z.B. Drag&Drop für Tausch). Robert sieht auf einen Blick: das hier ist nicht durch eine Absence ausgelöst.
+- **Token + Tailwind**: neues `--color-status-moved: #ca8a04` (yellow-600), als `status.moved` in `tailwind.config.ts` registriert.
+- **Tooltip-Hinweis** für gelbe Cards: `↪ Manuell verschoben` (en + de).
+- **Backend** bleibt unverändert — `reassignment_reason` ist die Trennschärfe-Quelle: nur das Absence-Modul (POST `/api/absences`) setzt einen Grund (`SICK`/`VACATION`/`OTHER`); Drag&Drop hat `reason=NULL`.
+- **VERSION 0.6.6 → 0.6.7** (Patch — CSS-Bugfix + UX-Differenzierung).
+
 ## v0.6.6 — 2026-05-18 (Card-Vollfarbe Rot/Grün + Move-Logik: Status korrekt setzen)
 
 - **`backend/src/routes/schedule-entries.ts`** — Move-Logik vollständig überarbeitet:

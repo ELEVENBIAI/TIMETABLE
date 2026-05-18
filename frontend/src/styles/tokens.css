@@ -18,6 +18,7 @@
   --color-status-completed: #15803d;
   --color-status-needs-reassign: #dc2626;
   --color-status-conflict: #b91c1c;
+  --color-status-moved: #ca8a04;
 
   /* Fallback Brand-Akzent — wird vom Tenant-Theme überschrieben */
   --color-brand-primary: #1f2937;

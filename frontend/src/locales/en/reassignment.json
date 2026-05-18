@@ -26,7 +26,8 @@
   },
   "tooltip": {
     "needsReassign": "Needs reassignment — employee absent",
-    "reassignSolved": "Reassignment in place"
+    "reassignSolved": "Reassignment in place",
+    "manuallyMoved": "Manually moved"
   },
   "reasons": {
     "capacityHigh": "Has ~{{hoursFree}}h free this week",

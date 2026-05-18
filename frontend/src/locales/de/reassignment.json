@@ -26,7 +26,8 @@
   },
   "tooltip": {
     "needsReassign": "Vertretung nötig — Mitarbeiter abwesend",
-    "reassignSolved": "Vertretung übernommen"
+    "reassignSolved": "Vertretung übernommen",
+    "manuallyMoved": "Manuell verschoben"
   },
   "reasons": {
     "capacityHigh": "Hat noch ~{{hoursFree}}h frei diese Woche",

@@ -22,19 +22,22 @@ interface Props {
   onReassignClick?: (entryId: string) => void;
 }
 
-// Status → Card-Modifier-Class. is_from_reassignment-Override (grün) wird
-// im Render zusätzlich angewendet wenn status==='PLANNED'.
+// Status → Card-Modifier-Class. Drei Sonder-Layer werden im Render zusätzlich
+// angewendet (rot/grün/gelb) — siehe Render-Logik unten.
 const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
   PLANNED: '',
   IN_PROGRESS: 'ring-2 ring-status-progress',
   COMPLETED: 'opacity-60 line-through decoration-text-muted',
   SKIPPED: 'opacity-40',
   REASSIGNED: 'opacity-50',
-  REASSIGNMENT_NEEDED:
-    'bg-status-needs-reassign ring-2 ring-inset ring-status-needs-reassign text-white',
+  REASSIGNMENT_NEEDED: '',
 };
-const REASSIGN_SOLVED_CLASS =
-  'bg-status-completed/85 ring-2 ring-inset ring-status-completed text-white';
+// !-Präfix erzwingt override — base className enthält bg-surface-raised,
+// das alphabetisch (bg-status-* < bg-surface-*) sonst gewinnen würde.
+const REASSIGN_NEEDED_CLASS =
+  '!bg-status-needs-reassign ring-2 ring-inset ring-status-needs-reassign';
+const REASSIGN_SOLVED_CLASS = '!bg-status-completed ring-2 ring-inset ring-status-completed';
+const REASSIGN_MOVED_CLASS = '!bg-status-moved ring-2 ring-inset ring-status-moved';
 
 export function ScheduleEntryCard({
   entry,
@@ -81,7 +84,11 @@ export function ScheduleEntryCard({
     tooltipParts.push(`⚠ ${tR('tooltip.needsReassign')}`);
   }
   if (entry.is_from_reassignment && entry.status === 'PLANNED') {
-    tooltipParts.push(`✓ ${tR('tooltip.reassignSolved')}`);
+    if (entry.reassignment_reason != null) {
+      tooltipParts.push(`✓ ${tR('tooltip.reassignSolved')}`);
+    } else {
+      tooltipParts.push(`↪ ${tR('tooltip.manuallyMoved')}`);
+    }
   }
   if (entry.is_from_reassignment && originalEmployee) {
     tooltipParts.push(
@@ -112,9 +119,21 @@ export function ScheduleEntryCard({
       ? 'cursor-not-allowed'
       : 'cursor-grab active:cursor-grabbing';
 
-  const reassignSolved = entry.is_from_reassignment && entry.status === 'PLANNED';
   const isReassignNeeded = entry.status === 'REASSIGNMENT_NEEDED';
-  const isInverted = isReassignNeeded || reassignSolved;
+  // Vertretung wegen Absence (Backend setzt reassignment_reason nur bei Absence-Move)
+  const reassignSolved =
+    entry.is_from_reassignment && entry.status === 'PLANNED' && entry.reassignment_reason != null;
+  // Manueller Move (Drag&Drop ohne Krankmeldung): is_from_reassignment=TRUE, aber kein Grund
+  const reassignManual =
+    entry.is_from_reassignment && entry.status === 'PLANNED' && entry.reassignment_reason == null;
+  const isInverted = isReassignNeeded || reassignSolved || reassignManual;
+  const variantClass = isReassignNeeded
+    ? REASSIGN_NEEDED_CLASS
+    : reassignSolved
+      ? REASSIGN_SOLVED_CLASS
+      : reassignManual
+        ? REASSIGN_MOVED_CLASS
+        : STATUS_CLASSES[entry.status];
 
   return (
     <article
@@ -124,7 +143,7 @@ export function ScheduleEntryCard({
       className={[
         'group relative flex flex-col gap-0.5 overflow-hidden rounded-md border border-border bg-surface-raised pl-2 pr-2 py-1.5 text-label transition-colors hover:border-brand-primary',
         cursorClass,
-        reassignSolved ? REASSIGN_SOLVED_CLASS : STATUS_CLASSES[entry.status],
+        variantClass,
         presentational ? 'shadow-lg rotate-1 ring-2 ring-brand-primary' : '',
       ].join(' ')}
       style={stylePos}
