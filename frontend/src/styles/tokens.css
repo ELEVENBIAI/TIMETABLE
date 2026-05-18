@@ -16,7 +16,7 @@
   --color-status-planned: #5b5d61;
   --color-status-progress: #0369a1;
   --color-status-completed: #15803d;
-  --color-status-needs-reassign: #b45309;
+  --color-status-needs-reassign: #dc2626;
   --color-status-conflict: #b91c1c;
 
   /* Fallback Brand-Akzent — wird vom Tenant-Theme überschrieben */

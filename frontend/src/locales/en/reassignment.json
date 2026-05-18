@@ -24,6 +24,9 @@
   "trigger": {
     "button": "Find substitute"
   },
+  "tooltip": {
+    "needsReassign": "Needs reassignment — employee absent"
+  },
   "reasons": {
     "capacityHigh": "Has ~{{hoursFree}}h free this week",
     "proximityNear": "Lives only {{km}} km away",

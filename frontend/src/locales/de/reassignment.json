@@ -24,6 +24,9 @@
   "trigger": {
     "button": "Vertretung finden"
   },
+  "tooltip": {
+    "needsReassign": "Vertretung nötig — Mitarbeiter abwesend"
+  },
   "reasons": {
     "capacityHigh": "Hat noch ~{{hoursFree}}h frei diese Woche",
     "proximityNear": "Wohnt nur {{km}} km entfernt",

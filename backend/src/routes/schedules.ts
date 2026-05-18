@@ -103,9 +103,10 @@ export async function scheduleRoutes(fastify: FastifyInstance): Promise<void> {
     }
   );
 
-  // GET /api/schedules/open-reassignments — Übersicht: pro Woche wieviele REASSIGNMENT_NEEDED-Entries offen sind.
+  // GET /api/reassignments/open-weeks — Übersicht: pro Woche wieviele REASSIGNMENT_NEEDED-Entries offen sind.
   // Banner-Datenquelle für SchedulePage damit Robert nicht wochenweise suchen muss.
-  fastify.get('/api/schedules/open-reassignments', {
+  // Eigener Pfad damit keine Kollision mit /api/schedules/:id (UUID-Format-Validierung) entsteht.
+  fastify.get('/api/reassignments/open-weeks', {
     preHandler: requireAuth,
     schema: {
       description: 'Liefert pro Schedule-Woche die Anzahl offener REASSIGNMENT_NEEDED-Entries.',
@@ -128,7 +129,8 @@ export async function scheduleRoutes(fastify: FastifyInstance): Promise<void> {
       }
       const pool = getOwnerPool();
       const r = await pool.query<{ schedule_id: string; week_start: string; open_count: string }>(
-        `SELECT s.id AS schedule_id, s.week_start, COUNT(se.id) AS open_count
+        `SELECT s.id AS schedule_id, to_char(s.week_start, 'YYYY-MM-DD') AS week_start,
+                COUNT(se.id) AS open_count
            FROM schedules s
            JOIN schedule_entries se ON se.schedule_id = s.id
           WHERE s.tenant_id = $1
@@ -142,10 +144,7 @@ export async function scheduleRoutes(fastify: FastifyInstance): Promise<void> {
       return {
         weeks: r.rows.map((row) => ({
           scheduleId: row.schedule_id,
-          weekStart:
-            typeof row.week_start === 'string'
-              ? row.week_start
-              : new Date(row.week_start).toISOString().slice(0, 10),
+          weekStart: row.week_start,
           openCount: Number(row.open_count),
         })),
       };

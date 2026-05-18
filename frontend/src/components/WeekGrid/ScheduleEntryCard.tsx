@@ -29,7 +29,7 @@ const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
   COMPLETED: 'opacity-60 line-through decoration-text-muted',
   SKIPPED: 'opacity-40',
   REASSIGNED: 'opacity-50',
-  REASSIGNMENT_NEEDED: 'bg-status-needs-reassign/20 ring-2 ring-inset ring-status-needs-reassign',
+  REASSIGNMENT_NEEDED: 'bg-status-needs-reassign/40 ring-2 ring-inset ring-status-needs-reassign',
 };
 
 export function ScheduleEntryCard({
@@ -73,6 +73,9 @@ export function ScheduleEntryCard({
   }
   tooltipParts.push(`${serviceFullName} (${durationLabel})`);
   if (entry.start_time) tooltipParts.push(`${startLabel} Uhr`);
+  if (entry.status === 'REASSIGNMENT_NEEDED') {
+    tooltipParts.push(`⚠ ${tR('tooltip.needsReassign')}`);
+  }
   if (entry.is_from_reassignment && originalEmployee) {
     tooltipParts.push(
       `Vertretung für ${originalEmployee.first_name} ${originalEmployee.last_name}`

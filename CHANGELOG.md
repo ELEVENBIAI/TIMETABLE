@@ -1,5 +1,17 @@
 # Changelog — Timetable
 
+## v0.6.5 — 2026-05-18 (Hotfix: REASSIGN-Endpoint-Routing + kräftigeres Rot + Tooltip-Hinweis)
+
+- **Bugfix Backend-Routing**: `/api/schedules/open-reassignments` (v0.6.4) wurde von `/api/schedules/:id` parametric route gefressen, weil das `id`-Schema UUID-Format erzwingt → 400 Validation-Fehler. Endpoint verschoben nach **`/api/reassignments/open-weeks`** (eigener Pfad-Stamm, keine Kollision).
+- **`backend/src/routes/schedules.ts`** — zusätzlich SQL: `to_char(week_start, 'YYYY-MM-DD')` statt JS-`Date.toISOString().slice(0,10)` (vermeidet TZ-Drift in der Datumsausgabe).
+- **`frontend/src/api/schedule.ts`** — Hook ruft jetzt `/reassignments/open-weeks`.
+- **`frontend/src/styles/tokens.css`** — `--color-status-needs-reassign: #b45309` (amber-700) → **`#dc2626`** (red-600). Klar rot statt orange-braun.
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — Card-Hintergrund von `/20` auf `/40` (deutlich sichtbares Rot mit ring-2 inset). Property-Name + Icon nutzen ebenfalls das neue Rot-Token. Banner + WorkloadBar + HealthPage profitieren automatisch.
+- **Tooltip-Hinweis** — bei `status=REASSIGNMENT_NEEDED` enthält der Hover-Tooltip jetzt: `⚠ Vertretung nötig — Mitarbeiter abwesend` (en + de). Robert sieht den Grund auch ohne die Card-Markierung zu deuten.
+- **i18n** — neuer Key `reassignment.tooltip.needsReassign` (en + de).
+- **Tests**: backend `schedules.test.ts` 9/9, frontend 74/74.
+- **VERSION 0.6.4 → 0.6.5** (Patch — Bugfix + visueller Schliff).
+
 ## v0.6.4 — 2026-05-18 (Polish: REASSIGN-Sichtbarkeit + Banner + UTF-8-Repair)
 
 - Drei Folge-Polish-Punkte aus Operator-Test mit ELE-204 (kein eigenes Issue):

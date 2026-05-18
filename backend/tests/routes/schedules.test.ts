@@ -198,7 +198,7 @@ describe('Schedules CRUD', () => {
 
     const res = await app.inject({
       method: 'GET',
-      url: '/api/schedules/open-reassignments',
+      url: '/api/reassignments/open-weeks',
       headers: planner(),
     });
     expect(res.statusCode).toBe(200);
@@ -211,7 +211,7 @@ describe('Schedules CRUD', () => {
   it('GET /open-reassignments: EMPLOYEE → leere Liste', async () => {
     const res = await app.inject({
       method: 'GET',
-      url: '/api/schedules/open-reassignments',
+      url: '/api/reassignments/open-weeks',
       headers: loginAs({ userId: EMP, tenantId: TENANT_A, role: 'EMPLOYEE' }),
     });
     expect(res.statusCode).toBe(200);

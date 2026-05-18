@@ -23,7 +23,7 @@ export function useOpenReassignments() {
   return useQuery({
     queryKey: scheduleKeys.openReassignments,
     queryFn: async () => {
-      const r = await api.get<{ weeks: OpenReassignmentWeek[] }>('/schedules/open-reassignments');
+      const r = await api.get<{ weeks: OpenReassignmentWeek[] }>('/reassignments/open-weeks');
       return r.weeks;
     },
     staleTime: 30_000,
