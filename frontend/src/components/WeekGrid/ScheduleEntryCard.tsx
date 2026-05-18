@@ -36,11 +36,11 @@ const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
 // das alphabetisch (bg-status-* < bg-surface-*) sonst gewinnen würde.
 // Pastell-Look: -soft-Token (HEX-Pastell als eigener Token) für den Hintergrund
 // statt /opacity (das auf var()-Farben in Tailwind nicht zuverlässig greift).
-// Ring in voller Status-Farbe als dünner Outline.
-const REASSIGN_NEEDED_CLASS =
-  '!bg-status-needs-reassign-soft ring-2 ring-inset ring-status-needs-reassign';
-const REASSIGN_SOLVED_CLASS = '!bg-status-completed-soft ring-2 ring-inset ring-status-completed';
-const REASSIGN_MOVED_CLASS = '!bg-status-moved-soft ring-2 ring-inset ring-status-moved';
+// Kein Ring/Outline — Hintergrund alleine signalisiert den Zustand; oben/rechts/unten
+// bleibt frei für künftige funktionale Markierungen (Konflikt, IN_PROGRESS …).
+const REASSIGN_NEEDED_CLASS = '!bg-status-needs-reassign-soft';
+const REASSIGN_SOLVED_CLASS = '!bg-status-completed-soft';
+const REASSIGN_MOVED_CLASS = '!bg-status-moved-soft';
 
 export function ScheduleEntryCard({
   entry,

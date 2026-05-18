@@ -1,5 +1,12 @@
 # Changelog — Timetable
 
+## v0.6.10 — 2026-05-18 (Card: Ring-Outline entfernt — Rand bleibt frei für künftige Marker)
+
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — `ring-2 ring-inset ring-status-*` aus den drei REASSIGN-Klassen entfernt. Hintergrund-Pastell signalisiert den Zustand ausreichend.
+- Begründung: Outline oben/rechts/unten soll für **künftige funktionale Markierungen** (Konflikt, IN_PROGRESS, etc.) reserviert bleiben — keine doppelte Belegung.
+- Service-Type-Stripe links (3px) bleibt unverändert.
+- **VERSION 0.6.9 → 0.6.10** (Patch — kleiner UI-Schliff).
+
 ## v0.6.9 — 2026-05-18 (Pastell-Tokens als HEX statt /opacity — Tailwind+CSS-Vars-Bugfix)
 
 - **Bugfix Pastell-Look**: `bg-status-XXX/25` / `ring-status-XXX/60` / `border-status-XXX/40` generieren mit `var(--color-status-XXX)`-Tokens **kein** Pastell — Tailwind kann den Alpha-Channel auf einer raw `var(...)` nicht ableiten, das CSS-Output fällt auf "no color" zurück → Card-Hintergrund weiß, Ring nur grau-ish, alle drei Varianten kaum unterscheidbar.
