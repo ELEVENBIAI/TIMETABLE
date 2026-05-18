@@ -1,5 +1,17 @@
 # Changelog — Timetable
 
+## v0.6.8 — 2026-05-18 (Card-Look: Pastell-Töne statt knallig)
+
+- **Card-Farben pastellig**: vollgesättigte Hintergründe (100% bg + weiße Schrift) → Pastell-Look mit dunkler, lesbarer Schrift:
+  - Background: `bg-status-XXX/25` (statt 100%) — ein zarter Wash statt Vollfläche.
+  - Ring (Outline): `ring-status-XXX/60` (statt voll) — sichtbar, aber nicht überdominant.
+  - Texte: `text-text-primary` / `text-text-secondary` / `text-text-muted` — wie auf normalen Cards, kein Weiß mehr.
+  - "Vertretung für X"-Badge + UserPlus-Icon-Button: Status-Farbe in dunklem Ton, statt invertiert.
+- Resultat: Rot / Grün / Gelb klar lesbar, aber dezent — passt zum Outlook-Kalender-Stil ohne knallige Akzente.
+- **Aufgeräumt**: `isInverted`-Flag entfernt (nicht mehr nötig — Texte sind in allen Varianten dunkel).
+- Vitest 74/74 grün, Typecheck grün.
+- **VERSION 0.6.7 → 0.6.8** (Patch — Visual-Tuning).
+
 ## v0.6.7 — 2026-05-18 (Card-Background-Bugfix + 3-Farben-Modell: rot/grün/gelb)
 
 - **Bugfix Card-Background**: `bg-status-needs-reassign` / `bg-status-completed` wurden im CSS-Output von `bg-surface-raised` (Base-Klasse) überschrieben, weil Tailwind utilities alphabetisch sortiert (`bg-status` < `bg-surface`). Resultat: Karten waren nur am Rand farbig, Hintergrund weiß, Text unlesbar.

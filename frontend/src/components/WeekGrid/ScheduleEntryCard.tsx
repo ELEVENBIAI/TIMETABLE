@@ -34,10 +34,11 @@ const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
 };
 // !-Präfix erzwingt override — base className enthält bg-surface-raised,
 // das alphabetisch (bg-status-* < bg-surface-*) sonst gewinnen würde.
+// Pastell-Look: Hintergrund /25, Ring /60 — gut sichtbar, aber nicht knallig.
 const REASSIGN_NEEDED_CLASS =
-  '!bg-status-needs-reassign ring-2 ring-inset ring-status-needs-reassign';
-const REASSIGN_SOLVED_CLASS = '!bg-status-completed ring-2 ring-inset ring-status-completed';
-const REASSIGN_MOVED_CLASS = '!bg-status-moved ring-2 ring-inset ring-status-moved';
+  '!bg-status-needs-reassign/25 ring-2 ring-inset ring-status-needs-reassign/60';
+const REASSIGN_SOLVED_CLASS = '!bg-status-completed/25 ring-2 ring-inset ring-status-completed/60';
+const REASSIGN_MOVED_CLASS = '!bg-status-moved/25 ring-2 ring-inset ring-status-moved/60';
 
 export function ScheduleEntryCard({
   entry,
@@ -126,7 +127,6 @@ export function ScheduleEntryCard({
   // Manueller Move (Drag&Drop ohne Krankmeldung): is_from_reassignment=TRUE, aber kein Grund
   const reassignManual =
     entry.is_from_reassignment && entry.status === 'PLANNED' && entry.reassignment_reason == null;
-  const isInverted = isReassignNeeded || reassignSolved || reassignManual;
   const variantClass = isReassignNeeded
     ? REASSIGN_NEEDED_CLASS
     : reassignSolved
@@ -159,12 +159,7 @@ export function ScheduleEntryCard({
         style={{ backgroundColor: stripeColor }}
       />
       <div className="flex items-start gap-1">
-        <div
-          className={[
-            'min-w-0 flex-1 truncate text-title font-semibold',
-            isInverted ? 'text-white' : 'text-text-primary',
-          ].join(' ')}
-        >
+        <div className="min-w-0 flex-1 truncate text-title font-semibold text-text-primary">
           {propertyName}
         </div>
         {showReassign ? (
@@ -175,7 +170,7 @@ export function ScheduleEntryCard({
               e.stopPropagation();
               onReassignClick?.(entry.id);
             }}
-            className="mt-0.5 shrink-0 rounded p-0.5 text-white hover:bg-white/20"
+            className="mt-0.5 shrink-0 rounded p-0.5 text-status-needs-reassign hover:bg-status-needs-reassign/20"
             aria-label={tR('trigger.button')}
             data-testid="reassign-trigger-icon"
           >
@@ -190,29 +185,19 @@ export function ScheduleEntryCard({
           />
         )}
       </div>
-      <div
-        className={[
-          'truncate text-label',
-          isInverted ? 'text-white/90' : 'text-text-secondary',
-        ].join(' ')}
-      >
-        {serviceName}
-      </div>
-      <div
-        className={[
-          'numeric tabular-nums text-label',
-          isInverted ? 'text-white/80' : 'text-text-muted',
-        ].join(' ')}
-      >
+      <div className="truncate text-label text-text-secondary">{serviceName}</div>
+      <div className="numeric tabular-nums text-label text-text-muted">
         {startLabel} · {durationLabel}
       </div>
       {entry.is_from_reassignment && (
         <div
           className={[
             'mt-0.5 inline-flex w-fit items-center rounded px-1.5 py-0.5 text-label',
-            isInverted
-              ? 'bg-white/20 text-white'
-              : 'bg-status-needs-reassign/10 text-status-needs-reassign',
+            reassignSolved
+              ? 'bg-status-completed/15 text-status-completed'
+              : reassignManual
+                ? 'bg-status-moved/15 text-status-moved'
+                : 'bg-status-needs-reassign/10 text-status-needs-reassign',
           ].join(' ')}
         >
           {t('entry.reassignedFrom', {
@@ -233,7 +218,7 @@ export function ScheduleEntryCard({
             e.stopPropagation();
             onReassignClick?.(entry.id);
           }}
-          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-white/20 px-2 py-0.5 text-label font-medium text-white hover:bg-white/30"
+          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-status-needs-reassign/15 px-2 py-0.5 text-label font-medium text-status-needs-reassign hover:bg-status-needs-reassign/25"
           data-testid="reassign-trigger"
         >
           <UserPlus size={12} aria-hidden="true" />
