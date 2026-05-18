@@ -1,6 +1,6 @@
 # Timetable — Architecture Design
 
-**Version:** 0.6.5 | **Stand:** 2026-05-18
+**Version:** 0.6.6 | **Stand:** 2026-05-18
 
 ## Übersicht
 

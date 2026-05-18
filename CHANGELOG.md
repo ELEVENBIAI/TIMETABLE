@@ -1,5 +1,19 @@
 # Changelog — Timetable
 
+## v0.6.6 — 2026-05-18 (Card-Vollfarbe Rot/Grün + Move-Logik: Status korrekt setzen)
+
+- **`backend/src/routes/schedule-entries.ts`** — Move-Logik vollständig überarbeitet:
+  - **Forward-Move** (Vertretung übernehmen): wenn `employee_id` wechselt und der bisherige Mitarbeiter NICHT der `original_employee_id` ist → `status='PLANNED'`, `is_from_reassignment=TRUE`, `original_employee_id` einmalig gesetzt. **Bisher**: Status blieb auf `REASSIGNMENT_NEEDED` — Card blieb rot trotz gelöster Vertretung.
+  - **Undo-Move** (zurück auf den ursprünglichen, kranken MA): wenn `employee_id === original_employee_id` → Check ob `absence_records` an dem Tag noch aktiv ist. Wenn ja: `status='REASSIGNMENT_NEEDED'`, `is_from_reassignment=FALSE`, `original_employee_id=NULL`, `reassignment_reason` wieder gesetzt. Wenn nein: vollständig zurückgesetzt auf `status='PLANNED'`.
+- **`backend/tests/routes/schedule-entries.test.ts`** — 2 neue Tests: Forward-Move setzt Status auf PLANNED, Undo-Move mit aktiver Absence setzt zurück auf REASSIGNMENT_NEEDED. **13/13 grün**.
+- **`frontend/src/components/WeekGrid/ScheduleEntryCard.tsx`** — Card-Farbgebung umgestellt auf **Vollfarbe statt Tint**:
+  - REASSIGNMENT_NEEDED: voller roter Hintergrund (`bg-status-needs-reassign`), weißer Text auf rotem Grund — auf den ersten Blick als „Achtung" lesbar (bisher `/40`-Opacity = blass).
+  - Gelöste Vertretung (`is_from_reassignment && status='PLANNED'`): voller grüner Hintergrund (`bg-status-completed/85`), weißer Text. Robert erkennt sofort welche Vertretungen erledigt sind.
+  - Service-Stripe links, Texte, Button + Vertretung-Badge auf weiße Variante invertiert (gute Lesbarkeit).
+- **Tooltip** zusätzlicher Hinweis bei gelöster Vertretung: `✓ Vertretung übernommen` / `Reassignment in place`.
+- **i18n** — neuer Key `reassignment.tooltip.reassignSolved` (en + de).
+- **VERSION 0.6.5 → 0.6.6** (Patch — Bugfix Move-Status + UX-Klarheit).
+
 ## v0.6.5 — 2026-05-18 (Hotfix: REASSIGN-Endpoint-Routing + kräftigeres Rot + Tooltip-Hinweis)
 
 - **Bugfix Backend-Routing**: `/api/schedules/open-reassignments` (v0.6.4) wurde von `/api/schedules/:id` parametric route gefressen, weil das `id`-Schema UUID-Format erzwingt → 400 Validation-Fehler. Endpoint verschoben nach **`/api/reassignments/open-weeks`** (eigener Pfad-Stamm, keine Kollision).

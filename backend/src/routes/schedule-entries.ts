@@ -524,8 +524,57 @@ export async function scheduleEntryRoutes(fastify: FastifyInstance): Promise<voi
       );
       if (conflict) throw new TimeConflictError(conflict);
 
-      // is_from_reassignment + original_employee_id setzen, wenn employee geändert
-      const isReassignment = input.employeeId && input.employeeId !== current.employee_id;
+      // Reassignment-Logik (employee_id geändert):
+      // - Move auf neuen Mitarbeiter → is_from_reassignment=TRUE, status='PLANNED' (Vertretung gelöst)
+      // - Move zurück auf original_employee_id, wenn dieser im Zeitraum eine aktive Absence hat:
+      //     status='REASSIGNMENT_NEEDED', is_from_reassignment=FALSE, original_employee_id=NULL
+      // - Move zurück, ohne Absence → status='PLANNED' (sauber zurückgesetzt)
+      const employeeChanged = input.employeeId && input.employeeId !== current.employee_id;
+      const isUndoReassignment =
+        employeeChanged &&
+        current.original_employee_id != null &&
+        input.employeeId === current.original_employee_id;
+      const isForwardReassignment = employeeChanged && !isUndoReassignment;
+
+      let originalStillAbsent = false;
+      if (isUndoReassignment) {
+        const ab = await pool.query<{ exists: boolean }>(
+          `SELECT EXISTS (
+             SELECT 1 FROM absence_records
+             WHERE tenant_id = $1
+               AND employee_id = $2
+               AND is_deleted = FALSE
+               AND $3::date BETWEEN start_date AND end_date
+           ) AS exists`,
+          [actor.tenantId, current.original_employee_id, newEntryDate]
+        );
+        originalStillAbsent = ab.rows[0]?.exists === true;
+      }
+
+      const nextStatus = isForwardReassignment
+        ? 'PLANNED'
+        : isUndoReassignment
+          ? originalStillAbsent
+            ? 'REASSIGNMENT_NEEDED'
+            : 'PLANNED'
+          : current.status;
+      const nextIsFromReassignment = isForwardReassignment
+        ? true
+        : isUndoReassignment
+          ? false
+          : current.is_from_reassignment;
+      const nextOriginal = isForwardReassignment
+        ? (current.original_employee_id ?? current.employee_id)
+        : isUndoReassignment
+          ? null
+          : current.original_employee_id;
+      const nextReassignReason = isForwardReassignment
+        ? current.reassignment_reason
+        : isUndoReassignment
+          ? originalStillAbsent
+            ? (current.reassignment_reason ?? 'SICK')
+            : null
+          : current.reassignment_reason;
 
       const r = await pool.query<ScheduleEntryRow>(
         `UPDATE schedule_entries SET
@@ -533,24 +582,28 @@ export async function scheduleEntryRoutes(fastify: FastifyInstance): Promise<voi
            entry_date = $2,
            day_of_week = $3,
            start_time = $4,
-           is_from_reassignment = CASE WHEN $5::boolean THEN TRUE ELSE is_from_reassignment END,
-           original_employee_id = CASE WHEN $5::boolean AND original_employee_id IS NULL
-                                    THEN $6 ELSE original_employee_id END,
-           updated_by = $7
-         WHERE id = $8 AND tenant_id = $9 AND is_deleted = FALSE
+           status = $5,
+           is_from_reassignment = $6,
+           original_employee_id = $7,
+           reassignment_reason = $8,
+           updated_by = $9
+         WHERE id = $10 AND tenant_id = $11 AND is_deleted = FALSE
          RETURNING ${COLS}`,
         [
           newEmployeeId,
           newEntryDate,
           input.dayOfWeek ?? current.day_of_week,
           newStartTime,
-          isReassignment,
-          current.employee_id,
+          nextStatus,
+          nextIsFromReassignment,
+          nextOriginal,
+          nextReassignReason,
           actor.userId,
           id,
           actor.tenantId,
         ]
       );
+      const isReassignment = isForwardReassignment;
       request.log.info(
         { action: 'schedule_entry.move', id, by: actor.userId, reassignment: isReassignment },
         'Schedule-Entry moved'

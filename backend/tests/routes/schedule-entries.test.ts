@@ -219,6 +219,67 @@ describe('Schedule-Entries CRUD', () => {
     expect(res.json().employee_id).toBe(EMP_ID_2);
   });
 
+  it('PATCH /:id/move: REASSIGNMENT_NEEDED auf Vertretung → status=PLANNED (gelöst)', async () => {
+    const pool = getOwnerPool();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/schedule-entries',
+      headers: planner(),
+      payload: { ...baseEntry(), startTime: '08:00' },
+    });
+    const id = created.json().id;
+    await pool.query(
+      `UPDATE schedule_entries SET status='REASSIGNMENT_NEEDED', reassignment_reason='SICK' WHERE id=$1`,
+      [id]
+    );
+    const res = await app.inject({
+      method: 'PATCH',
+      url: `/api/schedule-entries/${id}/move`,
+      headers: planner(),
+      payload: { employeeId: EMP_ID_2 },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().status).toBe('PLANNED');
+    expect(res.json().is_from_reassignment).toBe(true);
+    expect(res.json().original_employee_id).toBe(EMP_ID);
+  });
+
+  it('PATCH /:id/move: zurück auf original mit aktiver Absence → status=REASSIGNMENT_NEEDED', async () => {
+    const pool = getOwnerPool();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/schedule-entries',
+      headers: planner(),
+      payload: { ...baseEntry(), startTime: '08:00' },
+    });
+    const id = created.json().id;
+    // EMP_ID auf SICK markieren
+    await pool.query(
+      `INSERT INTO absence_records (tenant_id, employee_id, absence_type, start_date, end_date, reported_by)
+       VALUES ($1, $2, 'SICK', $3, $3, $4)`,
+      [TENANT_A, EMP_ID, baseEntry().entryDate, ADMIN]
+    );
+    // erst auf EMP_ID_2 vertreten
+    await app.inject({
+      method: 'PATCH',
+      url: `/api/schedule-entries/${id}/move`,
+      headers: planner(),
+      payload: { employeeId: EMP_ID_2 },
+    });
+    // jetzt zurück auf EMP_ID (krank)
+    const res = await app.inject({
+      method: 'PATCH',
+      url: `/api/schedule-entries/${id}/move`,
+      headers: planner(),
+      payload: { employeeId: EMP_ID },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().status).toBe('REASSIGNMENT_NEEDED');
+    expect(res.json().is_from_reassignment).toBe(false);
+    expect(res.json().original_employee_id).toBeNull();
+    expect(res.json().employee_id).toBe(EMP_ID);
+  });
+
   it('PATCH /:id/move: in Conflict-Zeit → 409', async () => {
     const a = await app.inject({
       method: 'POST',

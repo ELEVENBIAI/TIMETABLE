@@ -22,15 +22,19 @@ interface Props {
   onReassignClick?: (entryId: string) => void;
 }
 
-// Status → Card-Modifier-Class
+// Status → Card-Modifier-Class. is_from_reassignment-Override (grün) wird
+// im Render zusätzlich angewendet wenn status==='PLANNED'.
 const STATUS_CLASSES: Record<ScheduleEntry['status'], string> = {
   PLANNED: '',
   IN_PROGRESS: 'ring-2 ring-status-progress',
   COMPLETED: 'opacity-60 line-through decoration-text-muted',
   SKIPPED: 'opacity-40',
   REASSIGNED: 'opacity-50',
-  REASSIGNMENT_NEEDED: 'bg-status-needs-reassign/40 ring-2 ring-inset ring-status-needs-reassign',
+  REASSIGNMENT_NEEDED:
+    'bg-status-needs-reassign ring-2 ring-inset ring-status-needs-reassign text-white',
 };
+const REASSIGN_SOLVED_CLASS =
+  'bg-status-completed/85 ring-2 ring-inset ring-status-completed text-white';
 
 export function ScheduleEntryCard({
   entry,
@@ -76,6 +80,9 @@ export function ScheduleEntryCard({
   if (entry.status === 'REASSIGNMENT_NEEDED') {
     tooltipParts.push(`⚠ ${tR('tooltip.needsReassign')}`);
   }
+  if (entry.is_from_reassignment && entry.status === 'PLANNED') {
+    tooltipParts.push(`✓ ${tR('tooltip.reassignSolved')}`);
+  }
   if (entry.is_from_reassignment && originalEmployee) {
     tooltipParts.push(
       `Vertretung für ${originalEmployee.first_name} ${originalEmployee.last_name}`
@@ -105,6 +112,10 @@ export function ScheduleEntryCard({
       ? 'cursor-not-allowed'
       : 'cursor-grab active:cursor-grabbing';
 
+  const reassignSolved = entry.is_from_reassignment && entry.status === 'PLANNED';
+  const isReassignNeeded = entry.status === 'REASSIGNMENT_NEEDED';
+  const isInverted = isReassignNeeded || reassignSolved;
+
   return (
     <article
       ref={presentational ? undefined : draggable.setNodeRef}
@@ -113,7 +124,7 @@ export function ScheduleEntryCard({
       className={[
         'group relative flex flex-col gap-0.5 overflow-hidden rounded-md border border-border bg-surface-raised pl-2 pr-2 py-1.5 text-label transition-colors hover:border-brand-primary',
         cursorClass,
-        STATUS_CLASSES[entry.status],
+        reassignSolved ? REASSIGN_SOLVED_CLASS : STATUS_CLASSES[entry.status],
         presentational ? 'shadow-lg rotate-1 ring-2 ring-brand-primary' : '',
       ].join(' ')}
       style={stylePos}
@@ -132,9 +143,7 @@ export function ScheduleEntryCard({
         <div
           className={[
             'min-w-0 flex-1 truncate text-title font-semibold',
-            entry.status === 'REASSIGNMENT_NEEDED'
-              ? 'text-status-needs-reassign'
-              : 'text-text-primary',
+            isInverted ? 'text-white' : 'text-text-primary',
           ].join(' ')}
         >
           {propertyName}
@@ -147,7 +156,7 @@ export function ScheduleEntryCard({
               e.stopPropagation();
               onReassignClick?.(entry.id);
             }}
-            className="mt-0.5 shrink-0 rounded p-0.5 text-status-needs-reassign hover:bg-status-needs-reassign/20"
+            className="mt-0.5 shrink-0 rounded p-0.5 text-white hover:bg-white/20"
             aria-label={tR('trigger.button')}
             data-testid="reassign-trigger-icon"
           >
@@ -162,12 +171,31 @@ export function ScheduleEntryCard({
           />
         )}
       </div>
-      <div className="truncate text-label text-text-secondary">{serviceName}</div>
-      <div className="numeric tabular-nums text-label text-text-muted">
+      <div
+        className={[
+          'truncate text-label',
+          isInverted ? 'text-white/90' : 'text-text-secondary',
+        ].join(' ')}
+      >
+        {serviceName}
+      </div>
+      <div
+        className={[
+          'numeric tabular-nums text-label',
+          isInverted ? 'text-white/80' : 'text-text-muted',
+        ].join(' ')}
+      >
         {startLabel} · {durationLabel}
       </div>
       {entry.is_from_reassignment && (
-        <div className="mt-0.5 inline-flex w-fit items-center rounded bg-status-needs-reassign/10 px-1.5 py-0.5 text-label text-status-needs-reassign">
+        <div
+          className={[
+            'mt-0.5 inline-flex w-fit items-center rounded px-1.5 py-0.5 text-label',
+            isInverted
+              ? 'bg-white/20 text-white'
+              : 'bg-status-needs-reassign/10 text-status-needs-reassign',
+          ].join(' ')}
+        >
           {t('entry.reassignedFrom', {
             name: originalEmployee
               ? `${originalEmployee.first_name} ${originalEmployee.last_name}`
@@ -186,7 +214,7 @@ export function ScheduleEntryCard({
             e.stopPropagation();
             onReassignClick?.(entry.id);
           }}
-          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-status-needs-reassign/15 px-2 py-0.5 text-label font-medium text-status-needs-reassign hover:bg-status-needs-reassign/25"
+          className="mt-1 inline-flex items-center gap-1 self-start rounded bg-white/20 px-2 py-0.5 text-label font-medium text-white hover:bg-white/30"
           data-testid="reassign-trigger"
         >
           <UserPlus size={12} aria-hidden="true" />

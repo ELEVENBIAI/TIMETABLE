@@ -25,7 +25,8 @@
     "button": "Vertretung finden"
   },
   "tooltip": {
-    "needsReassign": "Vertretung nötig — Mitarbeiter abwesend"
+    "needsReassign": "Vertretung nötig — Mitarbeiter abwesend",
+    "reassignSolved": "Vertretung übernommen"
   },
   "reasons": {
     "capacityHigh": "Hat noch ~{{hoursFree}}h frei diese Woche",

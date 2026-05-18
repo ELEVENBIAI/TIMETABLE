@@ -25,7 +25,8 @@
     "button": "Find substitute"
   },
   "tooltip": {
-    "needsReassign": "Needs reassignment — employee absent"
+    "needsReassign": "Needs reassignment — employee absent",
+    "reassignSolved": "Reassignment in place"
   },
   "reasons": {
     "capacityHigh": "Has ~{{hoursFree}}h free this week",
